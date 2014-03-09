@@ -1,0 +1,26 @@
+{
+  "name": "seqJS",
+  "title": "Seqjs",
+  "description": "Parse nucleotide sequences",
+  "version": "0.1.0",
+  "homepage": "https://github.com/haydnKing/seqJS",
+  "author": {
+    "name": "Haydn King",
+    "email": "hjking734@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haydnKing/seqJS.git"
+  },
+  "bugs": "https://github.com/haydnKing/seqJS/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/haydnKing/seqJS/blob/master/LICENSE-MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": []
+}
