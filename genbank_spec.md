@@ -117,7 +117,7 @@ Location           |       Description
 -------------------|-------------------------------
 467             |      Points to a single base in the presented sequence 
 340..565         |         Points to a continuous range of bases bounded by and including the starting and ending bases
-<345..500                 Indicates that the exact lower boundary point of a feature is unknown.  The location begins at some  base previous to the first base specified (which need not be contained in the presented sequence) and continues to and includes the ending base 
+<345..500       |       Indicates that the exact lower boundary point of a feature is unknown.  The location begins at some  base previous to the first base specified (which need not be contained in the presented sequence) and continues to and includes the ending base 
 <1..888           |        The feature starts before the first sequenced base and  continues to and includes base 888
 1..>888           |       The feature starts at the first sequenced base and continues beyond base 888
 102.110         |       Indicates that the exact location is unknown but that it is one of the bases between bases 102 and 110, inclusive
