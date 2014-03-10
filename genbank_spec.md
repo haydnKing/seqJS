@@ -16,7 +16,7 @@ Defines some metadata about the file, e.g.
 
 The locus line is formatted according to
 
-'''
+```
 00:06      LOCUS
 06:12      spaces
 12:??      Locus name
@@ -31,11 +31,11 @@ The locus line is formatted according to
 64:67      The division code (e.g. BCT, VRL, INV)
 67:68      space
 68:79      Date, in the form dd-MMM-yyyy (e.g., 15-MAR-1991)
-'''
+```
 
 Older files are formatted as
 
-'''
+```
 00:06      LOCUS
 06:12      spaces
 12:??      Locus name
@@ -49,7 +49,7 @@ Older files are formatted as
 52:55      The division code (e.g. BCT, VRL, INV)
 55:62      space
 62:73      Date, in the form dd-MMM-yyyy (e.g., 15-MAR-1991)
-'''
+```
 
 Note the change in position of bp/aa/rc can be used to determine the type
 
@@ -167,13 +167,13 @@ join(1..100,J00194.1:100..202)
 This section begins with the keyword ORIGIN at the begining of a line.
 The sequence is then printed in columnar format, for example as below.
 
-'''
+```
         1 gatcctccat atacaacggt atctccacct caggtttaga tctcaacaac ggaaccattg
        61 ccgacatgag acagttaggt atcgtcgaga gttacaagct aaaacgagca gtagtcagct
       121 ctgcatctga agccgctgaa gttctactaa gggtggataa catcatccgt gcaagaccaa
       181 gaaccgccaa tagacaacat atgtaacata tttaggatat acctcgaaaa taataaaccg
       241 ccacactgtc attattataa ttagaaacag aacgcaaaaa ttatcc
-'''
+```
 
 ## Termination
 
