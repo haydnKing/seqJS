@@ -112,55 +112,23 @@ VALUE may be an integer or a string encased in double-quotes (") and
 backslashes and "s in the string must be escaped with \.
 
 location_string is defined by:
-Location                  Description   
 
-467                       Points to a single base in the presented sequence 
+Location           |       Description   
+-------------------|-------------------------------
+467             |      Points to a single base in the presented sequence 
+340..565         |         Points to a continuous range of bases bounded by and including the starting and ending bases
+<345..500                 Indicates that the exact lower boundary point of a feature is unknown.  The location begins at some  base previous to the first base specified (which need not be contained in the presented sequence) and continues to and includes the ending base 
+<1..888           |        The feature starts before the first sequenced base and  continues to and includes base 888
+1..>888           |       The feature starts at the first sequenced base and continues beyond base 888
+102.110         |       Indicates that the exact location is unknown but that it is one of the bases between bases 102 and 110, inclusive
+123^124          |         Points to a site between bases 123 and 124
+join(12..78,134..202)  |   Regions 12 to 78 and 134 to 202 should be joined to form one contiguous sequence
+complement(34..126)   |    Start at the base complementary to 126 and finish at the base complementary to base 34 (the feature is on the strand complementary to the presented strand)
+complement(join(2691..4571,4918..5163)) | Joins regions 2691 to 4571 and 4918 to 5163, then complements the joined segments (the feature is on the strand complementary to the presented strand) 
+join(complement(4918..5163),complement(2691..4571)) | Complements regions 4918 to 5163 and 2691 to 4571, then joins the complemented segments (the feature is on the strand complementary to the presented strand)
+J00194.1:100..202      |   Points to bases 100 to 202, inclusive, in the entry (in this database) with primary accession number 'J00194'
+join(1..100,J00194.1:100..202) | Joins region 1..100 of the existing entry with the region 100..202 of remote entry J00194
 
-340..565                  Points to a continuous range of bases bounded by and
-                          including the starting and ending bases
-
-<345..500                 Indicates that the exact lower boundary point of a feature
-                          is unknown.  The location begins at some  base previous to
-                          the first base specified (which need not be contained in 
-                          the presented sequence) and continues to and includes the 
-                          ending base 
-
-<1..888                   The feature starts before the first sequenced base and 
-                          continues to and includes base 888
-
-1..>888                   The feature starts at the first sequenced base and 
-                          continues beyond base 888
-
-102.110                   Indicates that the exact location is unknown but that it is 
-                          one of the bases between bases 102 and 110, inclusive
-
-123^124                   Points to a site between bases 123 and 124
-
-join(12..78,134..202)     Regions 12 to 78 and 134 to 202 should be joined to form 
-                          one contiguous sequence
-
-
-complement(34..126)       Start at the base complementary to 126 and finish at the 
-                          base complementary to base 34 (the feature is on the strand 
-                          complementary to the presented strand)
-
-
-complement(join(2691..4571,4918..5163))
-                          Joins regions 2691 to 4571 and 4918 to 5163, then 
-                          complements the joined segments (the feature is on the 
-                          strand complementary to the presented strand) 
-
-join(complement(4918..5163),complement(2691..4571))
-                          Complements regions 4918 to 5163 and 2691 to 4571, then 
-                          joins the complemented segments (the feature is on the 
-                          strand complementary to the presented strand)
-  
-J00194.1:100..202         Points to bases 100 to 202, inclusive, in the entry (in 
-                          this database) with primary accession number 'J00194'
- 
-join(1..100,J00194.1:100..202)
-                          Joins region 1..100 of the existing entry with the region
-                          100..202 of remote entry J00194
 
 ## Sequence section
 
