@@ -20,6 +20,19 @@
       throws(block, [expected], [message])
   */
 
+    module('seqJS#parser_genbank', {
+        setup: function() {
+            this.parser = seqJS.getParser('genbank');
+            this.data = TEST_DATA.parser_genbank;
+        }
+    });
+
+    test('parse valid 0', {
+        expect(1);
+        deepEqual(this.parser.parse(this.data.valid[0].string),
+                  this.data.valid[0].object);
+    });
+
   module('jQuery#seqJS', {
     // This will run before each test in this module.
     setup: function() {
