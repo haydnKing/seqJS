@@ -189,7 +189,7 @@ TEST_DATA.parser_genbank.valid = [
         'source': 'Saccharomyces cerevisiae (baker\'s yeast)',
         'organism': 'Saccharomyces cerevisiae',
         'taxonomy': ['Eukaryota', 'Fungi', 'Ascomycota', 'Saccharomycotina', 
-            'Saccharomycetes', 'Saccharomycetales', 'Saccharomycetaceae' 'Saccharomyces'],
+            'Saccharomycetes', 'Saccharomycetales', 'Saccharomycetaceae', 'Saccharomyces'],
 
         /*references*/
         'references': [{

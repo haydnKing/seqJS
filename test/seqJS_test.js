@@ -1,3 +1,5 @@
+/*global seqJS:true */
+
 (function($) {
   /*
     ======== A Handy Little QUnit Reference ========
@@ -19,7 +21,70 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
+    module('seqJS#seq');
 
+    test('setting data 1', function(){
+        expect(3);
+        var l = new seqJS.Seq("ATcGAT");
+        equal(l.seq(), "ATCGAT");
+        equal(l.length(), 6);
+        equal(l.alphabet(), seqJS.ALPH_DNA);
+    });
+
+    test('setting data 2', function(){
+        expect(3);
+        var l = new seqJS.Seq("ATcGAT", seqJS.ALPH_PROT);
+        equal(l.seq(), "ATCGAT");
+        equal(l.length(), 6);
+        equal(l.alphabet(), seqJS.ALPH_PROT);
+    });
+
+    test('invalid operator', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location(4, -1);
+        }, "Invalid location operator '-1'");
+    });
+
+    test('invalid location', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location(-1);
+        }, "Invalid location '-1'");
+    });
+
+
+    module('seqJS#record');
+
+    test('setting data 1', function(){
+        expect(2);
+        var l = new seqJS.Location(5);
+        equal(l.location(), 5);
+        equal(l.operator(), seqJS.LOC_EXACT);
+    });
+
+    test('setting data 2', function(){
+        expect(2);
+        var l = new seqJS.Location(6, seqJS.LOC_BEFORE);
+        equal(l.location(), 6);
+        equal(l.operator(), seqJS.LOC_BEFORE);
+    });
+
+    test('invalid operator', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location(4, -1);
+        }, "Invalid location operator '-1'");
+    });
+
+    test('invalid location', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location(-1);
+        }, "Invalid location '-1'");
+    });
+
+    /*
     module('seqJS#parser_genbank', {
         setup: function() {
             this.parser = seqJS.getParser('genbank');
@@ -27,7 +92,7 @@
         }
     });
 
-    test('parse valid 0', {
+    test('parse valid 0', function(){
         expect(1);
         deepEqual(this.parser.parse(this.data.valid[0].string),
                   this.data.valid[0].object);
@@ -50,7 +115,7 @@
     expect(1);
     strictEqual(this.elems.seqJS().text(), 'awesome0awesome1awesome2', 'should be awesome');
   });
-
+*/
   module('jQuery.seqJS');
 
   test('is awesome', function() {

@@ -6,20 +6,22 @@
  * Licensed under the MIT license.
  */
 
-seqJS = seqJS || {};
+var seqJS = seqJS || {};
 
-(function($){
+(function(){
 
     /*
      * Parser object
      */
     var Parser = function(type){
-        var type = type;
-
+        var last_data;
+        
+        this.type = function() {return type;};
         this.parse = function(data){
+            last_data = data;
             return {};
         };
-    }
+    };
 
     /*
      * getParser(type) - return a parser object
@@ -29,4 +31,5 @@ seqJS = seqJS || {};
         return new Parser(type);
     };
 
-}(jQuery));
+}());
+
