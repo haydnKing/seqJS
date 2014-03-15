@@ -48,25 +48,97 @@ var seqJS = seqJS || {};
     /*
      * Locations
      */
-    seqJS.LOC_BEFORE = 1;
-    seqJS.LOC_EXACT = 2;
-    seqJS.LOC_AFTER = 3;
-    seqJS.Location = function(_location, _operator) {
-        _operator = _operator || seqJS.LOC_EXACT;
-        if([seqJS.LOC_BEFORE, seqJS.LOC_EXACT, seqJS.LOC_AFTER].indexOf(_operator) === -1){
+    
+    seqJS.Location = function(_location, _operator, _location2) {
+        var self = this;
+        _operator = _operator || '';
+        if(['', '<', '>', '.'].indexOf(_operator) === -1){
             throw "Invalid location operator \'" + _operator + "\'";
         }
         if(_location < 1){
             throw "Invalid location \'" + _location + "\'";
         }
+        if(_operator === '.'){
+            if(_location2 === undefined){
+                throw "Must have two locations for '.' operator";
+            }
+            if(_location2 < _location){
+                throw "Second location must be less than the first";
+            }
+        }
+        else{
+            if(_location2 !== undefined){
+                throw "Only 1 location required for '"+_operator+"'";
+            }
+        }
         this.location = function() {return _location;};
+        this.location2= function() {return _location2;};
         this.operator = function() {return _operator;};
+
+        this.lt = function(rhs) {return !self.ge(rhs);};
+        this.gt = function(rhs) {
+            if(rhs.operator() === '.'){
+                return _location > rhs.location2();
+            }
+            return _location > rhs.location();
+        };
+
+        this.toString = function() {
+            if(_operator === '.'){
+                return _location + '.' + _location2;
+            }
+            return _operator + _location;
+        };
     };
 
     /*
      * spans
      */
+    var span_fmt = /(?:([<>]?)(\d+)(?=\.\.))|(?:(\d+)(\.)(\d+))\.\.(?:([<>]?)(\d+)(?=$))|(?:(\d+)(\.)(\d+))/;
+    var from_match = function(m){
+        if(m[0] === undefined){
+            return new seqJS.Location(m[2],m[3],m[4]);
+        }
+        else{
+            return new seqJS.Location(m[1], m[0]);
+        }
+    };
+    seqJS.Span = function(_location1, _location2){
+        //if we're given a string
+        if(_location1 instanceof String){
+            var m = _location1.search(span_fmt);
+            _location1 = from_match(m.slice(1,5));
+            _location2 = from_match(m.slice(6));
+        }
 
+        if(_location1.gt(_location2)){
+            throw "First location is greater than the second";
+        }
+
+        this.location1 = function() {return _location1;};
+        this.location2 = function() {return _location2;};
+
+        this.overlaps = function(rhs) {
+            if(_location1.lt(rhs.location1()) &&
+               _location2.gt(rhs.location1())) {
+                return true;
+            }
+            if(_location1.lt(rhs.location2()) &&
+               _location2.gt(rhs.location2())) {
+                return true;
+            }
+            if(_location1.gt(rhs.location1()) &&
+               _location2.lt(rhs.location2())) {
+                return true;
+            }
+            return false;
+        };    
+
+        this.toString = function() {
+            return _location1.toString() + '..' + _location2.toString();
+        };
+
+    };
 
    
 

@@ -54,14 +54,14 @@
 
     module('seqJS#location');
 
-    test('setting data 1', function(){
+    test('setting implicit exact', function(){
         expect(2);
         var l = new seqJS.Location(5);
         equal(l.location(), 5);
         equal(l.operator(), seqJS.LOC_EXACT);
     });
 
-    test('setting data 2', function(){
+    test('setting explicit before', function(){
         expect(2);
         var l = new seqJS.Location(6, seqJS.LOC_BEFORE);
         equal(l.location(), 6);
