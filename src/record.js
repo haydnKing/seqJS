@@ -171,55 +171,85 @@ var seqJS = seqJS || {};
 
     };
 
-    /*
-     * FeatureLocation
-     */
     var operator_fmt = /^(complement|join|order)\((.+)\)$/;
-    seqJS.FeatureLocation = function(location){
-        var operator = '';
-        var complement = false;
-        var last_op = '';
-        while(true){
-            m = operator_fmt.exec(location);
-            if(m === null){
-                break;
+    var tokenize = function(string){
+        var ret = [], items = string.split(',');
+        var depth = 0, current = '';
+        for(var i = 0; i < items.length; i++){
+            if(current){
+                current = current + ',' + items[i];
             }
-            switch(m[1]){
+            else{
+                current = items[i];
+            }
+            depth = - (current.split('(').length - 1) + (current.split(')').length -1 );
+            if(depth === 0){
+                ret.push(current.trim());
+                current = '';
+            }
+        }
+        if(depth > 0){
+            throw "Unmatched parentheses in \'"+string+"\'";
+        }
+        return ret;
+    };
+
+    seqJS.LocationOperator = function(location, prev_op){
+        var items = [], operator = '';
+
+        var m = operator_fmt.exec(location);
+        if(m){
+            operator = m[1];
+            switch(operator){
                 case 'complement':
-                    complement = !complement;
+                    items.push(new seqJS.LocationOperator(m[2].trim()));
                     break;
                 case 'join':
                 case 'order':
-                    if(operator === ''){
-                        operator = m[1];
+                    //check whether we're duplicating
+                    if(prev_op !== undefined && operator !== prev_op){
+                        throw "Location lines cannot mix join(...) and order(...)";
                     }
-                    else{
-                        throw "multiple operators in \'"+location+"\'";
+                    var s_items = tokenize(m[2]);
+                    for(var i = 0; i < s_items.length; i++){
+                        items.push(new seqJS.LocationOperator(s_items[i], operator));
                     }
             }
-            last_op = m[1];
-            location = m[2].trim();
+        }
+        else {
+            items.push(new seqJS.Span(location));
         }
 
-        var s_items = location.split(',');
-        if(last_op === 'complement' && s_items.length > 1){
-            throw 'complement expects only 1 argument, not '+s_items.length;
+        this.toString = function() {
+            var s = [];
+            for(var i = 0; i < items.length; i++){
+                s.push(items[i].toString());
+            }
+            if(operator){
+                return operator + '(' + s.join(',') + ')';
+            }
+            return s[0];
+        };
+
+    };
+
+
+
+    /*
+     * FeatureLocation
+     */
+    seqJS.FeatureLocation = function(location){
+        var loc;
+        try{
+            loc = new seqJS.LocationOperator(location);
+        }
+        catch(e){
+            throw e + " while parsing location string \'"+location+"\'";
         }
 
-        var items = [];
-        for(var i = 0; i < s_items.length; i++){
-            try{
-                var s = new seqJS.Span(s_items[i].trim());
-                items.append(s);
-            }
-            catch{
-                var f = new seqJS.FeatureLocation(s_items[i].trim());
-            }
-
-
-
-            }
-            location = m[2];
-        }
-
+        this.toString = function(){
+            return loc.toString();
+        };
+    };
+    
 }());

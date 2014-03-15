@@ -8,10 +8,10 @@
     Test methods:
       module(name, {[setup][ ,teardown]})
       test(name, callback)
-      expect(numberOfAssertions)
+      expect(numberOfequalions)
       stop(increment)
       start(decrement)
-    Test assertions:
+    Test equalions:
       ok(value, [message])
       equal(actual, expected, [message])
       notEqual(actual, expected, [message])
@@ -244,66 +244,83 @@
 
     test('parse A..B', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('100..200');
+        var l = new seqJS.FeatureLocation('100..200');
 
-        assert(l.toString(), '100..200');
+        equal(l.toString(), '100..200');
     });
 
     test('parse <A..B', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('<100..200');
+        var l = new seqJS.FeatureLocation('<100..200');
 
-        assert(l.toString(), '<100..200');
+        equal(l.toString(), '<100..200');
     });
 
     test('parse A.B..C', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('100.102..200');
+        var l = new seqJS.FeatureLocation('100.102..200');
 
-        assert(l.toString(), '100.102..200');
+        equal(l.toString(), '100.102..200');
     });
 
     test('parse complement(A..B)', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('complement(100..200)');
+        var l = new seqJS.FeatureLocation('complement(100..200)');
 
-        assert(l.toString(), 'complement(100..200)');
+        equal(l.toString(), 'complement(100..200)');
     });
 
     test('parse join(A..B,C..D)', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('join(100..200,300..400)');
+        var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
-        assert(l.toString(), 'join(100..200,300..400)');
+        equal(l.toString(), 'join(100..200,300..400)');
     });
 
     test('parse order(A..B,C..D)', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('order(100..200,300..400)');
+        var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
-        assert(l.toString(), 'order(100..200,300..400)');
+        equal(l.toString(), 'order(100..200,300..400)');
     });
 
     test('parse complement(join(A..B,C..D))', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
+        var l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
 
-        assert(l.toString(), 'complement(join(100..200,300..400))');
+        equal(l.toString(), 'complement(join(100..200,300..400))');
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
+        var l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
 
-        assert(l.toString(), 'join(complement(300..400),complement(100..200))');
+        equal(l.toString(), 'join(complement(300..400),complement(100..200))');
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
         expect(1);
-        l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
+        var l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
 
-        assert(l.toString(), '100..200');
+        equal(l.toString(), 'join(100..200,complement(join(500..600,300..400)))');
     });
+
+    test('fail complement(B..A)', function(){
+        expect(1);
+
+        throws(function(){
+            new seqJS.FeatureLocation('complement(200..100)');
+        });
+    });
+
+    test('fail join(A..B,order(C..D,E..F))', function(){
+        expect(1);
+
+        throws(function(){
+            new seqJS.FeatureLocation('join(100..200,order(300..400,500..600))');
+        });
+    });
+
 
     /*
     module('seqJS#parser_genbank', {
