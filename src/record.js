@@ -171,4 +171,55 @@ var seqJS = seqJS || {};
 
     };
 
+    /*
+     * FeatureLocation
+     */
+    var operator_fmt = /^(complement|join|order)\((.+)\)$/;
+    seqJS.FeatureLocation = function(location){
+        var operator = '';
+        var complement = false;
+        var last_op = '';
+        while(true){
+            m = operator_fmt.exec(location);
+            if(m === null){
+                break;
+            }
+            switch(m[1]){
+                case 'complement':
+                    complement = !complement;
+                    break;
+                case 'join':
+                case 'order':
+                    if(operator === ''){
+                        operator = m[1];
+                    }
+                    else{
+                        throw "multiple operators in \'"+location+"\'";
+                    }
+            }
+            last_op = m[1];
+            location = m[2].trim();
+        }
+
+        var s_items = location.split(',');
+        if(last_op === 'complement' && s_items.length > 1){
+            throw 'complement expects only 1 argument, not '+s_items.length;
+        }
+
+        var items = [];
+        for(var i = 0; i < s_items.length; i++){
+            try{
+                var s = new seqJS.Span(s_items[i].trim());
+                items.append(s);
+            }
+            catch{
+                var f = new seqJS.FeatureLocation(s_items[i].trim());
+            }
+
+
+
+            }
+            location = m[2];
+        }
+
 }());
