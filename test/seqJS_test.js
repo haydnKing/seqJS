@@ -146,67 +146,75 @@
         });
     });
 
-    module('seqJS#span');
+    module('seqJS.Span');
 
     test('span from string A', function(){
-        expect(6);
-        var s = new seqJS.span('100..150');
+        expect(7);
+        var s = new seqJS.Span('100..150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '');
-        equal(s.location1().location1(), undefined);
+        equal(s.location1().location2(), undefined);
 
         equal(s.location2().location(), 150);
         equal(s.location2().operator(), '');
-        equal(s.location2().location1(), undefined);
+        equal(s.location2().location2(), undefined);
+
+        equal(s.toString(), '100..150');
     });
 
     test('span from string B', function(){
-        expect(6);
-        var s = new seqJS.span('<100..>150');
+        expect(7);
+        var s = new seqJS.Span('<100..>150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '<');
-        equal(s.location1().location1(), undefined);
+        equal(s.location1().location2(), undefined);
 
         equal(s.location2().location(), 150);
         equal(s.location2().operator(), '>');
-        equal(s.location2().location1(), undefined);
+        equal(s.location2().location2(), undefined);
+
+        equal(s.toString(), '<100..>150');
     });
 
     test('span from string C', function(){
-        expect(6);
-        var s = new seqJS.span('100.105..150');
+        expect(7);
+        var s = new seqJS.Span('100.105..150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '.');
-        equal(s.location1().location1(), 105);
+        equal(s.location1().location2(), 105);
 
         equal(s.location2().location(), 150);
         equal(s.location2().operator(), '');
-        equal(s.location2().location1(), undefined);
+        equal(s.location2().location2(), undefined);
+
+        equal(s.toString(), '100.105..150');
     });
 
     test('span from string D', function(){
-        expect(6);
-        var s = new seqJS.span('100..150.160');
+        expect(7);
+        var s = new seqJS.Span('100..150.160');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '');
-        equal(s.location1().location1(), undefined);
+        equal(s.location1().location2(), undefined);
 
         equal(s.location2().location(), 150);
         equal(s.location2().operator(), '.');
-        equal(s.location2().location1(), 160);
+        equal(s.location2().location2(), 160);
+
+        equal(s.toString(), '100..150.160');
     });
 
     test('locations inverted', function(){
         expect(1);
         throws(function(){
-            new seqJS.span('200..100');
+            new seqJS.Span('200..100');
         });
     });
 
     test('bad formating', function(){
         expect(1);
         throws(function(){
-            new seqJS.span('100.200');
+            new seqJS.Span('100.200');
         });
     });
 

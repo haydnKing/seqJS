@@ -110,21 +110,16 @@ var seqJS = seqJS || {};
     /*
      * spans
      */
-    var span_fmt = /(?:([<>]?)(\d+)(?=\.\.))|(?:(\d+)(\.)(\d+))\.\.(?:([<>]?)(\d+)(?=$))|(?:(\d+)(\.)(\d+))/;
-    var from_match = function(m){
-        if(m[0] === undefined){
-            return new seqJS.Location(m[2],m[3],m[4]);
-        }
-        else{
-            return new seqJS.Location(m[1], m[0]);
-        }
-    };
+    var span_fmt = /(\S+)\.\.(\S+)/;
     seqJS.Span = function(_location1, _location2){
         //if we're given a string
-        if(_location1 instanceof String){
-            var m = _location1.search(span_fmt);
-            _location1 = from_match(m.slice(1,5));
-            _location2 = from_match(m.slice(6));
+        if(typeof _location1 === 'string' || _location1 instanceof String){
+            var m = span_fmt.exec(_location1);
+            if(m===null){
+                throw "Malformed location string \'"+_location1+"\'";
+            }
+            _location1 = new seqJS.Location(m[1]);
+            _location2 = new seqJS.Location(m[2]);
         }
 
         if(_location1.gt(_location2)){
@@ -155,7 +150,5 @@ var seqJS = seqJS || {};
         };
 
     };
-
-   
 
 }());
