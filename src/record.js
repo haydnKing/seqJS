@@ -47,6 +47,11 @@ var seqJS = seqJS || {};
 
     /*
      * Locations
+     *
+     * Represent a single location as either and exact base (''), before a
+     * specific base ('<'), after a specific base ('>') or between two specific
+     * bases ('A.B')
+     *
      */
     var loc_fmt = /(?:^([<>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
     
@@ -108,7 +113,12 @@ var seqJS = seqJS || {};
     };
 
     /*
-     * spans
+     * Spans:
+     *  Represent a span between two locations. By definition 
+     *  location1 < location 2.
+     *
+     *  currently the complement flag is a bit redundant as it's handled by
+     *  Location operator
      */
     var span_fmt = /(\S+)\.\.(\S+)/;
     var complement_fmt = /complement\((.+)\)/;
@@ -171,7 +181,18 @@ var seqJS = seqJS || {};
 
     };
 
+    /*
+     * LocationOperator:
+     *  store a Span or several spans and an operator which affects those spans
+     *  such as join(...), order(...) or complement()
+     */
+
     var operator_fmt = /^(complement|join|order)\((.+)\)$/;
+    /*
+     * tokenize:
+     *  split string arguments on commas, paying attention to the depth of
+     *  parentheses, i.e. 'a,b,c(d,e,f),g' -> ['a', 'b', 'c(d,e,f)', 'g']
+     */
     var tokenize = function(string){
         var ret = [], items = string.split(',');
         var depth = 0, current = '';
@@ -237,6 +258,8 @@ var seqJS = seqJS || {};
 
     /*
      * FeatureLocation
+     *  Store base LocationOperator and procide access to the underlying data
+     *  (somehow)
      */
     seqJS.FeatureLocation = function(location){
         var loc;
