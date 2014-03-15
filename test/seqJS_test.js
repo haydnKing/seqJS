@@ -1,4 +1,4 @@
-/*global seqJS:true */
+/*global seqJS:true  */
 
 (function($) {
   /*
@@ -58,21 +58,36 @@
         expect(2);
         var l = new seqJS.Location(5);
         equal(l.location(), 5);
-        equal(l.operator(), seqJS.LOC_EXACT);
+        equal(l.operator(), '');
     });
 
     test('setting explicit before', function(){
         expect(2);
-        var l = new seqJS.Location(6, seqJS.LOC_BEFORE);
+        var l = new seqJS.Location(6, '<');
         equal(l.location(), 6);
-        equal(l.operator(), seqJS.LOC_BEFORE);
+        equal(l.operator(), '<');
+    });
+
+    test('setting explicit range', function(){
+        expect(3);
+        var l = new seqJS.Location(6, '.', 8);
+        equal(l.location(), 6);
+        equal(l.operator(), '.');
+        equal(l.location2(), 8);
+    });
+
+    test('set invalid range', function(){
+        expect(1);
+        throws(function() {
+            new seqJS.Location(8, '.', 6);
+        });
     });
 
     test('invalid operator', function(){
         expect(1);
         throws(function(){
-            new seqJS.Location(4, -1);
-        }, "Invalid location operator '-1'");
+            new seqJS.Location(4, '!');
+        }, "Invalid location operator '!'");
     });
 
     test('invalid location', function(){
@@ -82,6 +97,54 @@
         }, "Invalid location '-1'");
     });
 
+    test('fixed location from string', function(){
+        expect(3);
+        var l = new seqJS.Location('6');
+        equal(l.location(), 6);
+        equal(l.operator(), '');
+        equal(l.location2(), undefined);
+    });
+
+    test('before location from string', function(){
+        expect(3);
+        var l = new seqJS.Location('<6');
+        equal(l.location(), 6);
+        equal(l.operator(), '<');
+        equal(l.location2(), undefined);
+    });
+    test('after location from string', function(){
+        expect(3);
+        var l = new seqJS.Location('>6');
+        equal(l.location(), 6);
+        equal(l.operator(), '>');
+        equal(l.location2(), undefined);
+    });
+    test('range location from string', function(){
+        expect(3);
+        var l = new seqJS.Location('6.8');
+        equal(l.location(), 6);
+        equal(l.operator(), '.');
+        equal(l.location2(), 8);
+    });
+    test('invalid location string format', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location('!6');
+        }, "Invalid location format '!6'");
+    });
+    test('invalid location string format 2', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location('67sds');
+        }, "Invalid location format '67sds'");
+    });
+
+    test('invalid location range string', function(){
+        expect(1);
+        throws(function(){
+            new seqJS.Location('8.6');
+        });
+    });
     /*
     module('seqJS#parser_genbank', {
         setup: function() {

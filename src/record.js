@@ -48,9 +48,25 @@ var seqJS = seqJS || {};
     /*
      * Locations
      */
+    var loc_fmt = /(?:^([<>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
     
     seqJS.Location = function(_location, _operator, _location2) {
         var self = this;
+        if (typeof _location === 'string' || _location instanceof String){
+            var m = loc_fmt.exec(_location);
+            if(m===null){
+                throw "Badly formated location \'"+_location+"\'";
+            }
+            if(m[1] !== undefined){
+                _operator = m[1] || '';
+                _location = parseInt(m[2],10);
+            }
+            else{
+                _location = parseInt(m[3],10);
+                _operator = '.';
+                _location2= parseInt(m[4],10);
+            }
+        }
         _operator = _operator || '';
         if(['', '<', '>', '.'].indexOf(_operator) === -1){
             throw "Invalid location operator \'" + _operator + "\'";
