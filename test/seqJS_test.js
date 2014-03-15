@@ -149,7 +149,7 @@
     module('seqJS.Span');
 
     test('span from string A', function(){
-        expect(7);
+        expect(8);
         var s = new seqJS.Span('100..150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '');
@@ -159,11 +159,12 @@
         equal(s.location2().operator(), '');
         equal(s.location2().location2(), undefined);
 
+        equal(s.isComplement(), false);
         equal(s.toString(), '100..150');
     });
 
     test('span from string B', function(){
-        expect(7);
+        expect(8);
         var s = new seqJS.Span('<100..>150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '<');
@@ -173,11 +174,12 @@
         equal(s.location2().operator(), '>');
         equal(s.location2().location2(), undefined);
 
+        equal(s.isComplement(), false);
         equal(s.toString(), '<100..>150');
     });
 
     test('span from string C', function(){
-        expect(7);
+        expect(8);
         var s = new seqJS.Span('100.105..150');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '.');
@@ -187,11 +189,12 @@
         equal(s.location2().operator(), '');
         equal(s.location2().location2(), undefined);
 
+        equal(s.isComplement(), false);
         equal(s.toString(), '100.105..150');
     });
 
     test('span from string D', function(){
-        expect(7);
+        expect(8);
         var s = new seqJS.Span('100..150.160');
         equal(s.location1().location(), 100);
         equal(s.location1().operator(), '');
@@ -201,7 +204,25 @@
         equal(s.location2().operator(), '.');
         equal(s.location2().location2(), 160);
 
+        equal(s.isComplement(), false);
+
         equal(s.toString(), '100..150.160');
+    });
+
+    test('span from string E', function(){
+        expect(8);
+        var s = new seqJS.Span('complement(<100..>150)');
+        equal(s.location1().location(), 100);
+        equal(s.location1().operator(), '<');
+        equal(s.location1().location2(), undefined);
+
+        equal(s.location2().location(), 150);
+        equal(s.location2().operator(), '>');
+        equal(s.location2().location2(), undefined);
+
+        equal(s.isComplement(), true);
+
+        equal(s.toString(), 'complement(<100..>150)');
     });
 
     test('locations inverted', function(){
