@@ -33,12 +33,15 @@ var seqJS = seqJS || {};
     seqJS.ALPH_RNA = 2;
     seqJS.ALPH_PROT = 3;
     seqJS.Seq = function(_seq, _alphabet){
-        _seq = _seq.toUpper();
+        if(_seq === undefined) { throw 'Argument seq is required';}
+        if(_alphabet === undefined) { throw 'Argument alphabet is required';}
+
+        _seq = _seq.toUpperCase();
         if([seqJS.ALPH_DNA, seqJS.ALPH_RNA, seqJS.ALPH_PROT].indexOf(_alphabet) < 0){
             throw "Invalid Alphabet";
         }
         this.seq = function() {return _seq;};
-        this.length = function() {return _seq.length();};
+        this.length = function() {return _seq.length;};
         this.alphabet = function() {return _alphabet;};
     };
 
@@ -59,6 +62,10 @@ var seqJS = seqJS || {};
         this.location = function() {return _location;};
         this.operator = function() {return _operator;};
     };
+
+    /*
+     * spans
+     */
 
 
    

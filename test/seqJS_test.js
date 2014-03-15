@@ -23,20 +23,18 @@
   */
     module('seqJS#seq');
 
-    test('setting data 1', function(){
-        expect(3);
-        var l = new seqJS.Seq("ATcGAT");
-        equal(l.seq(), "ATCGAT");
-        equal(l.length(), 6);
-        equal(l.alphabet(), seqJS.ALPH_DNA);
-    });
-
-    test('setting data 2', function(){
+    test('setting and get data', function(){
         expect(3);
         var l = new seqJS.Seq("ATcGAT", seqJS.ALPH_PROT);
         equal(l.seq(), "ATCGAT");
         equal(l.length(), 6);
         equal(l.alphabet(), seqJS.ALPH_PROT);
+    });
+
+    test('require an alphabet', function(){
+        expect(1);
+        throws(function() {new seqJS.Seq("ATcGAT");},
+               'Argument alphabet is required');
     });
 
     test('invalid operator', function(){
@@ -54,7 +52,7 @@
     });
 
 
-    module('seqJS#record');
+    module('seqJS#location');
 
     test('setting data 1', function(){
         expect(2);
