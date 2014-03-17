@@ -245,7 +245,7 @@ var seqJS = seqJS || {};
             var spans = [], i;
             if(operator === 'complement'){
                 for(i = items.length-1; i >= 0; i--){
-                    spans = spans.concat(items[i].getSpans());
+                    spans = spans.concat(items[i].getSpans().reverse());
                 }
             }
             else{

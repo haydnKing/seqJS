@@ -236,66 +236,123 @@
     module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
-        expect(1);
+        expect(4);
         var l = new seqJS.FeatureLocation('100..200');
 
         equal(l.toString(), '100..200');
+
+        var s = l.getSpans();
+        equal(s.length, 1);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '100..200');
     });
 
     test('parse <A..B', function(){
-        expect(1);
+        expect(4);
         var l = new seqJS.FeatureLocation('<100..200');
 
         equal(l.toString(), '<100..200');
+
+        var s = l.getSpans();
+        equal(s.length, 1);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '<100..200');
     });
 
     test('parse A.B..C', function(){
-        expect(1);
+        expect(4);
         var l = new seqJS.FeatureLocation('100.102..200');
 
         equal(l.toString(), '100.102..200');
+
+        var s = l.getSpans();
+        equal(s.length, 1);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '100.102..200');
     });
 
     test('parse complement(A..B)', function(){
-        expect(1);
+        expect(4);
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
         equal(l.toString(), 'complement(100..200)');
+
+        var s = l.getSpans();
+        equal(s.length, 1);
+        equal(s[0].isComplement(), true);
+        equal(s[0].toString(), '100..200');
     });
 
     test('parse join(A..B,C..D)', function(){
-        expect(1);
+        expect(6);
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
         equal(l.toString(), 'join(100..200,300..400)');
+
+        var s = l.getSpans();
+        equal(s.length, 2);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '100..200');
+        equal(s[1].isComplement(), false);
+        equal(s[1].toString(), '300..400');
     });
 
     test('parse order(A..B,C..D)', function(){
-        expect(1);
+        expect(6);
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
         equal(l.toString(), 'order(100..200,300..400)');
+
+        var s = l.getSpans();
+        equal(s.length, 2);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '100..200');
+        equal(s[1].isComplement(), false);
+        equal(s[1].toString(), '300..400');
     });
 
     test('parse complement(join(A..B,C..D))', function(){
-        expect(1);
+        expect(6);
         var l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
 
         equal(l.toString(), 'complement(join(100..200,300..400))');
+
+        var s = l.getSpans();
+        equal(s.length, 2);
+        equal(s[0].isComplement(), true);
+        equal(s[0].toString(), '300..400');
+        equal(s[1].isComplement(), true);
+        equal(s[1].toString(), '100..200');
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
-        expect(1);
+        expect(6);
         var l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
 
         equal(l.toString(), 'join(complement(300..400),complement(100..200))');
+
+        var s = l.getSpans();
+        equal(s.length, 2);
+        equal(s[0].isComplement(), true);
+        equal(s[0].toString(), '300..400');
+        equal(s[1].isComplement(), true);
+        equal(s[1].toString(), '100..200');
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
-        expect(1);
+        expect(8);
         var l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
 
         equal(l.toString(), 'join(100..200,complement(join(500..600,300..400)))');
+
+        var s = l.getSpans();
+        equal(s.length, 3);
+        equal(s[0].isComplement(), false);
+        equal(s[0].toString(), '100..200');
+        equal(s[1].isComplement(), true);
+        equal(s[1].toString(), '300..400');
+        equal(s[2].isComplement(), true);
+        equal(s[2].toString(), '500..600');
     });
 
     test('fail complement(B..A)', function(){
