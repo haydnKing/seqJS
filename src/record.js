@@ -111,18 +111,11 @@ var seqJS = seqJS || {};
      * spans
      */
     var span_fmt = /(\S+)\.\.(\S+)/;
-    var complement_fmt = /complement\((.+)\)/;
     seqJS.Span = function(_location1, _location2, complement){
         complement = complement || false;
         //if we're given a string
         if(typeof _location1 === 'string' || _location1 instanceof String){
-            //check for complement
-            var m = complement_fmt.exec(_location1);
-            if(m !== null){
-                complement = true;
-                _location1 = m[1];
-            }
-            m = span_fmt.exec(_location1);
+            var m = span_fmt.exec(_location1);
             if(m===null){
                 throw "Malformed location string \'"+_location1+"\'";
             }
@@ -161,11 +154,7 @@ var seqJS = seqJS || {};
         };    
 
         this.toString = function() {
-            var r = _location1.toString() + '..' + _location2.toString();
-            if(!complement){
-                return r;
-            }
-            return "complement("+r+")";
+            return _location1.toString() + '..' + _location2.toString();
         };
 
         this.isComplement = function() {
