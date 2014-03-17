@@ -323,18 +323,31 @@ var seqJS = seqJS || {};
      *  clearQualifiers: clears either a single qualifier, an array of
      *      qualifiers or all qualifiers if undefined
      */
-    seqJS.Feature = function(_type, _location, qualifiers){
+    seqJS.Feature = function(_type, _location, _qualifiers){
+        var self = this;
+
         if(_type === undefined){
             throw "Features cannot be constructed without a type";
         }
         if(_location === undefined){
             throw "Features must have a location";
         }
-        qualifiers = qualifiers || {};
 
         if(typeof _location === 'string' || _location instanceof String){
             _location = new seqJS.FeatureLocation(_location);
         }
+
+        
+        var qualifiers = {};
+        var q_keys = [];
+        var init = function() {
+            if(_qualifiers){
+                for(var k in _qualifiers){
+                    self.qualifier(k, _qualifiers[k]);
+                }
+            }
+        };
+
 
         this.type = function(new_type) {
             _type = new_type || _type;
@@ -350,31 +363,47 @@ var seqJS = seqJS || {};
             if(key === undefined){
                 throw "Key must be defined";
             }
-            qualifiers[key] = value || qualifiers[key];
-            return qualifiers[key];
+            if(value === undefined){
+                return qualifiers[key];
+            }
+            else{
+                if(q_keys.indexOf(key) < 0){
+                    q_keys.push(key);
+                }
+                qualifiers[key] = value;
+                return self;
+            }
         };
 
         this.clearQualifiers = function(to_remove){
+            var idx;
             if(to_remove === undefined){
+                q_keys = [];
                 qualifiers = {};
             }
             else if(to_remove instanceof Array){
                 for(var i = 0; i < to_remove.length; i++){
                     qualifiers[to_remove[i]] = undefined;
+                    idx = q_keys.indexOf(to_remove[i]);
+                    if(idx > -1){
+                        q_keys.splice(idx, 1);
+                    }
                 }
             }
             else {
                 qualifiers[to_remove] = undefined;
+                idx = q_keys.indexOf(to_remove);
+                if(idx > -1){
+                    q_keys.splice(idx, 1);
+                }
             }
         };
 
         this.qualifierKeys = function() {
-            var keys = [];
-            for(var k in qualifiers){
-                keys.push(k);
-            }
-            return keys;
+            return q_keys;
         };
+
+        init();
     };
 
 

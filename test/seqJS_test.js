@@ -402,7 +402,7 @@
         var f = new seqJS.Feature('gene', '100..200');
 
         equal(f.qualifier('gene'), undefined);
-        equal(f.qualifier('gene', 'GENE'), 'GENE');
+        equal(f.qualifier('gene', 'GENE'), f);
         equal(f.qualifier('gene'), 'GENE');
     });
 
