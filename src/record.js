@@ -130,6 +130,12 @@ var seqJS = seqJS || {};
             _location2 = new seqJS.Location(m[2]);
         }
 
+        //if we're given numbers then implicit exact
+        if(typeof _location1 === 'number' && typeof _location2 === 'number'){
+            _location1 = new seqJS.Location(_location1);
+            _location2 = new seqJS.Location(_location2);
+        }
+
         if(_location1.gt(_location2)){
             throw "First location is greater than the second";
         }
