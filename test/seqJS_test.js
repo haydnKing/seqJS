@@ -55,25 +55,29 @@
     module('seqJS#location');
 
     test('setting implicit exact', function(){
-        expect(2);
+        expect(3);
         var l = new seqJS.Location(5);
         equal(l.location(), 5);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '');
     });
 
     test('setting explicit before', function(){
-        expect(2);
+        expect(3);
         var l = new seqJS.Location(6, '<');
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '<');
     });
 
     test('setting explicit range', function(){
-        expect(3);
+        expect(5);
         var l = new seqJS.Location(6, '.', 8);
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '.');
         equal(l.location2(), 8);
+        equal(typeof l.location2(), 'number');
     });
 
     test('set invalid range', function(){
@@ -98,33 +102,38 @@
     });
 
     test('fixed location from string', function(){
-        expect(3);
+        expect(4);
         var l = new seqJS.Location('6');
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '');
         equal(l.location2(), undefined);
     });
 
     test('before location from string', function(){
-        expect(3);
+        expect(4);
         var l = new seqJS.Location('<6');
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '<');
         equal(l.location2(), undefined);
     });
     test('after location from string', function(){
-        expect(3);
+        expect(4);
         var l = new seqJS.Location('>6');
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '>');
         equal(l.location2(), undefined);
     });
     test('range location from string', function(){
-        expect(3);
+        expect(5);
         var l = new seqJS.Location('6.8');
         equal(l.location(), 6);
+        equal(typeof l.location(), 'number');
         equal(l.operator(), '.');
         equal(l.location2(), 8);
+        equal(typeof l.location2(), 'number');
     });
     test('invalid location string format', function(){
         expect(1);
