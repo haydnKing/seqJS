@@ -112,6 +112,7 @@ var seqJS = seqJS || {};
      */
     var span_fmt = /(\S+)\.\.(\S+)/;
     seqJS.Span = function(_location1, _location2, complement){
+        var self = this;
         complement = complement || false;
         //if we're given a string
         if(typeof _location1 === 'string' || _location1 instanceof String){
@@ -162,6 +163,10 @@ var seqJS = seqJS || {};
         };
         this.setComplement = function(value) {
             complement = value;
+        };
+
+        this.getSpans = function() {
+            return new Array(self);
         };
 
     };
@@ -225,6 +230,31 @@ var seqJS = seqJS || {};
             }
             return s[0];
         };
+        
+        this.setComplement = function(value){
+            value = value || false;
+            if(operator === 'complement'){
+                value = !value;
+            }
+            for(var i = 0; i < items.length; i++){
+                items[i].setComplement(value);
+            }
+        };
+
+        this.getSpans = function(){
+            var spans = [], i;
+            if(operator === 'complement'){
+                for(i = items.length-1; i >= 0; i--){
+                    spans = spans.concat(items[i].getSpans());
+                }
+            }
+            else{
+                for(i = 0; i < items.length; i++){
+                    spans = spans.concat(items[i].getSpans());
+                }
+            }
+            return spans;
+        };
 
     };
 
@@ -241,9 +271,15 @@ var seqJS = seqJS || {};
         catch(e){
             throw e + " while parsing location string \'"+location+"\'";
         }
+        //set complement flags on Spans
+        loc.setComplement();
 
         this.toString = function(){
             return loc.toString();
+        };
+
+        this.getSpans = function() {
+            return loc.getSpans();
         };
     };
     
