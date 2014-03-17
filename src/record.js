@@ -169,6 +169,7 @@ var seqJS = seqJS || {};
             return new Array(self);
         };
 
+        this.isSpan = function() {return true;};
     };
 
     var operator_fmt = /^(complement|join|order)\((.+)\)$/;
@@ -256,6 +257,26 @@ var seqJS = seqJS || {};
             return spans;
         };
 
+        this.getMergeOperator = function() {
+            var op;
+            if(prev_op) {
+                return prev_op;
+            }
+            else {
+                for(var i = 0; i < items.length; i++){
+                    if(!items[i].isSpan()){
+                        op = items[i].getMergeOperator();
+                        if(op){
+                            return op;
+                        }
+                    }
+                }
+            }
+            return '';
+        };
+
+        this.isSpan = function() {return false;};
+
     };
 
 
@@ -280,6 +301,10 @@ var seqJS = seqJS || {};
 
         this.getSpans = function() {
             return loc.getSpans();
+        };
+
+        this.getMergeOperator = function() {
+            return loc.getMergeOperator();
         };
     };
     

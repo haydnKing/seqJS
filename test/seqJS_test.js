@@ -236,10 +236,11 @@
     module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
-        expect(4);
+        expect(5);
         var l = new seqJS.FeatureLocation('100..200');
 
         equal(l.toString(), '100..200');
+        equal(l.getMergeOperator(), '');
 
         var s = l.getSpans();
         equal(s.length, 1);
@@ -248,10 +249,11 @@
     });
 
     test('parse <A..B', function(){
-        expect(4);
+        expect(5);
         var l = new seqJS.FeatureLocation('<100..200');
 
         equal(l.toString(), '<100..200');
+        equal(l.getMergeOperator(), '');
 
         var s = l.getSpans();
         equal(s.length, 1);
@@ -260,10 +262,11 @@
     });
 
     test('parse A.B..C', function(){
-        expect(4);
+        expect(5);
         var l = new seqJS.FeatureLocation('100.102..200');
 
         equal(l.toString(), '100.102..200');
+        equal(l.getMergeOperator(), '');
 
         var s = l.getSpans();
         equal(s.length, 1);
@@ -272,10 +275,11 @@
     });
 
     test('parse complement(A..B)', function(){
-        expect(4);
+        expect(5);
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
         equal(l.toString(), 'complement(100..200)');
+        equal(l.getMergeOperator(), '');
 
         var s = l.getSpans();
         equal(s.length, 1);
@@ -284,10 +288,11 @@
     });
 
     test('parse join(A..B,C..D)', function(){
-        expect(6);
+        expect(7);
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
         equal(l.toString(), 'join(100..200,300..400)');
+        equal(l.getMergeOperator(), 'join');
 
         var s = l.getSpans();
         equal(s.length, 2);
@@ -298,10 +303,11 @@
     });
 
     test('parse order(A..B,C..D)', function(){
-        expect(6);
+        expect(7);
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
         equal(l.toString(), 'order(100..200,300..400)');
+        equal(l.getMergeOperator(), 'order');
 
         var s = l.getSpans();
         equal(s.length, 2);
@@ -312,10 +318,11 @@
     });
 
     test('parse complement(join(A..B,C..D))', function(){
-        expect(6);
+        expect(7);
         var l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
 
         equal(l.toString(), 'complement(join(100..200,300..400))');
+        equal(l.getMergeOperator(), 'join');
 
         var s = l.getSpans();
         equal(s.length, 2);
@@ -326,10 +333,11 @@
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
-        expect(6);
+        expect(7);
         var l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
 
         equal(l.toString(), 'join(complement(300..400),complement(100..200))');
+        equal(l.getMergeOperator(), 'join');
 
         var s = l.getSpans();
         equal(s.length, 2);
@@ -340,10 +348,11 @@
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
-        expect(8);
+        expect(9);
         var l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
 
         equal(l.toString(), 'join(100..200,complement(join(500..600,300..400)))');
+        equal(l.getMergeOperator(), 'join');
 
         var s = l.getSpans();
         equal(s.length, 3);
