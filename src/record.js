@@ -112,8 +112,8 @@ var seqJS = seqJS || {};
      */
     var span_fmt = /(\S+)\.\.(\S+)/;
     var complement_fmt = /complement\((.+)\)/;
-    seqJS.Span = function(_location1, _location2){
-        var complement = false;
+    seqJS.Span = function(_location1, _location2, complement){
+        complement = complement || false;
         //if we're given a string
         if(typeof _location1 === 'string' || _location1 instanceof String){
             //check for complement
