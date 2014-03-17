@@ -13,7 +13,7 @@ var seqJS = seqJS || {};
     /*
      * record object
      */
-    seqJS.Record = function(seq, id, name, desc, features, annotations){
+    seqJS.Record = function(seq, id, name, desc, annotations){
         if(! seq instanceof seqJS.Seq){
             throw("seq must be a seqJS.Seq instance");
         }
@@ -21,7 +21,6 @@ var seqJS = seqJS || {};
         this.id = id || 0;
         this.name = name || "unnamed";
         this.desc = desc || "";
-        this.features = features || [];
         this.annotations = annotations || {};
 
     };
@@ -32,9 +31,10 @@ var seqJS = seqJS || {};
     seqJS.ALPH_DNA = 1;
     seqJS.ALPH_RNA = 2;
     seqJS.ALPH_PROT = 3;
-    seqJS.Seq = function(_seq, _alphabet){
+    seqJS.Seq = function(_seq, _alphabet, _features){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
+        _features = _features || [];
 
         _seq = _seq.toUpperCase();
         if([seqJS.ALPH_DNA, seqJS.ALPH_RNA, seqJS.ALPH_PROT].indexOf(_alphabet) < 0){
@@ -43,6 +43,7 @@ var seqJS = seqJS || {};
         this.seq = function() {return _seq;};
         this.length = function() {return _seq.length;};
         this.alphabet = function() {return _alphabet;};
+        this.features = function() {return _features;};
     };
 
     /*
