@@ -308,4 +308,74 @@ var seqJS = seqJS || {};
         };
     };
     
+    /*
+     * Feature
+     *  Store information about a feature
+     *      - type: the feature type -- gene, CDS, etc.
+     *      - location: feature location -- either a FeatureLocation object or
+     *          string from which one will be built
+     *      - qualifiers: dictionary Object of qualifiers to be stored with the
+     *          feature
+     *
+     *
+     *  type, location & qualifiers are getters/settors
+     *
+     *  clearQualifiers: clears either a single qualifier, an array of
+     *      qualifiers or all qualifiers if undefined
+     */
+    seqJS.Feature = function(_type, _location, qualifiers){
+        if(_type === undefined){
+            throw "Features cannot be constructed without a type";
+        }
+        if(_location === undefined){
+            throw "Features must have a location";
+        }
+        qualifiers = qualifiers || {};
+
+        if(typeof _location === 'string' || _location instanceof String){
+            _location = new seqJS.FeatureLocation(_location);
+        }
+
+        this.type = function(new_type) {
+            _type = new_type || _type;
+            return _type;
+        };
+
+        this.location = function(new_location){
+            _location = new_location || _location;
+            return _location;
+        };
+
+        this.qualifier = function(key, value) {
+            if(key === undefined){
+                throw "Key must be defined";
+            }
+            qualifiers[key] = value || qualifiers[key];
+            return qualifiers[key];
+        };
+
+        this.clearQualifiers = function(to_remove){
+            if(to_remove === undefined){
+                qualifiers = {};
+            }
+            else if(to_remove instanceof Array){
+                for(var i = 0; i < to_remove.length; i++){
+                    qualifiers[to_remove[i]] = undefined;
+                }
+            }
+            else {
+                qualifiers[to_remove] = undefined;
+            }
+        };
+
+        this.qualifierKeys = function() {
+            var keys = [];
+            for(var k in qualifiers){
+                keys.push(k);
+            }
+            return keys;
+        };
+    };
+
+
 }());

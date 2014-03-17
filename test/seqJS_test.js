@@ -380,6 +380,72 @@
         });
     });
 
+    module('seqJS#Feature');
+
+    test('type and location', function(){
+        expect(4);
+
+        var f = new seqJS.Feature('gene', '100..200');
+
+        equal(f.type(), 'gene');
+        equal(f.location().toString(), '100..200');
+
+        f.type('CDS');
+        f.location('200.202..300');
+        equal(f.type(), 'CDS');
+        equal(f.location().toString(), '200.202..300');
+    });
+
+    test('set qualifiers', function(){
+        expect(3);
+
+        var f = new seqJS.Feature('gene', '100..200');
+
+        equal(f.qualifier('gene'), undefined);
+        equal(f.qualifier('gene', 'GENE'), 'GENE');
+        equal(f.qualifier('gene'), 'GENE');
+    });
+
+    test('clearQualifiers', function(){
+        expect(21);
+
+        var f = new seqJS.Feature('gene', '100..200', 
+                              {q1: 'q1', q2: 'q2', q3: 'q3', q4: 'q4'});
+
+        var qk = f.qualifierKeys();
+        equal(qk.length, 4);
+        equal(qk[0], 'q1');
+        equal(qk[1], 'q2');
+        equal(qk[2], 'q3');
+        equal(qk[3], 'q4');
+
+        equal(f.qualifier('q1'), 'q1');
+        equal(f.qualifier('q2'), 'q2');
+        equal(f.qualifier('q3'), 'q3');
+        equal(f.qualifier('q4'), 'q4');
+
+        f.clearQualifiers(['q1','q2']);
+        equal(f.qualifier('q1'), undefined);
+        equal(f.qualifier('q2'), undefined);
+        equal(f.qualifier('q3'), 'q3');
+        equal(f.qualifier('q4'), 'q4');
+        
+        f.clearQualifiers('q3');
+        equal(f.qualifier('q1'), undefined);
+        equal(f.qualifier('q2'), undefined);
+        equal(f.qualifier('q3'), undefined);
+        equal(f.qualifier('q4'), 'q4');
+
+
+        f.clearQualifiers();
+        equal(f.qualifier('q1'), undefined);
+        equal(f.qualifier('q2'), undefined);
+        equal(f.qualifier('q3'), undefined);
+        equal(f.qualifier('q4'), undefined);
+    });
+
+
+
 
     /*
     module('seqJS#parser_genbank', {
