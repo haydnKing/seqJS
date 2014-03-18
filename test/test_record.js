@@ -1,5 +1,5 @@
 /*global seqJS:true  */
-/*global location_eq:true */
+/*global location_eq:true, span_eq:true */
 
 (function($) {
   /*
@@ -22,7 +22,7 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
-    module('seqJS#seq');
+module('seqJS#seq');
 
     test('setting and get data', function(){
         expect(3);
@@ -53,7 +53,7 @@
     });
 
 
-    module('seqJS#location');
+module('seqJS#location');
 
     test('setting implicit exact', function(){
         var l = new seqJS.Location(5);
@@ -128,67 +128,26 @@
         });
     });
 
-    module('seqJS.Span');
+module('seqJS.Span');
 
     test('span from string A', function(){
-        expect(8);
         var s = new seqJS.Span('100..150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '100..150');
+        span_eq(s, [100, ''], [150, ''], false, '100..150');
     });
 
     test('span from string B', function(){
-        expect(8);
         var s = new seqJS.Span('<100..>150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '<');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '>');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '<100..>150');
+        span_eq(s, [100, '<'], [150, '>'], false, '<100..>150');
     });
 
     test('span from string C', function(){
-        expect(8);
         var s = new seqJS.Span('100.105..150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '.');
-        equal(s.location1().location2(), 105);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '100.105..150');
+        span_eq(s, [100, '.', 105], [150, ''], false, '100.105..150');
     });
 
     test('span from string D', function(){
-        expect(8);
         var s = new seqJS.Span('100..150.160');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '.');
-        equal(s.location2().location2(), 160);
-
-        equal(s.isComplement(), false);
-
-        equal(s.toString(), '100..150.160');
+        span_eq(s, [100, ''], [150, '.', 160], false, '100..150.160');
     });
 
     test('locations inverted', function(){
@@ -206,7 +165,7 @@
     });
 
 
-    module('seqJS#FeatureLocation');
+module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
         expect(5);
