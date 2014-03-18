@@ -296,41 +296,35 @@ module('seqJS#Feature');
     });
 
     test('clearQualifiers', function(){
-        expect(21);
-
-        var f = new seqJS.Feature('gene', '100..200', 
+        var f = new seqJS.Feature('CDS', '200.202..300', 
                               {q1: 'q1', q2: 'q2', q3: 'q3', q4: 'q4'});
 
         var qk = f.qualifierKeys();
-        equal(qk.length, 4);
-        equal(qk[0], 'q1');
-        equal(qk[1], 'q2');
-        equal(qk[2], 'q3');
-        equal(qk[3], 'q4');
+        equal(qk.length, 4, "wrong number of qualifiers");
+        for(var i=0; i< 4; i++){
+            equal(qk[i], 'q'+(i+1), 'Item '+i+' is wrong');
+        }
 
-        equal(f.qualifier('q1'), 'q1');
-        equal(f.qualifier('q2'), 'q2');
-        equal(f.qualifier('q3'), 'q3');
-        equal(f.qualifier('q4'), 'q4');
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q1', 'q1'],
+            ['q2', 'q2'],
+            ['q3', 'q3'],
+            ['q4', 'q4'],
+        ]);
 
         f.clearQualifiers(['q1','q2']);
-        equal(f.qualifier('q1'), undefined);
-        equal(f.qualifier('q2'), undefined);
-        equal(f.qualifier('q3'), 'q3');
-        equal(f.qualifier('q4'), 'q4');
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q3', 'q3'],
+            ['q4', 'q4'],
+        ]);
         
         f.clearQualifiers('q3');
-        equal(f.qualifier('q1'), undefined);
-        equal(f.qualifier('q2'), undefined);
-        equal(f.qualifier('q3'), undefined);
-        equal(f.qualifier('q4'), 'q4');
-
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q4', 'q4'],
+        ]);
 
         f.clearQualifiers();
-        equal(f.qualifier('q1'), undefined);
-        equal(f.qualifier('q2'), undefined);
-        equal(f.qualifier('q3'), undefined);
-        equal(f.qualifier('q4'), undefined);
+        feature_eq(f, 'CDS', '200.202..300', []);
     });
 
 
