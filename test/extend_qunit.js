@@ -1,4 +1,5 @@
 /* jshint unused:false */
+/* global seqJS:true */
 /*
  * Extensions to QUnit for testing seqJS objects
  */
@@ -50,6 +51,9 @@ var feature_eq = function(actual, type, location_string, qualifiers){
     equal(actual.type(), type, "type is wrong");
     equal(actual.location().toString(), location_string,
           'location is wrong');
+    ok(actual.location() instanceof seqJS.FeatureLocation,
+       'feature.location() should be from FeatureLocation, not \"' + 
+      actual.location().constructor.name + '"');
 
     qualifiers = qualifiers || [];
     equal(actual.qualifierKeys().length, qualifiers.length);
