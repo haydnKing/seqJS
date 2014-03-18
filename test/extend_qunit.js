@@ -44,3 +44,17 @@ var featureloc_eq = function(actual, string, merge, spanlist){
         span_eq(s[i], j[0], j[1], j[2], j[3]);
     }
 };
+
+var feature_eq = function(actual, type, location_string, qualifiers){
+
+    equal(actual.type(), type, "type is wrong");
+    equal(actual.location().toString(), location_string,
+          'location is wrong');
+
+    qualifiers = qualifiers || [];
+    equal(actual.qualifierKeys().length, qualifiers.length);
+    for(var i =0; i< qualifiers.length; i++){
+        equal(actual.qualifier(qualifiers[i][0]), qualifiers[i][1],
+              "qualifier " + i + " incorrect");
+    }
+};

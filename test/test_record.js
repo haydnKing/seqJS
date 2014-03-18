@@ -1,5 +1,6 @@
 /*global seqJS:true  */
 /*global location_eq:true, span_eq:true, featureloc_eq:true */
+/*global feature_eq:true */
 
 (function($) {
   /*
@@ -264,24 +265,24 @@ module('seqJS#FeatureLocation');
         expect(1);
 
         throws(function(){
-            new seqJS.FeatureLocation('join(100..200,order(300..400,500..600))');
+            new seqJS.FeatureLocation(
+                'join(100..200,order(300..400,500..600))');
         });
     });
 
-    module('seqJS#Feature');
+module('seqJS#Feature');
 
     test('type and location', function(){
-        expect(4);
 
         var f = new seqJS.Feature('gene', '100..200');
 
-        equal(f.type(), 'gene');
-        equal(f.location().toString(), '100..200');
+        feature_eq(f, 'gene', '100..200', []);
 
-        f.type('CDS');
-        f.location('200.202..300');
-        equal(f.type(), 'CDS');
-        equal(f.location().toString(), '200.202..300');
+        equal(f.type('CDS'), f, "f.type(new) should be chainable");
+        equal(f.location('200.202..300'), f, 
+              "f.location(new) should be chainable");
+
+        feature_eq(f, 'CDS', '200.202..300', []);
     });
 
     test('set qualifiers', function(){
