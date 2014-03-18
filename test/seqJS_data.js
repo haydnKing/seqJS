@@ -2,7 +2,7 @@ var TEST_DATA = {};
 
 TEST_DATA.parser_genbank = {};
 TEST_DATA.parser_genbank.valid = [
-    {'string' : [
+    {string : [
         'LOCUS       SCU49845     5028 bp    DNA             PLN       21-JUN-1999',
         'DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p',
         '            (AXL2) and Rev7p (REV7) genes, complete cds.',
@@ -168,8 +168,8 @@ TEST_DATA.parser_genbank.valid = [
         '     4921 ttttcagtgt tagattgctc taattctttg agctgttctc tcagctcctc atatttttct',
         '     4981 tgccatgact cagattctaa ttttaagcta ttcaatttct ctttgatc',
         '//'
-    ],
-     'object' : {
+    ].join('\n'),
+     object : {
         /* Locus line */
         'name': 'SCU49845',
         'length': '5028',

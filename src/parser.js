@@ -16,7 +16,7 @@ var seqJS = seqJS || {};
      *  GenBankParser or FastaParser.
      */
     var Parser = function(type){
-        var remaining_data, record_cb, self=this;
+        var remaining_data = [], record_cb, self=this;
 
         this.type = function() {return type;};
         this.parse = function(data){
@@ -26,8 +26,8 @@ var seqJS = seqJS || {};
         };
 
         this._parse_lines = function(lines) {
-            lines.pop();
-            return 0;
+            self._triggerRecordCb(lines);
+            return lines.length;
         };
         
         this.setRecordCb = function(cb) {

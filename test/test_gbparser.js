@@ -1,4 +1,5 @@
-/* global seqJS:true */ 
+/* global seqJS:true, TEST_DATA:true */
+/* global gbrecord_eq:true */
 
 (function() {
   /*
@@ -23,14 +24,29 @@
   */
 
 
- module('seqJS#GenbankParser');
+module('seqJS#GenbankParser', {
+    setup: function() {
+       this.parser = seqJS.getParser('genbank');
+    }
+});
 
- test('correct Parser', function() {
-     var p = seqJS.getParser('gb');
-     equal(p.type(), 'gb');
+    test('correct Parser', function() {
+        var p = seqJS.getParser('gb');
+        equal(p.type(), 'gb');
 
-     p = seqJS.getParser('genbank');
-     equal(p.type(), 'gb');
- });
+        p = seqJS.getParser('genbank');
+        equal(p.type(), 'gb');
+    });
+
+    asyncTest('parse entire record', function(){
+        
+        this.parser.setRecordCb(function(record){
+            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
+            start();
+        });
+
+        this.parser.parse(TEST_DATA.parser_genbank.valid[0].string);
+
+    });
 
 }());

@@ -62,3 +62,32 @@ var feature_eq = function(actual, type, location_string, qualifiers){
               "qualifier " + i + " incorrect");
     }
 };
+
+var gbrecord_eq = function(actual, expected){
+    var keys = [
+        'name',
+        'length',
+        'residue_type',
+        'topology',
+        'data_division',
+        'date',
+        'description',
+        'accession',
+        'version',
+        'gi',
+        'source',
+        'organism',
+        'taxonomy'];
+
+    for(var i = 0; i < keys.length; i++){
+        equal(actual[keys[i]], expected[keys[i]], keys[i] + " is wrong");
+    }
+
+    for(i = 0; i < expected.references.length; i++){
+        var eref = expected.references[i],
+            aref = actual.references[i];
+        equal(aref, eref, "Reference "+i+" is wrong");
+    }
+
+};
+
