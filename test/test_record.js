@@ -1,5 +1,5 @@
 /*global seqJS:true  */
-/*global location_eq:true, span_eq:true */
+/*global location_eq:true, span_eq:true, featureloc_eq:true */
 
 (function($) {
   /*
@@ -168,132 +168,88 @@ module('seqJS.Span');
 module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
-        expect(5);
         var l = new seqJS.FeatureLocation('100..200');
 
-        equal(l.toString(), '100..200');
-        equal(l.getMergeOperator(), '');
+        featureloc_eq(l, '100..200', '', [
+                      [['100'],['200'],false,'100..200']
+        ]);
 
-        var s = l.getSpans();
-        equal(s.length, 1);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '100..200');
     });
 
     test('parse <A..B', function(){
-        expect(5);
         var l = new seqJS.FeatureLocation('<100..200');
 
-        equal(l.toString(), '<100..200');
-        equal(l.getMergeOperator(), '');
-
-        var s = l.getSpans();
-        equal(s.length, 1);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '<100..200');
+        featureloc_eq(l, '<100..200', '', [
+                      [['100', '<'],['200'],false,'<100..200']
+        ]);
     });
 
     test('parse A.B..C', function(){
-        expect(5);
         var l = new seqJS.FeatureLocation('100.102..200');
 
-        equal(l.toString(), '100.102..200');
-        equal(l.getMergeOperator(), '');
-
-        var s = l.getSpans();
-        equal(s.length, 1);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '100.102..200');
+        featureloc_eq(l, '100.102..200', '', [
+                      [['100', '.', '102'],['200'],false,'100.102..200']
+        ]);
     });
 
     test('parse complement(A..B)', function(){
-        expect(5);
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
-        equal(l.toString(), 'complement(100..200)');
-        equal(l.getMergeOperator(), '');
-
-        var s = l.getSpans();
-        equal(s.length, 1);
-        equal(s[0].isComplement(), true);
-        equal(s[0].toString(), '100..200');
+        featureloc_eq(l, 'complement(100..200)', '', [
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(A..B,C..D)', function(){
-        expect(7);
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
-        equal(l.toString(), 'join(100..200,300..400)');
-        equal(l.getMergeOperator(), 'join');
-
-        var s = l.getSpans();
-        equal(s.length, 2);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '100..200');
-        equal(s[1].isComplement(), false);
-        equal(s[1].toString(), '300..400');
+        featureloc_eq(l, 'join(100..200,300..400)', 'join', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],false,'300..400']
+        ]);
     });
 
     test('parse order(A..B,C..D)', function(){
-        expect(7);
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
-        equal(l.toString(), 'order(100..200,300..400)');
-        equal(l.getMergeOperator(), 'order');
-
-        var s = l.getSpans();
-        equal(s.length, 2);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '100..200');
-        equal(s[1].isComplement(), false);
-        equal(s[1].toString(), '300..400');
+        featureloc_eq(l, 'order(100..200,300..400)', 'order', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],false,'300..400']
+        ]);
     });
 
     test('parse complement(join(A..B,C..D))', function(){
-        expect(7);
-        var l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
+        var l = new seqJS.FeatureLocation(
+            'complement(join(100..200,300..400))');
 
-        equal(l.toString(), 'complement(join(100..200,300..400))');
-        equal(l.getMergeOperator(), 'join');
-
-        var s = l.getSpans();
-        equal(s.length, 2);
-        equal(s[0].isComplement(), true);
-        equal(s[0].toString(), '300..400');
-        equal(s[1].isComplement(), true);
-        equal(s[1].toString(), '100..200');
+        featureloc_eq(l, 'complement(join(100..200,300..400))', 'join', [
+                      [['300'],['400'],true,'300..400'],
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
-        expect(7);
-        var l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
+        var l = new seqJS.FeatureLocation(
+            'join(complement(300..400),complement(100..200))');
 
-        equal(l.toString(), 'join(complement(300..400),complement(100..200))');
-        equal(l.getMergeOperator(), 'join');
-
-        var s = l.getSpans();
-        equal(s.length, 2);
-        equal(s[0].isComplement(), true);
-        equal(s[0].toString(), '300..400');
-        equal(s[1].isComplement(), true);
-        equal(s[1].toString(), '100..200');
+        featureloc_eq(l, 
+            'join(complement(300..400),complement(100..200))', 'join', [
+                      [['300'],['400'],true,'300..400'],
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
-        expect(9);
-        var l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
+        var l = new seqJS.FeatureLocation(
+            'join(100..200,complement(join(500..600,300..400)))');
 
-        equal(l.toString(), 'join(100..200,complement(join(500..600,300..400)))');
-        equal(l.getMergeOperator(), 'join');
-
-        var s = l.getSpans();
-        equal(s.length, 3);
-        equal(s[0].isComplement(), false);
-        equal(s[0].toString(), '100..200');
-        equal(s[1].isComplement(), true);
-        equal(s[1].toString(), '300..400');
-        equal(s[2].isComplement(), true);
-        equal(s[2].toString(), '500..600');
+        featureloc_eq(l, 
+            'join(100..200,complement(join(500..600,300..400)))', 
+            'join', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],true,'300..400'],
+                      [['500'],['600'],true,'500..600']
+        ]);
     });
 
     test('fail complement(B..A)', function(){
