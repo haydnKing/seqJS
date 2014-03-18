@@ -351,12 +351,24 @@ var seqJS = seqJS || {};
 
 
         this.type = function(new_type) {
-            _type = new_type || _type;
+            if(new_type){
+                _type = new_type;
+                return self;
+            }
             return _type;
         };
 
         this.location = function(new_location){
-            _location = new_location || _location;
+            if(new_location){
+                if(typeof new_location === 'string' || 
+                                    new_location instanceof String){
+                    _location = new seqJS.FeatureLocation(new_location);
+                }
+                else {
+                    _location = new_location;
+                }
+                return self;
+            }
             return _location;
         };
 
