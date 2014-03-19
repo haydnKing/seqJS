@@ -64,14 +64,11 @@ var feature_eq = function(actual, type, location_string, qualifiers){
 };
 
 var gbrecord_eq = function(actual, expected){
-    var keys = [
-        'name',
-        'length',
+    var an_keys = [
         'residue_type',
         'topology',
         'data_division',
         'date',
-        'description',
         'accession',
         'version',
         'gi',
@@ -79,8 +76,12 @@ var gbrecord_eq = function(actual, expected){
         'organism',
         'taxonomy'];
 
-    for(var i = 0; i < keys.length; i++){
-        equal(actual[keys[i]], expected[keys[i]], keys[i] + " is wrong");
+    equal(actual.name, expected['name'], "Name is wrong");
+    equal(actual.desc, expected['description'], "Description is wrong");
+    //equal(actual.length(), expected['length']);
+
+    for(var i = 0; i < an_keys.length; i++){
+        equal(actual.annotations[an_keys[i]], expected[an_keys[i]], an_keys[i] + " is wrong");
     }
 
     for(i = 0; i < expected.references.length; i++){
