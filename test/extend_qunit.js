@@ -100,5 +100,7 @@ var gbrecord_eq = function(actual, expected){
                   'Feature '+i+' is wrong');
     }
 
+    equal(actual.seq.seq(), expected.seq, 'seq is wrong');
+
 };
 
