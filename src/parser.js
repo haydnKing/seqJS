@@ -91,11 +91,10 @@ var seqJS = seqJS || {};
                         more = self._parse_hdr(lines);
                         break;
                     case S_FT:
-                        state = S_SEQ;
+                        more = self._parse_ft(lines);
                         break;
                     case S_SEQ:
-                        self._build_record();
-                        state = S_LOCUS;
+                        more = self._parse_seq(lines);
                         break;
                 }
             }
@@ -172,7 +171,7 @@ var seqJS = seqJS || {};
                 //if we've reached the FT
                 if(c_key === 'FEATURES'){
                     state = S_FT;
-                    return true;
+                    return c_line < lines.length;
                 }
                 
                 
@@ -255,7 +254,34 @@ var seqJS = seqJS || {};
         };
 
         this._parse_ft = function(lines){
-            state = S_SEQ;
+            var line;
+            while(c_line < lines.length){
+                line = lines[c_line];
+
+                if(line.trim().substr(0,6) === 'ORIGIN'){
+                    state = S_SEQ;
+                    return c_line < lines.length;
+                }
+
+                c_line++;
+            }
+            return c_line < lines.length;
+        };
+
+
+        this._parse_seq = function(lines){
+            var line;
+            while(c_line < lines.length){
+                line = lines[c_line];
+
+                if(line.trim() === '//'){
+                    state = S_LOCUS;
+                    self._build_record();
+                    c_line++;
+                    return c_line < lines.length;
+                }
+                c_line++;
+            }
             return c_line < lines.length;
         };
 
