@@ -92,5 +92,13 @@ var gbrecord_eq = function(actual, expected){
         deepEqual(aref, eref, "Reference "+i+" is wrong");
     }
 
+    equal(actual.seq.features.length, expected.features.length,
+          'Wrong number of features');
+    for(i = 0; i < expected.features.length; i++)
+    {
+        deepEqual(actual.seq.features[i], expected.features[i],
+                  'Feature '+i+' is wrong');
+    }
+
 };
 
