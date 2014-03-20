@@ -59,21 +59,6 @@ var seqJS = seqJS || {};
             DEFINITION: 'desc'
         };
 
-        var annmap = {
-            ACCESSION: 'accession',
-            NID: 'NID',
-            PID: 'PID',
-            DBSOURCE: 'db_source',
-            KEYWORDS: 'keywords',
-            SEGMENT: 'segment',
-            SOURCE: 'source',
-            ORGANISM: 'organism',
-            COMMENT: 'comment',
-            VERSION: 'version',
-            PROJECT: 'project',
-            DBLINK: 'db_link'
-        };
-
         var refmap = {
             AUTHORS: 'authors',
             CONSRTM: 'consortium',
@@ -96,7 +81,10 @@ var seqJS = seqJS || {};
                 switch(state){
                     case S_LOCUS:
                         more = self._find_locus(lines);
-                        c_data = {};
+                        c_data = {
+                            annotations: {
+                                references: []
+                        }};
                         more = self._parse_locus(lines);
                         break;
                     case S_HDR:
@@ -142,10 +130,10 @@ var seqJS = seqJS || {};
                 c_data.name = m[1];
                 c_data.length = parseInt(m[2],10);
                 c_data.unit = m[3];
-                c_data.residue = m[4];
-                c_data.topology = m[5] || 'linear';
-                c_data.division = m[6];
-                c_data.date = m[7];
+                c_data.annotations.residue_type = m[4];
+                c_data.annotations.topology = m[5] || 'linear';
+                c_data.annotations.data_division = m[6];
+                c_data.annotations.date = m[7];
                 
                 state = S_HDR;
             }
@@ -159,7 +147,6 @@ var seqJS = seqJS || {};
 
         this._parse_hdr = function(lines){
             var c_key, c_val, lline, rline, s_line = c_line;
-            c_data.annotations = c_data.annotations || {references:[]};
             while(c_line < lines.length){
                 lline = lines[c_line].substring(0,12);
                 rline = lines[c_line].substring(12);
@@ -168,7 +155,7 @@ var seqJS = seqJS || {};
                     if(!c_key){
                         throw [c_line, 'Expected key while parsing header'];
                     }
-                    c_val = c_val + rline;
+                    c_val.push(rline);
                 }
                 //or start a new one
                 else {
@@ -177,7 +164,7 @@ var seqJS = seqJS || {};
                         self._save_annotation(c_key, c_val);
                     }
                     c_key = lline.trim();
-                    c_val = rline;
+                    c_val = [rline];
                     //save where we got to
                     s_line = c_line;
                 }
@@ -198,21 +185,71 @@ var seqJS = seqJS || {};
         };
 
         this._save_annotation = function(key, value) {
+            var l, m, m2;
             if(keymap[key]){
-                c_data[keymap[key]] = value;
-            }
-            if(annmap[key]){
-                c_data.annotations[annmap[key]] = value;
+                c_data[keymap[key]] = value.join(' ');
             }
             else if(refmap[key]){
-                var l = c_data.annotations.references.length;
+                l = c_data.annotations.references.length;
                 if(l === 0){
                     throw [c_line, "Key "+key+" found before REFERENCE"];
                 }
-                c_data.annotations.references[l-1][refmap[key]] = value;
+                var v = value.join(' ');
+                m = parseInt(v,10);
+                if(!isNaN(m)){
+                    v = m;
+                }
+                c_data.annotations.references[l-1][refmap[key]] = v;
             }
-            else if(key === 'REFERENCE'){
-                c_data.annotations.references.push({});
+            switch(key){
+                case 'REFERENCE':
+                    value = value.join(' ');
+                    l = [];
+                    m = /(\d+)\s+\(bases (.+)\)/.exec(value);
+                    if(m){
+                        l = m[2].split(';').map(function(v){
+                            m2 = /(\d+) to (\d+)/.exec(v);
+                            if(m2){
+                                return [parseInt(m2[1],10), parseInt(m2[2],10)];
+                            }
+                            else{
+                                throw [c_line, "Badly formatted REFERENCE"];
+                            }
+                        });
+                    }
+                    else {
+                        throw [c_line, "Badly formatted REFERENCE"];
+                    }
+                    c_data.annotations.references.push({
+                        location: l
+                    });
+                    break;
+                case 'VERSION':
+                    //version line should be formatted 
+                    //      ACCESSION.version [GI:gi]
+                    m = /(\S+)\.(\d+)(?:\s+GI:(\d+))?/.exec(value.join(' '));
+                    if(m){
+                        c_data.annotations['accession'] = m[1];
+                        c_data.annotations['version'] = m[2];
+                        c_data.annotations['gi'] = m[3];
+                    }
+                    else {
+                        c_data.annotations['version'] = value.join(' ');
+                    }
+                    break;
+                case 'ORGANISM':
+                    //ORGANISM line - organism name \n taxonomy.
+                    c_data.annotations.organism = value[0];
+                    var a = value.slice(1).join(' ').trim();
+                    if(a[a.length-1] === '.'){
+                        a = a.slice(0, a.length-1);
+                    }
+                    c_data.annotations.taxonomy = a.split(';').map(function(v){
+                        return v.trim();
+                    });
+                    break;
+                default: 
+                    c_data.annotations[key.toLowerCase()] = value.join(' ');
             }
 
         };

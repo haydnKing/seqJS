@@ -73,8 +73,7 @@ var gbrecord_eq = function(actual, expected){
         'version',
         'gi',
         'source',
-        'organism',
-        'taxonomy'];
+        'organism'];
 
     equal(actual.name, expected['name'], "Name is wrong");
     equal(actual.desc, expected['description'], "Description is wrong");
@@ -84,10 +83,13 @@ var gbrecord_eq = function(actual, expected){
         equal(actual.annotations[an_keys[i]], expected[an_keys[i]], an_keys[i] + " is wrong");
     }
 
+    deepEqual(actual.annotations.taxonomy, expected.taxonomy,
+          'taxonomy is wrong');
+
     for(i = 0; i < expected.references.length; i++){
         var eref = expected.references[i],
-            aref = actual.references[i];
-        equal(aref, eref, "Reference "+i+" is wrong");
+            aref = actual.annotations.references[i];
+        deepEqual(aref, eref, "Reference "+i+" is wrong");
     }
 
 };

@@ -13,7 +13,7 @@ TEST_DATA.parser_genbank.valid = [
         '  ORGANISM  Saccharomyces cerevisiae',
         '            Eukaryota; Fungi; Ascomycota; Saccharomycotina; Saccharomycetes;',
         '            Saccharomycetales; Saccharomycetaceae; Saccharomyces.',
-        'REFERENCE   1  (bases 1 to 5028)',
+        'REFERENCE   1  (bases 1 to 2000; 2500 to 5028)',
         '  AUTHORS   Torpey,L.E., Gibbs,P.E., Nelson,J. and Lawrence,C.W.',
         '  TITLE     Cloning and sequence of REV7, a gene whose function is required for',
         '            DNA damage-induced mutagenesis in Saccharomyces cerevisiae',
@@ -193,7 +193,7 @@ TEST_DATA.parser_genbank.valid = [
 
         /*references*/
         'references': [{
-            'location': [[1, 5028]],
+            'location': [[1, 2000], [2500, 5028]],
             'authors': 'Torpey,L.E., Gibbs,P.E., Nelson,J. and Lawrence,C.W.',
             'title': 'Cloning and sequence of REV7, a gene whose function is required for DNA damage-induced mutagenesis in Saccharomyces cerevisiae',
             'journal': 'Yeast 10 (11), 1503-1509 (1994)',
