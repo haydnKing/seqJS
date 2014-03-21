@@ -87,7 +87,7 @@ var gbrecord_eq = function(actual, expected){
 
     equal(actual.name, expected['name'], "Name is wrong");
     equal(actual.desc, expected['description'], "Description is wrong");
-    //equal(actual.length(), expected['length']);
+    equal(actual.length(), expected['length']);
 
     for(var i = 0; i < an_keys.length; i++){
         equal(actual.annotations[an_keys[i]], expected[an_keys[i]], an_keys[i] + " is wrong");

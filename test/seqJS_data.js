@@ -172,7 +172,7 @@ TEST_DATA.parser_genbank.valid = [
      object : {
         /* Locus line */
         'name': 'SCU49845',
-        'length': '5028',
+        'length': 5028,
         'length_unit': 'bp',
         'residue_type': 'DNA',
         'topology': 'linear',

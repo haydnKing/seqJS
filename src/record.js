@@ -23,6 +23,9 @@ var seqJS = seqJS || {};
         this.desc = desc || "";
         this.annotations = annotations || {};
 
+        this.length = function() {
+            return this.seq.length();
+        };
     };
 
     /*
