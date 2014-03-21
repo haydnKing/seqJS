@@ -55,7 +55,9 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
         return msg;
     };
 
-    equal(actual.type(), type, m("type is wrong"));
+    ok(actual instanceof seqJS.Feature, m("Didn't get a seqJS.Feature"));
+
+    equal(actual.type(), type, m("feature type is wrong"));
     equal(actual.location().toString(), location_string,
           m('location is wrong'));
     ok(actual.location() instanceof seqJS.FeatureLocation,
@@ -101,13 +103,11 @@ var gbrecord_eq = function(actual, expected){
     }
 
     var f = actual.seq.features();
-    equal(f.length, expected.features.length,
-          'Wrong number of features');
+    equal(f.length, expected.features.length, 'Wrong number of features');
     for(i = 0; i < expected.features.length; i++)
     {
         var e = expected.features[i];        
-        feature_eq(f[i], e[0], e[1], e[2],
-                  'Feature '+i);
+        feature_eq(f[i], e[0], e[1], e[2], 'Feature '+i);
     }
 
     equal(actual.seq.seq(), expected.seq, 'seq is wrong');

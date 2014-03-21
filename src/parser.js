@@ -26,15 +26,18 @@ var seqJS = seqJS || {};
                 remaining_data = lines.slice(consumed);
             }
             catch (e) {
-                throw {
-                    line_num: e[0],
-                    msg: e[1],
-                    line: lines[e[0]],
-                    toString: function(){
-                        return "Line "+this.line_num+": "+this.msg+"  \""+
-                            this.line + "\"";
-                    }
-                };
+                if(e instanceof Array){
+                    throw {
+                        line_num: e[0],
+                        msg: e[1],
+                        line: lines[e[0]],
+                        toString: function(){
+                            return "Line "+this.line_num+": "+this.msg+"  \""+
+                                this.line + "\"";
+                        }
+                    };
+                }
+                throw e;
             }
         };
 
@@ -277,13 +280,15 @@ var seqJS = seqJS || {};
                 line_l = lines[c_line].substr(0,21).trim();
                 line_r = lines[c_line].substr(21);
 
-                //if the previous line is complete
+                //if line is a new statement, parse the previous line
                 if(line_l !== '' || line_r[0] === '/'){
                     //parse prev_l prev_r
                     //if there's a new feature
                     if(prev_l){
-                        c_data.features.push(c_feat);
-                        s_line = c_line;
+                        if(c_feat){
+                            c_data.features.push(c_feat);
+                            s_line = c_line;
+                        }
                         try{
                             c_feat = new seqJS.Feature(prev_l, prev_r);
                         }
@@ -292,7 +297,7 @@ var seqJS = seqJS || {};
                         }
                     }
                     //if there's a new qualifier
-                    else {
+                    else if(prev_r) {
                         if(m = /\/(\w+)="(.+)"/.exec(prev_r)){
                             c_feat.qualifier(m[1],m[2]);
                         }
@@ -300,12 +305,21 @@ var seqJS = seqJS || {};
                             c_feat.qualifier(m[1],parseInt(m[2],10));
                         }
                         else {
-                            throw [c_line, "Invalid qualifier line"];
+                            throw [c_line, "Invalid qualifier line "];
                         }
                     }
                     
                     prev_l = line_l;
                     prev_r = line_r;
+
+                    if(line_l.substr(0,6) === 'ORIGIN'){
+                        if(c_feat){
+                            c_data.features.push(c_feat);
+                        }
+                        state = S_SEQ;
+                        c_line++;
+                        return c_line < lines.length;
+                    }
                 }
                 else{
                     prev_r = prev_r + line_r;

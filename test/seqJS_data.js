@@ -236,7 +236,7 @@ TEST_DATA.parser_genbank.valid = [
                 ['gene', "AXL2"],
                 ['note', "plasma membrane glycoprotein"],
                 ['codon_start', 1],
-                ['function', "required for axial budding pattern of S. cerevisiae"],
+                ['function', "required for axial budding pattern of S.cerevisiae"],
                 ['product', "Axl2p"],
                 ['protein_id', "AAA98666.1"],
                 ['db_xref', "GI:1293615"],
@@ -254,7 +254,7 @@ TEST_DATA.parser_genbank.valid = [
                 "SQSKEELLAKPPVQPPESPFFDPQNRSSSVYMDSEPAVNKSWRYTGNLSPVSDIVRDS",
                 "YGSQKTVDTEKLFDLEAPEKEKRTSRDVTMSSLDPWNSNISPSPVRKSVTPSPYNVTK",
                 "HRNRHLQNIQDSQSGKNGITPTTMSTSSSDDFVPVKDGENFCWVHSMEPDRRPSKKRL",
-                "VDFSNKSNVNVGQVKDIHGRIPEML"].join()]
+                "VDFSNKSNVNVGQVKDIHGRIPEML"].join('')]
             ]],
             ['gene', 'complement(3300..4037)', [
                 ['gene', "REV7"]
