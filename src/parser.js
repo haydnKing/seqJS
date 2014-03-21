@@ -21,8 +21,21 @@ var seqJS = seqJS || {};
         this.type = function() {return type;};
         this.parse = function(data){
             var lines = remaining_data.concat(data.split('\n'));
-            var consumed = self._parse_lines(lines);
-            remaining_data = lines.slice(consumed);
+            try{
+                var consumed = self._parse_lines(lines);
+                remaining_data = lines.slice(consumed);
+            }
+            catch (e) {
+                throw {
+                    line_num: e[0],
+                    msg: e[1],
+                    line: lines[e[0]],
+                    toString: function(){
+                        return "Line "+this.line_num+": "+this.msg+"  \""+
+                            this.line + "\"";
+                    }
+                };
+            }
         };
 
         this._parse_lines = function(lines) {
