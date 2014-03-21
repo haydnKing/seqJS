@@ -82,6 +82,7 @@ var seqJS = seqJS || {};
                     case S_LOCUS:
                         more = self._find_locus(lines);
                         c_data = {
+                            features: [],
                             annotations: {
                                 references: []
                         }};
@@ -171,6 +172,7 @@ var seqJS = seqJS || {};
                 //if we've reached the FT
                 if(c_key === 'FEATURES'){
                     state = S_FT;
+                    c_line++;
                     return c_line < lines.length;
                 }
                 
@@ -254,18 +256,55 @@ var seqJS = seqJS || {};
         };
 
         this._parse_ft = function(lines){
-            var line;
-            while(c_line < lines.length){
-                line = lines[c_line];
+            var s_line = c_line;
+            var line_l, line_r, c_feat, prev_l, prev_r, m;
 
-                if(line.trim().substr(0,6) === 'ORIGIN'){
-                    state = S_SEQ;
-                    return c_line < lines.length;
+            while(c_line < lines.length){
+
+                line_l = lines[c_line].substr(0,21).trim();
+                line_r = lines[c_line].substr(21);
+
+                //if the previous line is complete
+                if(line_l !== '' || line_r[0] === '/'){
+                    //parse prev_l prev_r
+                    //if there's a new feature
+                    if(prev_l){
+                        c_data.features.push(c_feat);
+                        s_line = c_line;
+                        try{
+                            c_feat = new seqJS.Feature(prev_l, prev_r);
+                        }
+                        catch (e){
+                            throw [c_line, "Couldn't parse Feature: "+e];
+                        }
+                    }
+                    //if there's a new qualifier
+                    else {
+                        if(m = /\/(\w+)="(.+)"/.exec(prev_r)){
+                            c_feat.qualifier(m[1],m[2]);
+                        }
+                        else if(m = /\/(\w+)=(\d+)/.exec(prev_r)){
+                            c_feat.qualifier(m[1],parseInt(m[2],10));
+                        }
+                        else {
+                            throw [c_line, "Invalid qualifier line"];
+                        }
+                    }
+                    
+                    prev_l = line_l;
+                    prev_r = line_r;
                 }
+                else{
+                    prev_r = prev_r + line_r;
+                }
+              
 
                 c_line++;
             }
-            return c_line < lines.length;
+            //We ran out of data during the last feature
+            //back up to the start of the feature
+            c_line = s_line;
+            return false;
         };
 
 
@@ -286,7 +325,7 @@ var seqJS = seqJS || {};
         };
 
         this._build_record = function(){
-            var seq = new seqJS.Seq('A', seqJS.ALPH_DNA);
+            var seq = new seqJS.Seq('A', seqJS.ALPH_DNA, c_data.features);
 
             var r = new seqJS.Record(seq, 0, c_data.name,c_data.desc, c_data.annotations);
 

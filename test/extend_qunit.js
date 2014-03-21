@@ -46,20 +46,28 @@ var featureloc_eq = function(actual, string, merge, spanlist){
     }
 };
 
-var feature_eq = function(actual, type, location_string, qualifiers){
+var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 
-    equal(actual.type(), type, "type is wrong");
+    var m = function(msg){
+        if(feat_name){
+            return feat_name + ': ' + msg;
+        }
+        return msg;
+    };
+
+    equal(actual.type(), type, m("type is wrong"));
     equal(actual.location().toString(), location_string,
-          'location is wrong');
+          m('location is wrong'));
     ok(actual.location() instanceof seqJS.FeatureLocation,
-       'feature.location() should be from FeatureLocation, not \"' + 
-      actual.location().constructor.name + '"');
+       m('feature.location() should be from FeatureLocation, not \"' + 
+      actual.location().constructor.name + '"'));
 
     qualifiers = qualifiers || [];
-    equal(actual.qualifierKeys().length, qualifiers.length);
+    equal(actual.qualifierKeys().length, qualifiers.length, 
+         m('qualifier length is wrong'));
     for(var i =0; i< qualifiers.length; i++){
         equal(actual.qualifier(qualifiers[i][0]), qualifiers[i][1],
-              "qualifier " + i + " incorrect");
+              m("qualifier " + i + " incorrect"));
     }
 };
 
@@ -92,12 +100,14 @@ var gbrecord_eq = function(actual, expected){
         deepEqual(aref, eref, "Reference "+i+" is wrong");
     }
 
-    equal(actual.seq.features.length, expected.features.length,
+    var f = actual.seq.features();
+    equal(f.length, expected.features.length,
           'Wrong number of features');
     for(i = 0; i < expected.features.length; i++)
     {
-        deepEqual(actual.seq.features[i], expected.features[i],
-                  'Feature '+i+' is wrong');
+        var e = expected.features[i];        
+        feature_eq(f[i], e[0], e[1], e[2],
+                  'Feature '+i);
     }
 
     equal(actual.seq.seq(), expected.seq, 'seq is wrong');
