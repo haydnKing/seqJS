@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -223,7 +224,7 @@ var seqJS = seqJS || {};
                 case 'REFERENCE':
                     value = value.join(' ');
                     l = [];
-                    m = /(\d+)\s+\(bases (.+)\)/.exec(value);
+                    m = /(\d+)\s+\(\w+ (.+)\)/.exec(value);
                     if(m){
                         l = m[2].split(';').map(function(v){
                             m2 = /(\d+) to (\d+)/.exec(v);
@@ -231,11 +232,13 @@ var seqJS = seqJS || {};
                                 return [parseInt(m2[1],10), parseInt(m2[2],10)];
                             }
                             else{
+                                console.log('_save_annotation('+key+','+value+')');
                                 throw [c_line, "Badly formatted REFERENCE"];
                             }
                         });
                     }
                     else {
+                        console.log('2_save_annotation('+key+','+value+')');
                         throw [c_line, "Badly formatted REFERENCE"];
                     }
                     c_data.annotations.references.push({
@@ -337,7 +340,7 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, alphabet = c_data.annotations.residue_type;
+            var line, i, alphabet = c_data.annotations.residue_type || '';
             if(alphabet.indexOf('DNA') > -1){
                 c_data.alphabet = seqJS.ALPH_DNA;
             }

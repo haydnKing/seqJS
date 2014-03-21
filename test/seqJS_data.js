@@ -363,5 +363,120 @@ TEST_DATA.parser_genbank.valid = [
                     .join('').toUpperCase()
 
      }
+},
+{
+    string: [
+        'LOCUS       AAD51968                 143 aa            linear   BCT 21-AUG-2001',
+        'DEFINITION  transcriptional regulator RovA [Yersinia enterocolitica].',
+        'ACCESSION   AAD51968',
+        'VERSION     AAD51968.1  GI:5805369',
+        'DBSOURCE    locus AF171097 accession AF171097.1',
+        'KEYWORDS    .',
+        'SOURCE      Yersinia enterocolitica',
+        '  ORGANISM  Yersinia enterocolitica',
+        '            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacteriales;',
+        '            Enterobacteriaceae; Yersinia.',
+        'REFERENCE   1  (residues 1 to 143)',
+        '  AUTHORS   Revell,P.A. and Miller,V.L.',
+        '  TITLE     A chromosomally encoded regulator is required for expression of the',
+        '            Yersinia enterocolitica inv gene and for virulence',
+        '  JOURNAL   Mol. Microbiol. 35 (3), 677-685 (2000)',
+        '  MEDLINE   20138369',
+        '   PUBMED   10672189',
+        'REFERENCE   2  (residues 1 to 143)',
+        '  AUTHORS   Revell,P.A. and Miller,V.L.',
+        '  TITLE     Direct Submission',
+        '  JOURNAL   Submitted (22-JUL-1999) Molecular Microbiology, Washington',
+        '            University School of Medicine, Campus Box 8230, 660 South Euclid,',
+        '            St. Louis, MO 63110, USA',
+        'COMMENT     Method: conceptual translation.',
+        'FEATURES             Location/Qualifiers',
+        '     source          1..143',
+        '                     /organism="Yersinia enterocolitica"',
+        '                     /mol_type="unassigned DNA"',
+        '                     /strain="JB580v"',
+        '                     /serotype="O:8"',
+        '                     /db_xref="taxon:630"',
+        '     Protein         1..143',
+        '                     /product="transcriptional regulator RovA"',
+        '                     /name="regulates inv expression"',
+        '     CDS             1..143',
+        '                     /gene="rovA"',
+        '                     /coded_by="AF171097.1:380..811"',
+        '                     /note="regulator of virulence"',
+        '                     /transl_table=11',
+        'ORIGIN',
+        '        1 mestlgsdla rlvrvwrali dhrlkplelt qthwvtlhni nrlppeqsqi qlakaigieq',
+        '       61 pslvrtldql eekglitrht candrrakri klteqsspii eqvdgvicst rkeilggisp',
+        '      121 deiellsgli dklerniiql qsk',
+        '//'].join('\n'),
+    object: {
+        /* Locus line */
+        'name': 'AAD51968',
+        'length': 143,
+        'length_unit': 'aa',
+        'residue_type': '',
+        'alphabet': 3,
+        'topology': 'linear',
+        'data_division': 'BCT',
+        'date': '21-AUG-2001',
+
+        /* Header */
+        'description': 'transcriptional regulator RovA [Yersinia enterocolitica].',
+            //version / accession lines
+        'accession': 'AAD51968',
+        'version': 1,
+        'gi': 5805369,
+        'keywords': [],
+        'source': 'Yersinia enterocolitica',
+        'organism': 'Yersinia enterocolitica',
+        'taxonomy': ['Bacteria','Proteobacteria','Gammaproteobacteria',
+            'Enterobacteriales','Enterobacteriaceae','Yersinia'],
+
+
+        'references': [{
+            'location': [[1,143]],
+            'authors': 'Revell,P.A. and Miller,V.L.',
+            'title': 'A chromosomally encoded regulator is required for expression of the Yersinia enterocolitica inv gene and for virulence',
+            'journal': 'Mol. Microbiol. 35 (3), 677-685 (2000)',
+            'pubmed': 10672189,
+            'medline': 20138369
+        },
+        {
+            'locaiton': [1, 143],
+            authors: 'Revell,P.A. and Miller,V.L.',
+            title: 'Direct Submission',
+            journal: ['Submitted (22-JUL-1999) Molecular Microbiology, Washington',
+                'University School of Medicine, Campus Box 8230, 660 South Euclid,',
+                'St. Louis, MO 63110, USA'].join(' '),
+            comment: 'Method: conceptual translation.'
+        }],
+
+        features: [
+            ['source','1..143', [
+                ['organism',"Yersinia enterocolitica"],
+                ['mol_type', "unassigned DNA"],
+                ['strain', "JB580v"],
+                ['serotype', "O:8"],
+                ['db_xref', "taxon:630"]
+            ]],
+            ['Protein', '1..143', [
+                ['product', "transcriptional regulator RovA"],
+                ['name', "regulates inv expression"]
+            ]],
+            ['CDS', '1..143', [
+                ['gene', "rovA"],
+                ['coded_by', "AF171097.1:380..811"],
+                ['note', "regulator of virulence"],
+                ['transl_table', 11]
+            ]]
+        ],
+
+        seq: [
+            'mestlgsdlarlvrvwralidhrlkpleltqthwvtlhninrlppeqsqiqlakaigieq',
+            'pslvrtldqleekglitrhtcandrrakriklteqsspiieqvdgvicstrkeilggisp',
+            'deiellsglidklerniiqlqsk'].join('').toUpperCase()
+
+    }
 }];
 

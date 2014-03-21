@@ -49,4 +49,15 @@ module('seqJS#GenbankParser', {
 
     });
 
+    asyncTest('parse entire protein record', function(){
+        
+        this.parser.setRecordCb(function(record){
+            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[1].object);
+            start();
+        });
+
+        this.parser.parse(TEST_DATA.parser_genbank.valid[1].string);
+
+    });
+
 }());
