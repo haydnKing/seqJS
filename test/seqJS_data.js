@@ -443,7 +443,7 @@ TEST_DATA.parser_genbank.valid = [
             'medline': 20138369
         },
         {
-            'locaiton': [1, 143],
+            location: [[1, 143]],
             authors: 'Revell,P.A. and Miller,V.L.',
             title: 'Direct Submission',
             journal: ['Submitted (22-JUL-1999) Molecular Microbiology, Washington',

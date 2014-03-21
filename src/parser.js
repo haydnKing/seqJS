@@ -83,7 +83,7 @@ var seqJS = seqJS || {};
             JOURNAL: 'journal',
             MEDLINE: 'medline',
             PUBMED: 'pubmed',
-            REMARK: 'remark'
+            COMMENT: 'comment'
         };
 
 
@@ -148,7 +148,7 @@ var seqJS = seqJS || {};
                 c_data.name = m[1];
                 c_data.length = parseInt(m[2],10);
                 c_data.unit = m[3];
-                c_data.annotations.residue_type = m[4];
+                c_data.annotations.residue_type = m[4] || '';
                 c_data.annotations.topology = m[5] || 'linear';
                 c_data.annotations.data_division = m[6];
                 c_data.annotations.date = m[7];
