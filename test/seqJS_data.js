@@ -175,6 +175,7 @@ TEST_DATA.parser_genbank.valid = [
         'length': 5028,
         'length_unit': 'bp',
         'residue_type': 'DNA',
+        'alphabet': 1,
         'topology': 'linear',
         'data_division': 'PLN',
         'date': '21-JUN-1999',

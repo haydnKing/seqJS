@@ -110,6 +110,7 @@ var gbrecord_eq = function(actual, expected){
         feature_eq(f[i], e[0], e[1], e[2], 'Feature '+i);
     }
 
+    equal(actual.seq.alphabet(), expected.alphabet, 'alphabet is wrong');
     equal(actual.seq.seq(), expected.seq, 'seq is wrong');
 
 };

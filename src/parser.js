@@ -98,6 +98,7 @@ var seqJS = seqJS || {};
                     case S_LOCUS:
                         more = self._find_locus(lines);
                         c_data = {
+                            seq: '',
                             features: [],
                             annotations: {
                                 references: []
@@ -336,7 +337,18 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line;
+            var line, i, alphabet = c_data.annotations.residue_type;
+            if(alphabet.indexOf('DNA') > -1){
+                c_data.alphabet = seqJS.ALPH_DNA;
+            }
+            else if(alphabet.indexOf('RNA') > -1){
+                c_data.alphabet = seqJS.ALPH_RNA;
+            }
+            else {
+                c_data.alphabet = seqJS.ALPH_PROT;
+            }
+            var letters = seqJS.ALPHABETS[c_data.alphabet];
+
             while(c_line < lines.length){
                 line = lines[c_line];
 
@@ -346,13 +358,24 @@ var seqJS = seqJS || {};
                     c_line++;
                     return c_line < lines.length;
                 }
+                
+                line = line.substr(10).replace(/ /g, '').toUpperCase();
+                //checkLetters
+                for(i = 0; i < line.length; i++){
+                    if(letters.indexOf(line[i]) < 0){
+                        throw [c_line, "Invalid character '"+line[i]+"'"];
+                    }
+                }
+                c_data.seq = c_data.seq + line;
                 c_line++;
             }
             return c_line < lines.length;
         };
 
         this._build_record = function(){
-            var seq = new seqJS.Seq('A', seqJS.ALPH_DNA, c_data.features);
+            var seq = new seqJS.Seq(c_data.seq, 
+                                    c_data.alphabet, 
+                                    c_data.features);
 
             var r = new seqJS.Record(seq, 0, c_data.name,c_data.desc, c_data.annotations);
 

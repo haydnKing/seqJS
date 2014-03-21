@@ -34,6 +34,12 @@ var seqJS = seqJS || {};
     seqJS.ALPH_DNA = 1;
     seqJS.ALPH_RNA = 2;
     seqJS.ALPH_PROT = 3;
+    seqJS.ALPHABETS = [ [], 
+        ['A','C','G','T','R','Y','S','W','K','M','B','D','H','V','N'],
+        ['A','C','G','U','R','Y','S','W','K','M','B','D','H','V','N'],
+        ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T',
+            'V','W','Y']
+    ];
     seqJS.Seq = function(_seq, _alphabet, _features){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
