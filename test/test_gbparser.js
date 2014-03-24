@@ -61,3 +61,25 @@ module('seqJS#GenbankParser', {
     });
 
 }());
+
+module('seqJS#GenbankWriter', {
+    setup: function() {
+       this.parser = seqJS.getParser('genbank');
+       this.writer = seqJS.getWriter('genbank');
+    }
+});
+
+    asyncTest('parse/write entire record', function(){
+        var self = this;
+        this.parser.setRecordCb(function(record){
+            var output = self.writer.write(record);
+
+            equal(output, TEST_DATA.parser_genbank.valid[0].string,
+                 'Output string is not equal to input');
+
+            start();
+        });
+
+        this.parser.parse(TEST_DATA.parser_genbank.valid[0].string);
+
+    });
