@@ -1,5 +1,5 @@
 /* global seqJS:true, TEST_DATA:true */
-/* global gbrecord_eq:true */
+/* global gbrecord_eq:true, console:true */
 
 (function() {
   /*
@@ -69,13 +69,26 @@ module('seqJS#GenbankWriter', {
     }
 });
 
+    var compare_file = function(actual, expected, name){
+
+        var a = actual.split('\n'),
+            e = expected.split('\n');
+
+        equal(a.length, e.length, name + ": Number of lines is wrong");
+
+        for(var i = 0; i < Math.min(a.length, e.length); i++){
+            equal(a[i], e[i], name + ": line "+i+" is wrong");
+        }
+    };
+
+
     asyncTest('parse/write entire record', function(){
         var self = this;
         this.parser.setRecordCb(function(record){
             var output = self.writer.write(record);
 
-            equal(output, TEST_DATA.parser_genbank.valid[0].string,
-                 'Output string is not equal to input');
+            compare_file(output, TEST_DATA.parser_genbank.valid[0].string,
+                 'Record[0]');
 
             start();
         });

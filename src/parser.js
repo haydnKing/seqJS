@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -232,13 +231,11 @@ var seqJS = seqJS || {};
                                 return [parseInt(m2[1],10), parseInt(m2[2],10)];
                             }
                             else{
-                                console.log('_save_annotation('+key+','+value+')');
                                 throw [c_line, "Badly formatted REFERENCE"];
                             }
                         });
                     }
                     else {
-                        console.log('2_save_annotation('+key+','+value+')');
                         throw [c_line, "Badly formatted REFERENCE"];
                     }
                     c_data.annotations.references.push({
