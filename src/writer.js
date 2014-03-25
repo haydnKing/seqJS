@@ -10,44 +10,26 @@ var seqJS = seqJS || {};
 
 (function(){
 
-    /*
-     * Writer object:
-     *  A generic writer which wraps the more specific writers, such as
-     *  GenBankWriter or FastaWriter.
-     */
-    var Writer = function(type){
-
-        this.type = function() {return type;};
-
-        this.write = function(/*record*/){
-            //Implemented by subclass
-            return '';
-        };
-    };
-
     var writers = {};
-    /*
-     * Genbank Parser
-     *  Parse a GenBank file
-     */
 
-    var GenBankWriter = function() {
-        Writer.call(this);
+    var gb_write = function(record){
+        return "LOCUS      " + record.name;
     };
-    GenBankWriter.prototype = new Writer();
-    writers['gb'] = writers['genbank'] = GenBankWriter;
-    
+
+    writers['gb'] = gb_write;
+    writers['genbank'] = gb_write;
 
     /*
-     * getWriter(type) - return a writer object
+     * seqJS.write(record, type) - write the record to a string and return the
+     *  string
      *      type: 'gb' or 'fasta'
      */
-    seqJS.getWriter =  function(type){
+    seqJS.write = function(record, type){
         if(Object.keys(writers).indexOf(type) > -1){
-            return new writers[type]();
+            return writers[type](record);
         }
         else {
-            throw "Unknown parser type \'"+type+"\'. Known types are " + 
+            throw "Unknown format \'"+type+"\'. Known formats are " + 
                 Object.keys(writers).join(', ') + '.';
         }
     };

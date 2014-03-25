@@ -1,5 +1,5 @@
 /* global seqJS:true, TEST_DATA:true */
-/* global gbrecord_eq:true, console:true */
+/* global gbrecord_eq:true */
 
 (function() {
   /*
@@ -65,7 +65,6 @@ module('seqJS#GenbankParser', {
 module('seqJS#GenbankWriter', {
     setup: function() {
        this.parser = seqJS.getParser('genbank');
-       this.writer = seqJS.getWriter('genbank');
     }
 });
 
@@ -83,9 +82,8 @@ module('seqJS#GenbankWriter', {
 
 
     asyncTest('parse/write entire record', function(){
-        var self = this;
         this.parser.setRecordCb(function(record){
-            var output = self.writer.write(record);
+            var output = seqJS.write(record, 'gb');
 
             compare_file(output, TEST_DATA.parser_genbank.valid[0].string,
                  'Record[0]');
