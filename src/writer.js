@@ -13,7 +13,27 @@ var seqJS = seqJS || {};
     var writers = {};
 
     var gb_write = function(record){
-        return "LOCUS      " + record.name;
+        var i;
+
+
+        var get_locus = function(record){
+            var r = "LOCUS       ",
+                name = record.name,
+                len = record.length().toString();
+            if((name.length + len.length) >= 28){
+                name = name.substr(0, 27 - len.length);
+            }
+            r += name;
+            for(i=0; i < 28 - (name.length+len.length);i++){
+                r += ' ';
+            }
+            r += len;
+
+            return r;
+        };
+
+
+        return get_locus(record);
     };
 
     writers['gb'] = gb_write;
