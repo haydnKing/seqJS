@@ -38,7 +38,7 @@ module('seqJS#GenbankParser', {
         equal(p.type(), 'gb');
     });
 
-    asyncTest('parse entire record', function(){
+    asyncTest('parse entire new-style record', function(){
         
         this.parser.setRecordCb(function(record){
             gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
@@ -46,6 +46,17 @@ module('seqJS#GenbankParser', {
         });
 
         this.parser.parse(TEST_DATA.parser_genbank.valid[0].string);
+
+    });
+
+    asyncTest('parse entire old-style record', function(){
+        
+        this.parser.setRecordCb(function(record){
+            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
+            start();
+        });
+
+        this.parser.parse(TEST_DATA.parser_genbank.valid[0].old_string);
 
     });
 
