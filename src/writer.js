@@ -10,11 +10,41 @@ var seqJS = seqJS || {};
 
 (function(){
 
+    var pad_l = function(str, val){
+        if(str.length > val){
+            return str.substring(0,val);
+        }
+        return spaces(val - str.length) + str;
+    };
+    var spaces = function(val){
+        var r = '';
+        for(var i = 0; i < val; i++){
+            r += ' ';
+        }
+        return r;
+    };
+
     var writers = {};
 
     var gb_write = function(record){
         var i;
 
+        var get_date = function(){
+            var d = new Date();
+            return d.getDate().toString() + '-' + [
+                'JAN',
+                'FEB',
+                'MAR',
+                'APR',
+                'MAY',
+                'JUN',
+                'JUL',
+                'AUG',
+                'SEP',
+                'OCT',
+                'NOV',
+                'DEC'][d.getMonth()] + '-' + d.getFullYear().toString();
+        };
 
         var get_locus = function(record){
             var r = "LOCUS       ",
@@ -24,10 +54,21 @@ var seqJS = seqJS || {};
                 name = name.substr(0, 27 - len.length);
             }
             r += name;
-            for(i=0; i < 28 - (name.length+len.length);i++){
+            for(i=0; i < 28 - (name.length+len.length); i++){
                 r += ' ';
             }
             r += len;
+
+            r += (record.seq.alphabet() === seqJS.ALPH_PROT) ? ' aa ' : ' bp ';
+
+            r += pad_l(record.residue_type || '', 6);
+
+            r += pad_l( (record.topology === 'circular') ? 'circular' : '', 13);
+
+            r += ' ' + (record.data_division || 'SYN');
+
+            r += ' ' + (record.date || get_date()); 
+            
 
             return r;
         };

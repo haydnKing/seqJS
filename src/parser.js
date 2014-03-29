@@ -147,10 +147,10 @@ var seqJS = seqJS || {};
                 c_data.name = m[1];
                 c_data.length = parseInt(m[2],10);
                 c_data.unit = m[3];
-                c_data.annotations.residue_type = m[4] || '';
-                c_data.annotations.topology = m[5] || 'linear';
-                c_data.annotations.data_division = m[6];
-                c_data.annotations.date = m[7];
+                c_data.residue_type = m[4] || '';
+                c_data.topology = m[5] || 'linear';
+                c_data.data_division = m[6];
+                c_data.date = m[7];
                 
                 state = S_HDR;
             }
@@ -337,7 +337,7 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, alphabet = c_data.annotations.residue_type || '';
+            var line, i, alphabet = c_data.residue_type || '';
             if(alphabet.indexOf('DNA') > -1){
                 c_data.alphabet = seqJS.ALPH_DNA;
             }
@@ -377,7 +377,12 @@ var seqJS = seqJS || {};
                                     c_data.alphabet, 
                                     c_data.features);
 
-            var r = new seqJS.Record(seq, 0, c_data.name,c_data.desc, c_data.annotations);
+            var r = new seqJS.Record(seq, 0, c_data.name, c_data.desc, c_data.annotations);
+
+            r.residue_type = c_data.residue_type;
+            r.topology = c_data.topology;
+            r.data_division = c_data.data_division;
+            r.date = c_data.date;
 
 
             self._triggerRecordCb(r);
