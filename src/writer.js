@@ -48,6 +48,7 @@ var seqJS = seqJS || {};
 
         var get_locus = function(record){
             var r = "LOCUS       ",
+                ra = record.annotations,
                 name = record.name,
                 len = record.length().toString();
             if((name.length + len.length) >= 28){
@@ -61,13 +62,13 @@ var seqJS = seqJS || {};
 
             r += (record.seq.alphabet() === seqJS.ALPH_PROT) ? ' aa ' : ' bp ';
 
-            r += pad_l(record.residue_type || '', 6);
+            r += pad_l(ra.residue_type || '', 6);
 
-            r += pad_l( (record.topology === 'circular') ? 'circular' : '', 13);
+            r += pad_l( (ra.topology === 'circular') ? 'circular' : '', 13);
 
-            r += ' ' + (record.data_division || 'SYN');
+            r += ' ' + (ra.data_division || 'SYN');
 
-            r += ' ' + (record.date || get_date()); 
+            r += ' ' + (ra.date || get_date()); 
             
 
             return r;
