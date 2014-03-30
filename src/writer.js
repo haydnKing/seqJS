@@ -60,7 +60,7 @@ var seqJS = seqJS || {};
             }
             r += len;
 
-            r += (record.seq.alphabet() === seqJS.ALPH_PROT) ? ' aa ' : ' bp ';
+            r += ' ' + record.seq.unit() + ' ';
 
             r += pad_l(ra.residue_type || '', 6);
 

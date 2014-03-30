@@ -55,6 +55,12 @@ var seqJS = seqJS || {};
         this.length = function() {return _seq.length;};
         this.alphabet = function() {return _alphabet;};
         this.features = function() {return _features;};
+        this.unit = function() {
+            if(_alphabet.indexOf('PROT') > -1){
+                return 'aa';
+            }
+            return 'bp';
+        };
     };
 
     /*
