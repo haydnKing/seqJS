@@ -16,6 +16,12 @@ var seqJS = seqJS || {};
         }
         return spaces(val - str.length) + str;
     };
+    var pad_r = function(str, val){
+        if(str.length > val){
+            return str.substring(0,val);
+        }
+        return str + spaces(val - str.length);
+    };
     var spaces = function(val){
         var r = '';
         for(var i = 0; i < val; i++){
@@ -44,7 +50,28 @@ var seqJS = seqJS || {};
                 'DEC'][d.getMonth()] + '-' + d.getFullYear().toString();
         };
 
-        var get_locus = function(record){
+        var line_wrap = function(line, max_len, wrap){
+            wrap = wrap || '\n';
+            var lines = [],
+                l = '',
+                s = line.split(' '),
+                w;
+            for(var i in s){
+                w = s[i];
+                if((l.length+w.length) >= max_len){
+                    lines.push(l);
+                    l = w;
+                }
+                else{
+                    l += ' ' + w;
+                }
+            }
+            lines.push(l);
+            return lines.join(wrap);
+        };
+
+
+        var write_locus = function(record){
             var ra = record.annotations,
                 name = record.name,
                 len = record.length().toString();
@@ -58,11 +85,19 @@ var seqJS = seqJS || {};
               pad_l(ra.residue_type || '', 6) +
               pad_l( (ra.topology === 'circular') ? 'circular' : '', 13) +
               ' ' + (ra.data_division || 'SYN') +
-              ' ' + (ra.date || get_date()); 
+              ' ' + (ra.date || get_date()) + '\n'; 
+        };
+
+        var write_annotation = function(key, value, indent){
+            indent = indent || false;
+
+            return pad_r( (indent ? '  ' : '') + key.toUpperCase(), 10) + 
+                ' ' + line_wrap(value,69,'\n            ');
         };
 
 
-        return get_locus(record);
+
+        return write_locus(record) + write_annotation('definition', record.desc);
     };
 
     writers['gb'] = gb_write;
