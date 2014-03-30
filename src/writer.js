@@ -69,6 +69,10 @@ var seqJS = seqJS || {};
             lines.push(l);
             return lines.join(wrap);
         };
+        var line_break = function(line, max_len, wrap){
+            wrap = wrap || '\n';
+            return line.match(new RegExp('/.{1,'+max_len+'}/g')).join(wrap);
+        };
 
 
         var write_locus = function(record){
@@ -151,9 +155,44 @@ var seqJS = seqJS || {};
             return ret;
         };
 
+        var write_feature = function(f){
+            var i,k,v,qk = f.qualifierKeys(),
+                ret = '     ' + pad_r(f.type(),15) + ' ' + 
+                f.location().toString() + '\n';
+
+            for(i in qk){
+                k = qk[i];
+                v = f.qualifier(k);
+                if(typeof(v) === 'string' || v instanceof String){
+                    ret += '                    ' + 
+                    line_break('/' + k + '="'+v+'"',60,'\n                     ') + '\n';
+                }
+                else
+                {
+                    ret += '                    /'+k+'='+v.toString()+'\n';
+                }
+            }
+
+            return ret;
+        };
+
+        var write_features = function(r){
+
+            var ret = 'FEATURES             Location/Qualifiers\n',
+                i, fs = r.seq.features();
+
+            for(i = 0; i < fs.length; i++){
+                ret += write_feature(fs[i]);
+            }
+
+            return ret;
+        };
 
 
-        return write_locus(record) + write_annotations(record);
+
+        return write_locus(record) + 
+            write_annotations(record) +
+            write_features(record);
     };
 
     writers['gb'] = gb_write;
