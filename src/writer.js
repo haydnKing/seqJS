@@ -27,8 +27,6 @@ var seqJS = seqJS || {};
     var writers = {};
 
     var gb_write = function(record){
-        var i;
-
         var get_date = function(){
             var d = new Date();
             return d.getDate().toString() + '-' + [
@@ -47,31 +45,20 @@ var seqJS = seqJS || {};
         };
 
         var get_locus = function(record){
-            var r = "LOCUS       ",
-                ra = record.annotations,
+            var ra = record.annotations,
                 name = record.name,
                 len = record.length().toString();
             if((name.length + len.length) >= 28){
                 name = name.substr(0, 27 - len.length);
             }
-            r += name;
-            for(i=0; i < 28 - (name.length+len.length); i++){
-                r += ' ';
-            }
-            r += len;
-
-            r += ' ' + record.seq.unit() + ' ';
-
-            r += pad_l(ra.residue_type || '', 6);
-
-            r += pad_l( (ra.topology === 'circular') ? 'circular' : '', 13);
-
-            r += ' ' + (ra.data_division || 'SYN');
-
-            r += ' ' + (ra.date || get_date()); 
-            
-
-            return r;
+            return "LOCUS       " +
+              name + ' ' + 
+              pad_l(len, 27 - name.length) +
+              ' ' + record.seq.unit() + ' ' +
+              pad_l(ra.residue_type || '', 6) +
+              pad_l( (ra.topology === 'circular') ? 'circular' : '', 13) +
+              ' ' + (ra.data_division || 'SYN') +
+              ' ' + (ra.date || get_date()); 
         };
 
 
