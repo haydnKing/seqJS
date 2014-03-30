@@ -337,17 +337,17 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, alphabet = c_data.residue_type || '';
-            if(alphabet.indexOf('DNA') > -1){
-                c_data.alphabet = seqJS.ALPH_DNA;
+            var line, i, rt = (c_data.annotations.residue_type || '').toUpperCase();
+            if(rt.indexOf('DNA') > -1){
+                c_data.alphabet = 'DNA';
             }
-            else if(alphabet.indexOf('RNA') > -1){
-                c_data.alphabet = seqJS.ALPH_RNA;
+            else if(rt.indexOf('RNA') > -1){
+                c_data.alphabet = 'RNA';
             }
             else {
-                c_data.alphabet = seqJS.ALPH_PROT;
+                c_data.alphabet = 'PROT';
             }
-            var letters = seqJS.ALPHABETS[c_data.alphabet];
+            var letters = seqJS.Letters[c_data.alphabet];
 
             while(c_line < lines.length){
                 line = lines[c_line];
@@ -363,6 +363,13 @@ var seqJS = seqJS || {};
                 //checkLetters
                 for(i = 0; i < line.length; i++){
                     if(letters.indexOf(line[i]) < 0){
+                        //check for ambiguous
+                        if(c_data.alphabet[0] !== 'a'){
+                            c_data.alphabet = 'a' + c_data.alphabet;
+                            letters = seqJS.Letters[c_data.alphabet];
+                            i = i-1;
+                            continue;
+                        }
                         throw [c_line, "Invalid character '"+line[i]+"'"];
                     }
                 }

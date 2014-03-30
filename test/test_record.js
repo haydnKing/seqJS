@@ -27,10 +27,10 @@ module('seqJS#seq');
 
     test('setting and get data', function(){
         expect(3);
-        var l = new seqJS.Seq("ATcGAT", seqJS.ALPH_PROT);
+        var l = new seqJS.Seq("ATcGAT", 'PROT');
         equal(l.seq(), "ATCGAT");
         equal(l.length(), 6);
-        equal(l.alphabet(), seqJS.ALPH_PROT);
+        equal(l.alphabet(), 'PROT');
     });
 
     test('require an alphabet', function(){
@@ -38,6 +38,16 @@ module('seqJS#seq');
         throws(function() {new seqJS.Seq("ATcGAT");},
                'Argument alphabet is required');
     });
+
+    test('unknown alphabet', function(){
+        expect(1);
+        throws(function() {new seqJS.Seq("ATcGAT", 'var');},
+               'Unknown Alphabet');
+    });
+
+
+
+module('seqJS#location');
 
     test('invalid operator', function(){
         expect(1);
@@ -52,9 +62,6 @@ module('seqJS#seq');
             new seqJS.Location(-1);
         }, "Invalid location '-1'");
     });
-
-
-module('seqJS#location');
 
     test('setting implicit exact', function(){
         var l = new seqJS.Location(5);

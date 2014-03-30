@@ -31,22 +31,24 @@ var seqJS = seqJS || {};
     /*
      * Seq object
      */
-    seqJS.ALPH_DNA = 1;
-    seqJS.ALPH_RNA = 2;
-    seqJS.ALPH_PROT = 3;
-    seqJS.ALPHABETS = [ [], 
-        ['A','C','G','T','R','Y','S','W','K','M','B','D','H','V','N'],
-        ['A','C','G','U','R','Y','S','W','K','M','B','D','H','V','N'],
-        ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T',
-            'V','W','Y']
-    ];
+    seqJS.Alphabets = ['DNA','aDNA','RNA','aRNA','PROT','aPROT'];
+    seqJS.Letters = {
+        DNA: ['A','C','G','T'],
+        aDNA: ['A','C','G','T','R','Y','S','W','K','M','B','D','H','V','N'],
+        RNA: ['A','C','G','U'],
+        aRNA: ['A','C','G','U','R','Y','S','W','K','M','B','D','H','V','N'],
+        PROT: ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q',
+            'R','S','T','V','W','Y'],
+        aPROT: ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q',
+            'R','S','T','V','W','Y','B','X','Z']
+    };
     seqJS.Seq = function(_seq, _alphabet, _features){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
         _features = _features || [];
 
         _seq = _seq.toUpperCase();
-        if([seqJS.ALPH_DNA, seqJS.ALPH_RNA, seqJS.ALPH_PROT].indexOf(_alphabet) < 0){
+        if(seqJS.Alphabets.indexOf(_alphabet) < 0){
             throw "Invalid Alphabet";
         }
         this.seq = function() {return _seq;};
