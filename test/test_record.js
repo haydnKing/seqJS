@@ -1,4 +1,6 @@
 /*global seqJS:true  */
+/*global location_eq:true, span_eq:true, featureloc_eq:true */
+/*global feature_eq:true */
 
 (function($) {
   /*
@@ -21,7 +23,7 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
-    module('seqJS#seq');
+module('seqJS#seq');
 
     test('setting and get data', function(){
         expect(3);
@@ -52,28 +54,21 @@
     });
 
 
-    module('seqJS#location');
+module('seqJS#location');
 
     test('setting implicit exact', function(){
-        expect(2);
         var l = new seqJS.Location(5);
-        equal(l.location(), 5);
-        equal(l.operator(), '');
+        location_eq(l, 5, '');
     });
 
     test('setting explicit before', function(){
-        expect(2);
         var l = new seqJS.Location(6, '<');
-        equal(l.location(), 6);
-        equal(l.operator(), '<');
+        location_eq(l, 6, '<');
     });
 
     test('setting explicit range', function(){
-        expect(3);
         var l = new seqJS.Location(6, '.', 8);
-        equal(l.location(), 6);
-        equal(l.operator(), '.');
-        equal(l.location2(), 8);
+        location_eq(l, 6, '.', 8);
     });
 
     test('set invalid range', function(){
@@ -98,33 +93,21 @@
     });
 
     test('fixed location from string', function(){
-        expect(3);
         var l = new seqJS.Location('6');
-        equal(l.location(), 6);
-        equal(l.operator(), '');
-        equal(l.location2(), undefined);
+        location_eq(l, 6, '');
     });
 
     test('before location from string', function(){
-        expect(3);
         var l = new seqJS.Location('<6');
-        equal(l.location(), 6);
-        equal(l.operator(), '<');
-        equal(l.location2(), undefined);
+        location_eq(l, 6, '<');
     });
     test('after location from string', function(){
-        expect(3);
         var l = new seqJS.Location('>6');
-        equal(l.location(), 6);
-        equal(l.operator(), '>');
-        equal(l.location2(), undefined);
+        location_eq(l, 6, '>');
     });
     test('range location from string', function(){
-        expect(3);
         var l = new seqJS.Location('6.8');
-        equal(l.location(), 6);
-        equal(l.operator(), '.');
-        equal(l.location2(), 8);
+        location_eq(l, 6, '.', 8);
     });
     test('invalid location string format', function(){
         expect(1);
@@ -146,83 +129,26 @@
         });
     });
 
-    module('seqJS.Span');
+module('seqJS.Span');
 
     test('span from string A', function(){
-        expect(8);
         var s = new seqJS.Span('100..150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '100..150');
+        span_eq(s, [100, ''], [150, ''], false, '100..150');
     });
 
     test('span from string B', function(){
-        expect(8);
         var s = new seqJS.Span('<100..>150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '<');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '>');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '<100..>150');
+        span_eq(s, [100, '<'], [150, '>'], false, '<100..>150');
     });
 
     test('span from string C', function(){
-        expect(8);
         var s = new seqJS.Span('100.105..150');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '.');
-        equal(s.location1().location2(), 105);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), false);
-        equal(s.toString(), '100.105..150');
+        span_eq(s, [100, '.', 105], [150, ''], false, '100.105..150');
     });
 
     test('span from string D', function(){
-        expect(8);
         var s = new seqJS.Span('100..150.160');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '.');
-        equal(s.location2().location2(), 160);
-
-        equal(s.isComplement(), false);
-
-        equal(s.toString(), '100..150.160');
-    });
-
-    test('span from string E', function(){
-        expect(8);
-        var s = new seqJS.Span('complement(<100..>150)');
-        equal(s.location1().location(), 100);
-        equal(s.location1().operator(), '<');
-        equal(s.location1().location2(), undefined);
-
-        equal(s.location2().location(), 150);
-        equal(s.location2().operator(), '>');
-        equal(s.location2().location2(), undefined);
-
-        equal(s.isComplement(), true);
-
-        equal(s.toString(), 'complement(<100..>150)');
+        span_eq(s, [100, ''], [150, '.', 160], false, '100..150.160');
     });
 
     test('locations inverted', function(){
@@ -240,69 +166,91 @@
     });
 
 
-    module('seqJS#FeatureLocation');
+module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('100..200');
 
-        equal(l.toString(), '100..200');
+        featureloc_eq(l, '100..200', '', [
+                      [['100'],['200'],false,'100..200']
+        ]);
+
     });
 
     test('parse <A..B', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('<100..200');
 
-        equal(l.toString(), '<100..200');
+        featureloc_eq(l, '<100..200', '', [
+                      [['100', '<'],['200'],false,'<100..200']
+        ]);
     });
 
     test('parse A.B..C', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('100.102..200');
 
-        equal(l.toString(), '100.102..200');
+        featureloc_eq(l, '100.102..200', '', [
+                      [['100', '.', '102'],['200'],false,'100.102..200']
+        ]);
     });
 
     test('parse complement(A..B)', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
-        equal(l.toString(), 'complement(100..200)');
+        featureloc_eq(l, 'complement(100..200)', '', [
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(A..B,C..D)', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
-        equal(l.toString(), 'join(100..200,300..400)');
+        featureloc_eq(l, 'join(100..200,300..400)', 'join', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],false,'300..400']
+        ]);
     });
 
     test('parse order(A..B,C..D)', function(){
-        expect(1);
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
-        equal(l.toString(), 'order(100..200,300..400)');
+        featureloc_eq(l, 'order(100..200,300..400)', 'order', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],false,'300..400']
+        ]);
     });
 
     test('parse complement(join(A..B,C..D))', function(){
-        expect(1);
-        var l = new seqJS.FeatureLocation('complement(join(100..200,300..400))');
+        var l = new seqJS.FeatureLocation(
+            'complement(join(100..200,300..400))');
 
-        equal(l.toString(), 'complement(join(100..200,300..400))');
+        featureloc_eq(l, 'complement(join(100..200,300..400))', 'join', [
+                      [['300'],['400'],true,'300..400'],
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
-        expect(1);
-        var l = new seqJS.FeatureLocation('join(complement(300..400),complement(100..200))');
+        var l = new seqJS.FeatureLocation(
+            'join(complement(300..400),complement(100..200))');
 
-        equal(l.toString(), 'join(complement(300..400),complement(100..200))');
+        featureloc_eq(l, 
+            'join(complement(300..400),complement(100..200))', 'join', [
+                      [['300'],['400'],true,'300..400'],
+                      [['100'],['200'],true,'100..200']
+        ]);
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
-        expect(1);
-        var l = new seqJS.FeatureLocation('join(100..200,complement(join(500..600,300..400)))');
+        var l = new seqJS.FeatureLocation(
+            'join(100..200,complement(join(500..600,300..400)))');
 
-        equal(l.toString(), 'join(100..200,complement(join(500..600,300..400)))');
+        featureloc_eq(l, 
+            'join(100..200,complement(join(500..600,300..400)))', 
+            'join', [
+                      [['100'],['200'],false,'100..200'],
+                      [['300'],['400'],true,'300..400'],
+                      [['500'],['600'],true,'500..600']
+        ]);
     });
 
     test('fail complement(B..A)', function(){
@@ -317,24 +265,70 @@
         expect(1);
 
         throws(function(){
-            new seqJS.FeatureLocation('join(100..200,order(300..400,500..600))');
+            new seqJS.FeatureLocation(
+                'join(100..200,order(300..400,500..600))');
         });
     });
 
+module('seqJS#Feature');
 
-    /*
-    module('seqJS#parser_genbank', {
-        setup: function() {
-            this.parser = seqJS.getParser('genbank');
-            this.data = TEST_DATA.parser_genbank;
+    test('type and location', function(){
+
+        var f = new seqJS.Feature('gene', '100..200');
+
+        feature_eq(f, 'gene', '100..200', []);
+
+        equal(f.type('CDS'), f, "f.type(new) should be chainable");
+        equal(f.location('200.202..300'), f, 
+              "f.location(new) should be chainable");
+
+        feature_eq(f, 'CDS', '200.202..300', []);
+    });
+
+    test('set qualifiers', function(){
+        expect(3);
+
+        var f = new seqJS.Feature('gene', '100..200');
+
+        equal(f.qualifier('gene'), undefined);
+        equal(f.qualifier('gene', 'GENE'), f);
+        equal(f.qualifier('gene'), 'GENE');
+    });
+
+    test('clearQualifiers', function(){
+        var f = new seqJS.Feature('CDS', '200.202..300', 
+                              {q1: 'q1', q2: 'q2', q3: 'q3', q4: 'q4'});
+
+        var qk = f.qualifierKeys();
+        equal(qk.length, 4, "wrong number of qualifiers");
+        for(var i=0; i< 4; i++){
+            equal(qk[i], 'q'+(i+1), 'Item '+i+' is wrong');
         }
+
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q1', 'q1'],
+            ['q2', 'q2'],
+            ['q3', 'q3'],
+            ['q4', 'q4'],
+        ]);
+
+        f.clearQualifiers(['q1','q2']);
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q3', 'q3'],
+            ['q4', 'q4'],
+        ]);
+        
+        f.clearQualifiers('q3');
+        feature_eq(f, 'CDS', '200.202..300', [
+            ['q4', 'q4'],
+        ]);
+
+        f.clearQualifiers();
+        feature_eq(f, 'CDS', '200.202..300', []);
     });
 
-    test('parse valid 0', function(){
-        expect(1);
-        deepEqual(this.parser.parse(this.data.valid[0].string),
-                  this.data.valid[0].object);
-    });
+
+
 
   module('jQuery#seqJS', {
     // This will run before each test in this module.
@@ -353,7 +347,7 @@
     expect(1);
     strictEqual(this.elems.seqJS().text(), 'awesome0awesome1awesome2', 'should be awesome');
   });
-*/
+
   module('jQuery.seqJS');
 
   test('is awesome', function() {
