@@ -146,7 +146,6 @@ var seqJS = seqJS || {};
             if(m){
                 c_data.name = m[1];
                 c_data.length = parseInt(m[2],10);
-                c_data.annotations.unit = m[3];
                 c_data.annotations.residue_type = m[4] || '';
                 c_data.annotations.topology = m[5] || 'linear';
                 c_data.annotations.data_division = m[6];

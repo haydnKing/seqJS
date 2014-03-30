@@ -90,14 +90,70 @@ var seqJS = seqJS || {};
 
         var write_annotation = function(key, value, indent){
             indent = indent || false;
+            value = (value || '.').toString();
 
             return pad_r( (indent ? '  ' : '') + key.toUpperCase(), 10) + 
-                ' ' + line_wrap(value,69,'\n            ');
+                ' ' + line_wrap(value,69,'\n            ') + '\n';
+        };
+
+        var write_reference = function(num, ref){
+
+            var l = [],
+                keys = ['authors','title','journal',' pubmed','medline'];
+            for(var i in ref.location){
+                l.push(ref.location[i].join(' to '));
+            }
+            l = l.join('; ');
+
+            var r = write_annotation('reference', (num+1).toString() + '  (' +
+                (record.seq.unit() === 'bp' ? 'bases' : 'residues') + ' ' +
+                l + ')');
+
+            for(i in keys){
+                if(ref[keys[i].trim()]){
+                    r += write_annotation(keys[i], ref[keys[i].trim()], true);
+                }
+            }
+
+            return r;
+        };
+
+
+        var write_annotations = function(r){
+            var ra = r.annotations,i,
+                exclude = ['accession', 'version', 'keywords', 'source', 
+                    'organism', 'data_division', 'topology', 'residue_type',
+                    'date', 'definition', 'gi',
+                    'authors', 'title', 'journal', 'pubmed', 'medline'],
+                ret = write_annotation('definition', record.desc) + 
+                write_annotation('accession', ra.accession || '0') + 
+                write_annotation('version', (ra.accession || '0') + '.' + 
+                    (ra.version || '0') + '  GI:' + (ra.gi || '0')) +
+                write_annotation('keywords', ra.keywords) + 
+                write_annotation('source', ra.source) + 
+                write_annotation('organism', ra.organism, true) + 
+                write_annotation('', ra.taxonomy.join('; ') + '.');
+
+
+            for(i =0; i < ra.references.length; i++){
+                ret += write_reference(i, ra.references[i]);
+            }
+
+            //add non-standard annotations
+            for(i in ra){
+                if(exclude.indexOf(i) < 0){
+                    if(typeof(ra[i]) === 'string' || ra[i] instanceof String){
+                        ret += write_annotation(i, ra[i]);
+                    }
+                }
+            }
+
+            return ret;
         };
 
 
 
-        return write_locus(record) + write_annotation('definition', record.desc);
+        return write_locus(record) + write_annotations(record);
     };
 
     writers['gb'] = gb_write;
