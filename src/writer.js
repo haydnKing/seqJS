@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -50,28 +51,32 @@ var seqJS = seqJS || {};
                 'DEC'][d.getMonth()] + '-' + d.getFullYear().toString();
         };
 
-        var line_wrap = function(line, max_len, wrap){
+        var word_wrap = function(line, max_len, wrap){
             wrap = wrap || '\n';
             var lines = [],
+                i,
                 l = '',
-                s = line.split(' '),
+                s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
                 w;
-            for(var i in s){
+
+            console.log(line);
+            console.log(s);
+            for(i = 0; i < s.length; i++){
                 w = s[i];
-                if((l.length+w.length) >= max_len){
-                    lines.push(l);
-                    l = w;
+                while((l.length+w.trim().length) >= max_len){
+                    if(l){
+                        lines.push(l.trim());
+                        l = '';
+                    }
+                    else{
+                        lines.push(w.substring(0,max_len));
+                        w = w.substring(max_len);
+                    }
                 }
-                else{
-                    l += ' ' + w;
-                }
+                l += w;
             }
             lines.push(l);
             return lines.join(wrap);
-        };
-        var line_break = function(line, max_len, wrap){
-            wrap = wrap || '\n';
-            return line.match(new RegExp('/.{1,'+max_len+'}/g')).join(wrap);
         };
 
 
@@ -96,8 +101,8 @@ var seqJS = seqJS || {};
             indent = indent || false;
             value = (value || '.').toString();
 
-            return pad_r( (indent ? '  ' : '') + key.toUpperCase(), 10) + 
-                ' ' + line_wrap(value,69,'\n            ') + '\n';
+            return pad_r( (indent ? '  ' : '') + key.toUpperCase(), 11) + 
+                ' ' + word_wrap(value,68,'\n            ') + '\n';
         };
 
         var write_reference = function(num, ref){
@@ -156,21 +161,22 @@ var seqJS = seqJS || {};
         };
 
         var write_feature = function(f){
-            var i,k,v,qk = f.qualifierKeys(),
+            var i,q,v,qk = f.qualifierKeys(),
                 ret = '     ' + pad_r(f.type(),15) + ' ' + 
                 f.location().toString() + '\n';
 
             for(i in qk){
-                k = qk[i];
-                v = f.qualifier(k);
+                v = f.qualifier(qk[i]);
                 if(typeof(v) === 'string' || v instanceof String){
-                    ret += '                    ' + 
-                    line_break('/' + k + '="'+v+'"',60,'\n                     ') + '\n';
+                    q = word_wrap('/' + qk[i] + '="'+v+'"',59);
                 }
                 else
                 {
-                    ret += '                    /'+k+'='+v.toString()+'\n';
+                    q = '/'+qk[i]+'='+v.toString();
                 }
+
+                ret += '                     ' + 
+                    q.split('\n').join('\n                     ') + '\n'; 
             }
 
             return ret;
