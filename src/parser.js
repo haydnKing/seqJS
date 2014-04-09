@@ -86,7 +86,7 @@ var seqJS = seqJS || {};
         };
 
 
-        var LOCUS = /LOCUS       (\S+)\s+(\d+)\s(bp|aa|rc)\s+((?:ss-|ds-|ms)?(?:DNA|RNA|tRNA|mRNA|uRNA|snRNA|cRNA))?\s+(linear|circular)?\s+(\w{3})\s+(\d{1,2}-\w{3}-\d{4})/;
+        var LOCUS = /LOCUS       (\S+)\s+(\d+)\s(bp|aa|rc)\s+(ss-|ds-|ms-)?(DNA|RNA|tRNA|mRNA|uRNA|snRNA|cRNA)?\s+(linear|circular)?\s+(\w{3})\s+(\d{1,2}-\w{3}-\d{4})/;
 
         this.type = function() {return 'gb';};
 
@@ -148,10 +148,11 @@ var seqJS = seqJS || {};
             if(m){
                 c_data.name = m[1];
                 c_data.length = parseInt(m[2],10);
-                c_data.annotations.residue_type = m[4] || '';
-                c_data.annotations.topology = m[5] || 'linear';
-                c_data.annotations.data_division = m[6];
-                c_data.annotations.date = m[7];
+                c_data.annotations.strand_type = m[4] || '';
+                c_data.annotations.residue_type = m[5] || '';
+                c_data.annotations.topology = m[6] || 'linear';
+                c_data.annotations.data_division = m[7];
+                c_data.annotations.date = m[8];
                 
                 state = S_HDR;
             }

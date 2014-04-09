@@ -4,7 +4,7 @@ TEST_DATA.parser_genbank = {};
 TEST_DATA.parser_genbank.valid = [
     {
     string :[
-        "LOCUS       SCU49845                5028 bp    DNA              PLN 21-JUN-1999",
+        "LOCUS       SCU49845                5028 bp     DNA    linear   PLN 21-JUN-1999",
         "DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p",
         "            (AXL2) and Rev7p (REV7) genes, complete cds.",
         "ACCESSION   U49845",

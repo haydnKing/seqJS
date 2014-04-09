@@ -89,8 +89,9 @@ var seqJS = seqJS || {};
               name + ' ' + 
               pad_l(len, 27 - name.length) +
               ' ' + record.seq.unit() + ' ' +
-              pad_l(ra.residue_type || '', 6) +
-              pad_l( (ra.topology === 'circular') ? 'circular' : '', 13) +
+              pad_l( (ra.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
+              pad_r(ra.residue_type || '', 7) +
+              pad_r( (ra.topology === 'circular') ? 'circular' : 'linear', 8) +
               ' ' + (ra.data_division || 'SYN') +
               ' ' + (ra.date || get_date()) + '\n'; 
         };
@@ -106,7 +107,7 @@ var seqJS = seqJS || {};
         var write_reference = function(num, ref){
 
             var l = [],
-                keys = ['authors','title','journal',' pubmed','medline'];
+                keys = ['authors','title','journal','medline',' pubmed'];
             for(var i in ref.location){
                 l.push(ref.location[i].join(' to '));
             }
@@ -129,13 +130,16 @@ var seqJS = seqJS || {};
         var write_annotations = function(r){
             var ra = r.annotations,i,
                 exclude = ['accession', 'version', 'keywords', 'source', 
-                    'organism', 'data_division', 'topology', 'residue_type',
-                    'date', 'definition', 'gi',
+                    'organism', 'data_division', 'topology', 'strand_type', 
+                    'residue_type',
+                    'date', 'definition', 'gi', 'dbsource',
                     'authors', 'title', 'journal', 'pubmed', 'medline'],
                 ret = write_annotation('definition', record.desc) + 
                 write_annotation('accession', ra.accession || '0') + 
                 write_annotation('version', (ra.accession || '0') + '.' + 
                     (ra.version || '0') + '  GI:' + (ra.gi || '0')) +
+                ((ra.dbsource === undefined) ? 
+                    '' : write_annotation('dbsource',ra.dbsource)) + 
                 write_annotation('keywords', ra.keywords) + 
                 write_annotation('source', ra.source) + 
                 write_annotation('organism', ra.organism, true) + 

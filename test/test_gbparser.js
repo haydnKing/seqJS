@@ -38,18 +38,23 @@ module('seqJS#GenbankParser', {
         equal(p.type(), 'gb');
     });
 
-    asyncTest('parse entire new-style record', function(){
-        
-        this.parser.setRecordCb(function(record){
-            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
-            start();
-        });
+    var test_parse = function(num){
+        return function() {
+            this.parser.setRecordCb(function(record){
+                gbrecord_eq(record, TEST_DATA.parser_genbank.valid[num].object);
+                start();
+            });
 
-        this.parser.parse(TEST_DATA.parser_genbank.valid[0].string);
+            this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
+        };
+    };
 
-    });
+    for(var test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    {
+        asyncTest('parse valid ' + test_num, test_parse(test_num));
+    }
 
-    asyncTest('parse entire old-style record', function(){
+    asyncTest('parse old-style record', function(){
         
         this.parser.setRecordCb(function(record){
             gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
@@ -57,17 +62,6 @@ module('seqJS#GenbankParser', {
         });
 
         this.parser.parse(TEST_DATA.parser_genbank.valid[0].old_string);
-
-    });
-
-    asyncTest('parse entire protein record', function(){
-        
-        this.parser.setRecordCb(function(record){
-            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[1].object);
-            start();
-        });
-
-        this.parser.parse(TEST_DATA.parser_genbank.valid[1].string);
 
     });
 
@@ -96,16 +90,24 @@ module('seqJS#GenbankWriter', {
     };
 
 
-    asyncTest('parse/write entire record', function(){
-        this.parser.setRecordCb(function(record){
-            var output = seqJS.write(record, 'gb');
+    var test_write = function(num){
+        return function(){
+            this.parser.setRecordCb(function(record){
+                var output = seqJS.write(record, 'gb');
 
-            compare_file(output, TEST_DATA.parser_genbank.valid[0].string,
-                 'Record[0]');
+                compare_file(output, TEST_DATA.parser_genbank.valid[num].string,
+                     'Record['+num+']');
 
-            start();
-        });
+                start();
+            });
 
-        this.parser.parse(TEST_DATA.parser_genbank.valid[0].string);
+            this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
+        };
+        
+    };
 
-    });
+
+    for(var test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    {
+        asyncTest('parse/write entire record ' + test_num, test_write(test_num));
+    }
