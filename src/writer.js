@@ -1,4 +1,4 @@
-/* global console:true */
+/* unused:false global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -59,8 +59,6 @@ var seqJS = seqJS || {};
                 s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
                 w;
 
-            console.log(line);
-            console.log(s);
             for(i = 0; i < s.length; i++){
                 w = s[i];
                 while((l.length+w.trim().length) >= max_len){
@@ -194,11 +192,31 @@ var seqJS = seqJS || {};
             return ret;
         };
 
+        var write_sequence = function(r){
+            var o = "ORIGIN\n",
+                p,
+                s = r.seq.seq();
+
+            for(p=0; p < s.length; p += 60)
+            {
+                o += pad_l((p+1).toString(), 9) + ' ' + 
+                     s.substr(p,60)
+                        .toLowerCase()
+                        .replace(/(.{10})/g, '$1 ')
+                        .trim() +
+                     '\n';
+            }
+
+            return o;
+        };
+
 
 
         return write_locus(record) + 
             write_annotations(record) +
-            write_features(record);
+            write_features(record) +
+            write_sequence(record) + 
+            '//\n';
     };
 
     writers['gb'] = gb_write;
