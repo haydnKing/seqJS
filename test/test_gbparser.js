@@ -84,7 +84,11 @@ module('seqJS#GenbankWriter', {
         var a = actual.split('\n'),
             e = expected.split('\n');
 
-        equal(a.length, e.length, name + ": Number of lines is wrong");
+        var msg = name + ': Number of lines is wrong';
+        if(a.length > e.length){
+            msg += ' -- extra lines:\n' + a.slice(e.length).join('\n');
+        }
+        equal(a.length, e.length, msg);
 
         for(var i = 0; i < Math.min(a.length, e.length); i++){
             equal(a[i], e[i], name + ": line "+i+" is wrong");
