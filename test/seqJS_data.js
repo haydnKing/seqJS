@@ -168,7 +168,8 @@ TEST_DATA.parser_genbank.valid = [
         "     4861 ttctccactt cactgtcgag ttgctcgttt ttagcggaca aagatttaat ctcgttttct",
         "     4921 ttttcagtgt tagattgctc taattctttg agctgttctc tcagctcctc atatttttct",
         "     4981 tgccatgact cagattctaa ttttaagcta ttcaatttct ctttgatc",
-        "//"].join('\n'),
+        "//",
+        ""].join('\n'),
 
     old_string : [
         'LOCUS       SCU49845     5028 bp    DNA             PLN       21-JUN-1999',
@@ -335,8 +336,8 @@ TEST_DATA.parser_genbank.valid = [
         '     4861 ttctccactt cactgtcgag ttgctcgttt ttagcggaca aagatttaat ctcgttttct',
         '     4921 ttttcagtgt tagattgctc taattctttg agctgttctc tcagctcctc atatttttct',
         '     4981 tgccatgact cagattctaa ttttaagcta ttcaatttct ctttgatc',
-        '//'
-    ].join('\n'),
+        '//',
+        ''].join('\n'),
      object : {
         /* Locus line */
         'name': 'SCU49845',
@@ -577,7 +578,8 @@ TEST_DATA.parser_genbank.valid = [
         '        1 mestlgsdla rlvrvwrali dhrlkplelt qthwvtlhni nrlppeqsqi qlakaigieq',
         '       61 pslvrtldql eekglitrht candrrakri klteqsspii eqvdgvicst rkeilggisp',
         '      121 deiellsgli dklerniiql qsk',
-        '//'].join('\n'),
+        '//',
+        ''].join('\n'),
     object: {
         /* Locus line */
         'name': 'AAD51968',
