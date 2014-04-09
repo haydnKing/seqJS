@@ -97,13 +97,15 @@ var seqJS = seqJS || {};
                 switch(state){
                     case S_LOCUS:
                         more = self._find_locus(lines);
-                        c_data = {
-                            seq: '',
-                            features: [],
-                            annotations: {
-                                references: []
-                        }};
-                        more = self._parse_locus(lines);
+                        if(more){
+                            c_data = {
+                                seq: '',
+                                features: [],
+                                annotations: {
+                                    references: []
+                            }};
+                            more = self._parse_locus(lines);
+                        }
                         break;
                     case S_HDR:
                         more = self._parse_hdr(lines);
@@ -123,13 +125,13 @@ var seqJS = seqJS || {};
         this._find_locus = function(lines){
             var line;
             while(c_line < lines.length){
-                line = lines[c_line];
+                line = lines[c_line].trim();
                 //if line is a locus line
                 if(line.substr(0,12) === 'LOCUS       '){
                     return true;
                 }
-                //if line is a comment
-                else if(comments.indexOf(line.trim()[0]) > -1){
+                //if line is blank or comment
+                else if((line === '') || (comments.indexOf(line[0]) > -1)){
                     c_line++;
                 }
                 else{
