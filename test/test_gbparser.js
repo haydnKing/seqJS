@@ -37,7 +37,7 @@ module('seqJS#GenbankParser', {
         p = seqJS.getParser('genbank');
         equal(p.type(), 'gb');
     });
-/*
+  
     var test_parse = function(num){
         return function() {
             this.parser.setRecordCb(function(record){
@@ -48,7 +48,7 @@ module('seqJS#GenbankParser', {
             this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
         };
     };
-*/
+
     var test_chunk_parse = function(num, chunk_size){
         chunk_size = chunk_size || 64;
         return function() {
@@ -64,17 +64,19 @@ module('seqJS#GenbankParser', {
         };
     };
 
-/*    for(var test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    var test_num;
+
+    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
-*/
-    for(var test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+
+    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
     {
         asyncTest('chunk parse valid ' + test_num, test_chunk_parse(test_num));
     }
 
-/*
+
 
     asyncTest('parse old-style record', function(){
         
@@ -127,9 +129,9 @@ module('seqJS#GenbankWriter', {
     };
 
 
-    for(var test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
     {
         asyncTest('parse/write entire record ' + test_num, test_write(test_num));
     }
-*/
+
 }());
