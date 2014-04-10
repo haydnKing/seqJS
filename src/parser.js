@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -20,10 +21,14 @@ var seqJS = seqJS || {};
 
         this.type = function() {return type;};
         this.parse = function(data){
-            var lines = remaining_data.concat(data.split('\n'));
             try{
+                console.log('parse("'+data.replace(/\n/g,'\\n')+'")');
+                var lines = (remaining_data + data).split('\n');
+                //last item isn't a full line
+                remaining_data = lines[lines.length-1];
+                lines.splice(-1,1);
                 var consumed = self._parse_lines(lines);
-                remaining_data = lines.slice(consumed);
+                remaining_data = lines.slice(consumed).concat(remaining_data).join('\n');
             }
             catch (e) {
                 if(e instanceof Array){
@@ -91,8 +96,9 @@ var seqJS = seqJS || {};
         this.type = function() {return 'gb';};
 
         this._parse_lines = function(lines){
+            console.log('  _parse_lines(['+lines+'])');
             c_line = 0;
-            var more = true;
+            var more = lines.length > c_line;
             while(more){
                 switch(state){
                     case S_LOCUS:
@@ -118,8 +124,8 @@ var seqJS = seqJS || {};
                         break;
                 }
             }
-
-
+            console.log('  -> '+c_line);
+            return c_line;
         };
 
         this._find_locus = function(lines){
