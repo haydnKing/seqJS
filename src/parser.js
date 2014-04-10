@@ -371,7 +371,7 @@ var seqJS = seqJS || {};
             else {
                 c_data.alphabet = 'PROT';
             }
-            var letters = seqJS.Letters[c_data.alphabet];
+            var re = seqJS.Alphabets_RE[c_data.alphabet];
 
             while(c_line < lines.length){
                 line = lines[c_line];
@@ -385,15 +385,16 @@ var seqJS = seqJS || {};
                 
                 line = line.substr(10).replace(/ /g, '').toUpperCase();
                 //checkLetters
-                for(i = 0; i < line.length; i++){
-                    if(letters.indexOf(line[i]) < 0){
-                        //check for ambiguous
-                        if(c_data.alphabet[0] !== 'a'){
-                            c_data.alphabet = 'a' + c_data.alphabet;
-                            letters = seqJS.Letters[c_data.alphabet];
-                            i = i-1;
-                            continue;
+                if(!line.match(re)){
+                    //check for ambiguous
+                    if(c_data.alphabet[0] !== 'a'){
+                        c_data.alphabet = 'a' + c_data.alphabet;
+                        re = seqJS.Alphabets_RE[c_data.alphabet];
+                        if(!line.match(re)){
+                            throw [c_line, "Invalid character '"+line[i]+"'"];
                         }
+                    }
+                    else {
                         throw [c_line, "Invalid character '"+line[i]+"'"];
                     }
                 }

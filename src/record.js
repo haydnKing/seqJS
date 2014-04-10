@@ -32,15 +32,13 @@ var seqJS = seqJS || {};
      * Seq object
      */
     seqJS.Alphabets = ['DNA','aDNA','RNA','aRNA','PROT','aPROT'];
-    seqJS.Letters = {
-        DNA: ['A','C','G','T'],
-        aDNA: ['A','C','G','T','R','Y','S','W','K','M','B','D','H','V','N'],
-        RNA: ['A','C','G','U'],
-        aRNA: ['A','C','G','U','R','Y','S','W','K','M','B','D','H','V','N'],
-        PROT: ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q',
-            'R','S','T','V','W','Y'],
-        aPROT: ['A','C', 'D','E','F','G','H','I','K','L','M','N','P','Q',
-            'R','S','T','V','W','Y','B','X','Z']
+    seqJS.Alphabets_RE = {
+        DNA: /^[ACGT]+$/,
+        aDNA: /^[ACGTRYSWKMBDHVN]+$/,
+        RNA: /^[ACGU]+$/,
+        aRNA: /^[ACGURYSWKMBDHVN]+$/,
+        PROT: /^[ACDEFGHIKLMNPQRSTVWY]+$/,
+        aPROT: /^[ACDEFGHIKLMNPQRSTVWYBXZ]+$/
     };
     seqJS.Seq = function(_seq, _alphabet, _features){
         if(_seq === undefined) { throw 'Argument seq is required';}
