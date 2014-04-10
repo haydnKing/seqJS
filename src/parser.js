@@ -22,7 +22,6 @@ var seqJS = seqJS || {};
         this.type = function() {return type;};
         this.parse = function(data){
             try{
-                console.log('parse("'+data.replace(/\n/g,'\\n')+'")');
                 var lines = (remaining_data + data).split('\n');
                 //last item isn't a full line
                 remaining_data = lines[lines.length-1];
@@ -97,7 +96,6 @@ var seqJS = seqJS || {};
         this.type = function() {return 'gb';};
 
         this._parse_lines = function(lines){
-            console.log('  _parse_lines(['+lines+'])');
             c_line = 0;
             var more = lines.length > c_line;
             while(more){
@@ -125,7 +123,6 @@ var seqJS = seqJS || {};
                         break;
                 }
             }
-            console.log('  -> '+c_line);
             return c_line;
         };
 
@@ -282,8 +279,20 @@ var seqJS = seqJS || {};
         };
 
         this._parse_ft = function(lines){
-            var s_line = c_line;
-            var line_l='', line_r='', c_feat, next_l, next_r, m;
+            console.log('_parse_ft(c_line = '+c_line+'\n\t"'+lines.join('"\n\t"')+'"\n);');
+            var feature_start = c_line;
+            var line_l='', line_r='', c_feat=null, next_l, next_r, m;
+
+            line_l = lines[c_line].substr(0,21).trim();
+            line_r = lines[c_line].substr(21);
+            if(!line_l){
+                throw [c_line, 'Expected new feature'];
+            }
+            c_line++;
+            if(line_l.substr(0,6) === 'ORIGIN'){
+                state = S_SEQ;
+                return c_line < lines.length;
+            }
 
             while(c_line < lines.length){
 
@@ -293,18 +302,13 @@ var seqJS = seqJS || {};
                 //If there's a new line
                 if(next_l || next_r[0] === '/'){
                     //current line is complete
-                    
-                    //if a new feature starts
-                    if(line_l || !c_feat){
-                        //save old feature
-                        if(c_feat){
-                            c_data.features.push(c_feat);
-                        }
-                        if(!line_l){
-                            throw [c_line, 'Feature must have a type'];
-                        }
+                    console.log('\t\tNew line"'+line_l+'" + "'+line_r+'" -- next_l="'+next_l+'"');
+                    //if this line starts a new feature
+                    if(line_l)
+                    {
                         //make a new one
                         try{
+                            console.log('\t\tnew seqJS.Feature("'+line_l+'", "'+line_r+'");');
                             c_feat = new seqJS.Feature(line_l, line_r);
                         }
                         catch(e) {
@@ -314,16 +318,37 @@ var seqJS = seqJS || {};
                     //else if there's a new qualifier
                     else {
                         if(m = /\/(\w+)="(.+)"/.exec(line_r)){
+                            console.log('\t\t\tadd qual("'+m[1]+'", "'+m[2]+'")');
                             c_feat.qualifier(m[1], m[2]);
                         }
                         else if(m = /\/(\w+)=(\d+(?:\.\d+)?)$/.exec(line_r)){
+                            console.log('\t\t\tadd qual("'+m[1]+'", "'+m[2]+'")');
                             c_feat.qualifier(m[1], parseInt(m[2], 10));
                         }
+                        else {
+                            throw [c_line, "Could not parse qualifier"];
+                        }
+                    }                    
+
+                    //if a new feature starts in the next line
+                    if(next_l){
+                        console.log('\t\tSave feature: '+c_feat.type()+' begin new feature at '+c_line);
+                        //save old feature
+                        c_data.features.push(c_feat);
+                        c_feat = null;
+                        //set save line to the point where this line
+                        //started
+                        feature_start = c_line;
                     }
 
                     //move to next line
                     line_l = next_l;
                     line_r = next_r;
+                    if(line_l.substr(0,6) === 'ORIGIN'){
+                        state = S_SEQ;
+                        c_line++;
+                        return c_line < lines.length;
+                    }
                 }
                 else{
                     //next_l continues from this line
@@ -335,7 +360,8 @@ var seqJS = seqJS || {};
             }
             //We ran out of data during the last feature
             //back up to the start of the feature
-            c_line = s_line;
+            c_line = feature_start;
+            console.log('  (ft)-> '+c_line);
             return false;
         };
 
