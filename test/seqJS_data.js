@@ -648,5 +648,26 @@ TEST_DATA.parser_genbank.valid = [
             'deiellsglidklerniiqlqsk'].join('').toUpperCase()
 
     }
-}];
+}/*,
+{
+    string: [
+        'LOCUS       test                     189 bp                         10-APR-2014',
+        'UNIMARK     test annotations',
+        '            test',
+        'FEATURES             Location/Qualifiers',
+        '     primer_bind     69..112',
+        '     primer_bind     complement(69..112)',
+        '     misc_feature    146..151',
+        '                     /db_xref="REBASE:01628"',
+        '                     /cut=3',
+        '                     /ugene_name="ScaI"',
+        'ORIGIN',
+        '        1 CATGCACCAT TCCTTGCGGC GGCGGTGCTC AACGGCCTCA ACCTACTACT GGGCTGCTTC',
+        '       61 CTAATGCAGG AGTCGCATAA GGGAGAGCGG TTCTTCATTT TCATAAAAGG GCATTGTGAC',
+        '      121 ACTTGATTTT CATCATCTCG CAAGAAGTAC TGTTTCCACT CCAGATTGTC TTTTTTTCCA',
+        '      181 TACCATCCT',
+        '//',
+        ''].join('\n'),
+    object:{}
+}*/];
 
