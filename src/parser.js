@@ -17,7 +17,7 @@ var seqJS = seqJS || {};
      *  GenBankParser or FastaParser.
      */
     var Parser = function(type){
-        var remaining_data = [], record_cb, self=this;
+        var remaining_data = [], record_cb, self=this, line_num=0;
 
         this.type = function() {return type;};
         this.parse = function(data){
@@ -29,11 +29,12 @@ var seqJS = seqJS || {};
                 lines.splice(-1,1);
                 var consumed = self._parse_lines(lines);
                 remaining_data = lines.slice(consumed).concat(remaining_data).join('\n');
+                line_num += consumed;
             }
             catch (e) {
                 if(e instanceof Array){
                     throw {
-                        line_num: e[0],
+                        line_num: e[0] + line_num,
                         msg: e[1],
                         line: lines[e[0]],
                         toString: function(){
