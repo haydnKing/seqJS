@@ -282,56 +282,51 @@ var seqJS = seqJS || {};
 
         this._parse_ft = function(lines){
             var s_line = c_line;
-            var line_l, line_r, c_feat, prev_l, prev_r, m;
+            var line_l='', line_r='', c_feat, next_l, next_r, m;
 
             while(c_line < lines.length){
 
-                line_l = lines[c_line].substr(0,21).trim();
-                line_r = lines[c_line].substr(21);
+                next_l = lines[c_line].substr(0,21).trim();
+                next_r = lines[c_line].substr(21);
 
-                //if line is a new statement, parse the previous line
-                if(line_l !== '' || line_r[0] === '/'){
-                    //parse prev_l prev_r
-                    //if there's a new feature
-                    if(prev_l){
-                        if(c_feat){
-                            c_data.features.push(c_feat);
-                            s_line = c_line;
-                        }
-                        try{
-                            c_feat = new seqJS.Feature(prev_l, prev_r);
-                        }
-                        catch (e){
-                            throw [c_line, "Couldn't parse Feature: "+e];
-                        }
-                    }
-                    //if there's a new qualifier
-                    else if(prev_r) {
-                        if(m = /\/(\w+)="(.+)"/.exec(prev_r)){
-                            c_feat.qualifier(m[1],m[2]);
-                        }
-                        else if(m = /\/(\w+)=(\d+)/.exec(prev_r)){
-                            c_feat.qualifier(m[1],parseInt(m[2],10));
-                        }
-                        else {
-                            throw [c_line, "Invalid qualifier line "];
-                        }
-                    }
+                //If there's a new line
+                if(next_l || next_r[0] === '/'){
+                    //current line is complete
                     
-                    prev_l = line_l;
-                    prev_r = line_r;
-
-                    if(line_l.substr(0,6) === 'ORIGIN'){
+                    //if a new feature starts
+                    if(line_l || !c_feat){
+                        //save old feature
                         if(c_feat){
                             c_data.features.push(c_feat);
                         }
-                        state = S_SEQ;
-                        c_line++;
-                        return c_line < lines.length;
+                        if(!line_l){
+                            throw [c_line, 'Feature must have a type'];
+                        }
+                        //make a new one
+                        try{
+                            c_feat = new seqJS.Feature(line_l, line_r);
+                        }
+                        catch(e) {
+                            throw [c_line, 'Couldn\'t parse feature: ' + e];
+                        }
                     }
+                    //else if there's a new qualifier
+                    else {
+                        if(m = /\/(\w+)="(.+)"/.exec(line_r)){
+                            c_feat.qualifier(m[1], m[2]);
+                        }
+                        else if(m = /\/(\w+)=(\d+(?:\.\d+)?)$/.exec(line_r)){
+                            c_feat.qualifier(m[1], parseInt(m[2], 10));
+                        }
+                    }
+
+                    //move to next line
+                    line_l = next_l;
+                    line_r = next_r;
                 }
                 else{
-                    prev_r = prev_r + line_r;
+                    //next_l continues from this line
+                    line_r = line_r + next_r;
                 }
               
 
