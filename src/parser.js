@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -279,90 +278,85 @@ var seqJS = seqJS || {};
         };
 
         this._parse_ft = function(lines){
-            console.log('_parse_ft(c_line = '+c_line+'\n\t"'+lines.join('"\n\t"')+'"\n);');
-            var feature_start = c_line;
-            var line_l='', line_r='', c_feat=null, next_l, next_r, m;
-
-            line_l = lines[c_line].substr(0,21).trim();
-            line_r = lines[c_line].substr(21);
-            if(!line_l){
-                throw [c_line, 'Expected new feature'];
-            }
-            c_line++;
-            if(line_l.substr(0,6) === 'ORIGIN'){
-                state = S_SEQ;
-                return c_line < lines.length;
-            }
+            var feature_start, type;
 
             while(c_line < lines.length){
-
-                next_l = lines[c_line].substr(0,21).trim();
-                next_r = lines[c_line].substr(21);
-
-                //If there's a new line
-                if(next_l || next_r[0] === '/'){
-                    //current line is complete
-                    console.log('\t\tNew line"'+line_l+'" + "'+line_r+'" -- next_l="'+next_l+'"');
-                    //if this line starts a new feature
-                    if(line_l)
-                    {
-                        //make a new one
-                        try{
-                            console.log('\t\tnew seqJS.Feature("'+line_l+'", "'+line_r+'");');
-                            c_feat = new seqJS.Feature(line_l, line_r);
-                        }
-                        catch(e) {
-                            throw [c_line, 'Couldn\'t parse feature: ' + e];
-                        }
-                    }
-                    //else if there's a new qualifier
-                    else {
-                        if(m = /\/(\w+)="(.+)"/.exec(line_r)){
-                            console.log('\t\t\tadd qual("'+m[1]+'", "'+m[2]+'")');
-                            c_feat.qualifier(m[1], m[2]);
-                        }
-                        else if(m = /\/(\w+)=(\d+(?:\.\d+)?)$/.exec(line_r)){
-                            console.log('\t\t\tadd qual("'+m[1]+'", "'+m[2]+'")');
-                            c_feat.qualifier(m[1], parseInt(m[2], 10));
-                        }
-                        else {
-                            throw [c_line, "Could not parse qualifier"];
-                        }
-                    }                    
-
-                    //if a new feature starts in the next line
-                    if(next_l){
-                        console.log('\t\tSave feature: '+c_feat.type()+' begin new feature at '+c_line);
-                        //save old feature
-                        c_data.features.push(c_feat);
-                        c_feat = null;
-                        //set save line to the point where this line
-                        //started
-                        feature_start = c_line;
-                    }
-
-                    //move to next line
-                    line_l = next_l;
-                    line_r = next_r;
-                    if(line_l.substr(0,6) === 'ORIGIN'){
-                        state = S_SEQ;
-                        c_line++;
-                        return c_line < lines.length;
-                    }
+                feature_start = c_line;
+                type = lines[c_line].substr(0,21).trim();
+                if(type === ''){
+                    throw [c_line, 'Expected new Feature'];
                 }
-                else{
-                    //next_l continues from this line
-                    line_r = line_r + next_r;
+                else if(type === 'ORIGIN'){
+                    state = S_SEQ;
+                    c_line++;
+                    return c_line < lines.length;
                 }
-              
+                else if(type === '//'){
+                    throw [c_line, 'Premature end of record'];
+                }
 
+                //consume the feature
                 c_line++;
+                while(c_line < lines.length){
+                    if(lines[c_line].substr(0,21).trim() !== ''){
+                        //save the feature
+                        this._parse_feat(lines.slice(feature_start, c_line), feature_start);
+                        break;
+                    }
+                    c_line++;
+                }
+
             }
-            //We ran out of data during the last feature
-            //back up to the start of the feature
+
+            //Ran out of lines part way through the feature
             c_line = feature_start;
-            console.log('  (ft)-> '+c_line);
             return false;
+        };
+
+        this._parse_feat = function(lines, start_pos){
+            var type = lines[0].substr(0,21).trim(),
+                pos  = lines[0].substr(21),
+                l = 1,
+                feat, line, _line,m;
+
+            lines.push('                     /');
+
+            //parse any remaining pos
+            while(l < lines.length){
+                line = lines[l++].substr(21);
+                if(line[0] === '/'){
+                    break;
+                }
+                pos += line;
+            }
+
+            //make the feature
+            try{
+                feat = new seqJS.Feature(type,pos);
+            }
+            catch(e){
+                throw [start_pos, 'Couldn\'t parse Feature'];
+            }
+
+            //parse the qualifiers
+            while(l < lines.length){
+                _line = lines[l++].substr(21);
+                if(_line[0] === '/'){
+                    if(m = /\/(\w+)="(.+)"/.exec(line)){
+                        feat.qualifier(m[1],m[2]);
+                    }
+                    else if(m = /\/(\w+)=(\d+(?:\.\d+)?)$/.exec(line)){
+                        feat.qualifier(m[1],parseInt(m[2],10));
+                    }
+                    else {
+                        throw [start_pos+l-1, "Invalid qualifier line "];
+                    }
+                    line = '';
+                }
+                line = line + _line;
+            }
+
+            c_data.features.push(feat);
         };
 
 
