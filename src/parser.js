@@ -90,7 +90,7 @@ var seqJS = seqJS || {};
         };
 
 
-        var LOCUS = /LOCUS       (\S+)\s+(\d+)\s(bp|aa|rc)\s+(ss-|ds-|ms-)?(DNA|RNA|tRNA|mRNA|uRNA|snRNA|cRNA)?\s+(linear|circular)?\s+(\w{3})\s+(\d{1,2}-\w{3}-\d{4})/;
+        var LOCUS = /LOCUS       (\S+)\s+(\d+)\s(bp|aa|rc)\s+(ss-|ds-|ms-)?(DNA|RNA|tRNA|mRNA|uRNA|snRNA|cRNA)?\s+(linear|circular)?\s+(\w{3})?\s+(\d{1,2}-\w{3}-\d{4})/;
 
         this.type = function() {return 'gb';};
 
