@@ -648,7 +648,7 @@ TEST_DATA.parser_genbank.valid = [
             'deiellsglidklerniiqlqsk'].join('').toUpperCase()
 
     }
-}/*,
+},
 {
     string: [
         'LOCUS       test                     189 bp                         10-APR-2014',
@@ -668,6 +668,48 @@ TEST_DATA.parser_genbank.valid = [
         '      181 TACCATCCT',
         '//',
         ''].join('\n'),
-    object:{}
-}*/];
+    object: {
+        /* Locus line */
+        'name': 'test',
+        'length': 189,
+        'length_unit': 'bp',
+        'residue_type': '',
+        'alphabet': 'DNA',
+        'topology': 'linear',
+        'data_division': '',
+        'date': '10-APR-2014',
+
+        /* Header */
+        'description': '',
+            //version / accession lines
+        'accession': '',
+        'version': null,
+        'gi': null,
+        'keywords': [],
+        'source': '',
+        'organism': '',
+        'taxonomy': [],
+
+
+        'references': [],
+
+        features: [
+            ['primer_bind','69..112', []],
+            ['primer_bind','complement(69..112)', []],
+            ['misc_feature','146..151',[
+                ['db_xref','REBASE:01628'],
+                ['cut',3],
+                ['ugene_name','ScaI']
+            ]]
+        ],
+
+        seq: [
+            'CATGCACCATTCCTTGCGGCGGCGGTGCTCAACGGCCTCAACCTACTACTGGGCTGCTTC',
+            'CTAATGCAGGAGTCGCATAAGGGAGAGCGGTTCTTCATTTTCATAAAAGGGCATTGTGAC',
+            'ACTTGATTTTCATCATCTCGCAAGAAGTACTGTTTCCACTCCAGATTGTCTTTTTTTCCA',
+            'TACCATCCT'
+        ].join('')
+    }
+
+}];
 

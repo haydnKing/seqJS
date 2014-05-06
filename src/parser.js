@@ -160,7 +160,7 @@ var seqJS = seqJS || {};
                 state = S_HDR;
             }
             else{
-                throw [c_line, 'Badly formatted LOCUS line "'+line+'"'];
+                throw [c_line, 'Badly formatted LOCUS line'];
             }
 
             c_line++;
