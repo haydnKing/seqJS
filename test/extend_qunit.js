@@ -74,6 +74,38 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 };
 
 var gbrecord_eq = function(actual, expected){
+
+/* TODO:
+ *
+ *  Improve annotation parsing and testing.
+ *
+ *  There should be a fixed set of annotations which every SeqRecord is
+ *  guaranteed to have, with fixed default values.
+ *  Therse annotations are always written out first to file, but can appear in
+ *  any order.
+ *
+ *  Test data should include:
+ *      string: input file which should parse correctly
+ *      object: {
+ *          - this level contains things parsed from the LOCUS line (name,
+ *          length, seq etc
+ *
+ *          annotations: [
+ *              ['key', 'value']
+ *              ],
+ *
+ *          references: [
+ *              { as before}
+ *          ]
+ *      },
+ *      output: string which should be the result of read/write
+ *
+ *
+ *
+ *
+ */
+
+
     var an_keys = [
         'residue_type',
         'topology',
