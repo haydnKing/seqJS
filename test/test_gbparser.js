@@ -41,7 +41,8 @@ module('seqJS#GenbankParser', {
     var test_parse = function(num){
         return function() {
             this.parser.setRecordCb(function(record){
-                gbrecord_eq(record, TEST_DATA.parser_genbank.valid[num].object);
+                gbrecord_eq(record, 
+                            TEST_DATA.parser_genbank.valid[num].object);
                 start();
             });
 
@@ -53,7 +54,8 @@ module('seqJS#GenbankParser', {
         chunk_size = chunk_size || 64;
         return function() {
             this.parser.setRecordCb(function(record){
-                gbrecord_eq(record, TEST_DATA.parser_genbank.valid[num].object);
+                gbrecord_eq(record, 
+                            TEST_DATA.parser_genbank.valid[num].object);
                 start();
             });
 
@@ -66,14 +68,17 @@ module('seqJS#GenbankParser', {
 
     var test_num;
 
-    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
+        test_num++)
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
 
-    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
+    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
+        test_num++)
     {
-        asyncTest('chunk parse valid ' + test_num, test_chunk_parse(test_num));
+        asyncTest('chunk parse valid ' + test_num, 
+                  test_chunk_parse(test_num));
     }
 
 
@@ -89,49 +94,5 @@ module('seqJS#GenbankParser', {
 
     });
 
-module('seqJS#GenbankWriter', {
-    setup: function() {
-       this.parser = seqJS.getParser('genbank');
-    }
-});
-
-    var compare_file = function(actual, expected, name){
-
-        var a = actual.split('\n'),
-            e = expected.split('\n');
-
-        var msg = name + ': Number of lines is wrong';
-        if(a.length > e.length){
-            msg += ' -- extra lines:\n' + a.slice(e.length).join('\n');
-        }
-        equal(a.length, e.length, msg);
-
-        for(var i = 0; i < Math.min(a.length, e.length); i++){
-            equal(a[i], e[i], name + ": line "+i+" is wrong");
-        }
-    };
-
-
-    var test_write = function(num){
-        return function(){
-            this.parser.setRecordCb(function(record){
-                var output = seqJS.write(record, 'gb');
-
-                compare_file(output, TEST_DATA.parser_genbank.valid[num].string,
-                     'Record['+num+']');
-
-                start();
-            });
-
-            this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
-        };
-        
-    };
-
-
-    for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; test_num++)
-    {
-        asyncTest('parse/write entire record ' + test_num, test_write(test_num));
-    }
 
 }());
