@@ -39,8 +39,11 @@ module('seqJS#GenbankWriter', {
         }
         equal(a.length, e.length, msg);
 
+        var t;
         for(var i = 0; i < Math.min(a.length, e.length); i++){
-            equal(a[i], e[i], name + ": line "+i+" is wrong");
+            t = (a[i] === e[i]);
+            ok(t, name + ": line "+i+" is wrong\n\tExpected: \""+e[i]+"\"\n\tActual  : \""+a[i]+"\"");
+            if(!t) {break;}
         }
     };
 

@@ -106,6 +106,11 @@ var seqJS = seqJS || {};
                                 seq: '',
                                 features: [],
                                 annotations: {
+                                    desc: '',
+                                    accession: '',
+                                    source: '',
+                                    organism: '',
+                                    taxonomy: [],
                                     references: []
                             }};
                             more = self._parse_locus(lines);
