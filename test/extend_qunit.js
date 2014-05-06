@@ -102,6 +102,21 @@ var gbrecord_eq = function(actual, expected){
  *
  *
  *
+ * required annotation keys:
+ *  - data_division
+ *  - date
+ *  - source 
+ *  - organism
+ *  - taxonomy
+ *
+ *
+ * sequence anotations:
+ *  - topology
+ *  - residue_type
+ *  - alphabet
+ *  - length_unit
+ *
+ *
  *
  */
 
