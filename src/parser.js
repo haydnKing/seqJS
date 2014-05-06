@@ -154,7 +154,7 @@ var seqJS = seqJS || {};
                 c_data.annotations.strand_type = m[4] || '';
                 c_data.annotations.residue_type = m[5] || '';
                 c_data.annotations.topology = m[6] || 'linear';
-                c_data.annotations.data_division = m[7];
+                c_data.annotations.data_division = m[7] || '';
                 c_data.annotations.date = m[8];
                 
                 state = S_HDR;
