@@ -104,6 +104,13 @@ var seqJS = seqJS || {};
             _residue_type = v;
             return this;
         };
+        this.strandType = function(v) {
+            if(v === undefined){
+                return _strand_type;
+            }
+            _strand_type = v;
+            return this;
+        };
         this.topology = function() {
             return _topology;
         };

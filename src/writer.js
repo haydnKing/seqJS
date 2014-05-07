@@ -1,4 +1,3 @@
-/* unused:false global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -79,7 +78,7 @@ var seqJS = seqJS || {};
 
 
         var write_locus = function(record){
-            var ra = record.annotations,
+            var ra = record.annotation,
                 rs = record.seq,
                 name = record.name,
                 len = record.length().toString();
@@ -90,11 +89,11 @@ var seqJS = seqJS || {};
               name + ' ' + 
               pad_l(len, 27 - name.length) +
               ' ' + record.seq.lengthUnit() + ' ' +
-              pad_l( (rs.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
-              pad_r(ra.residue_type || '', 7) +
-              pad_r( (ra.topology === 'circular') ? 'circular' : 'linear', 8) +
-              ' ' + (ra.data_division || 'SYN') +
-              ' ' + (ra.date || get_date()) + '\n'; 
+              pad_l( (rs.strandType() ? (rs.strandType()+'-') : ''), 3) + ' ' + 
+              pad_r(rs.residueType() || '', 7) +
+              pad_r( (rs.topology() === 'circular') ? 'circular' : 'linear', 8) +
+              ' ' + (ra('data_division') || 'SYN') +
+              ' ' + (ra('date') || get_date()) + '\n'; 
         };
 
         var write_annotation = function(key, value, indent){
@@ -129,33 +128,34 @@ var seqJS = seqJS || {};
 
 
         var write_annotations = function(r){
-            var ra = r.annotations,i,
+            var ra = r.annotation,i,
+                annots = r.listAnnotations(),
                 exclude = ['accession', 'version', 'keywords', 'source', 
                     'organism', 'data_division', 'topology', 'strand_type', 
                     'residue_type',
                     'date', 'definition', 'gi', 'dbsource',
                     'authors', 'title', 'journal', 'pubmed', 'medline'],
                 ret = write_annotation('definition', record.desc) + 
-                write_annotation('accession', ra.accession || '0') + 
-                write_annotation('version', (ra.accession || '0') + '.' + 
-                    (ra.version || '0') + '  GI:' + (ra.gi || '0')) +
-                ((ra.dbsource === undefined) ? 
-                    '' : write_annotation('dbsource',ra.dbsource)) + 
-                write_annotation('keywords', ra.keywords) + 
-                write_annotation('source', ra.source) + 
-                write_annotation('organism', ra.organism, true) + 
-                write_annotation('', ra.taxonomy.join('; ') + '.');
+                write_annotation('accession', ra('accession') || '0') + 
+                write_annotation('version', (ra('accession') || '0') + '.' + 
+                    (ra('version') || '0') + '  GI:' + (ra('gi') || '0')) +
+                ((ra('dbsource') === undefined) ? 
+                    '' : write_annotation('dbsource',ra('dbsource'))) + 
+                write_annotation('keywords', ra('keywords')) + 
+                write_annotation('source', ra('source')) + 
+                write_annotation('organism', ra('organism'), true) + 
+                write_annotation('', ra('taxonomy').join('; ') + '.');
 
 
-            for(i =0; i < ra.references.length; i++){
-                ret += write_reference(i, ra.references[i]);
+            for(i =0; i < ra('references').length; i++){
+                ret += write_reference(i, ra('references')[i]);
             }
 
             //add non-standard annotations
-            for(i in ra){
-                if(exclude.indexOf(i) < 0){
-                    if(typeof(ra[i]) === 'string' || ra[i] instanceof String){
-                        ret += write_annotation(i, ra[i]);
+            for(i in annots){
+                if(exclude.indexOf(annots[i]) < 0){
+                    if(typeof(ra(annots[i])) === 'string' || ra(annots[i]) instanceof String){
+                        ret += write_annotation(annots[i], ra(annots[i]));
                     }
                 }
             }

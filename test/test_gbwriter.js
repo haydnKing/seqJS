@@ -49,18 +49,22 @@ module('seqJS#GenbankWriter', {
 
 
     var test_write = function(num){
+        var data = TEST_DATA.parser_genbank.valid[num];
         return function(){
             this.parser.setRecordCb(function(record){
                 var output = seqJS.write(record, 'gb');
 
-                compare_file(output, 
-                             TEST_DATA.parser_genbank.valid[num].input,
-                     'Record['+num+']');
+                if(data.output !== undefined){
+                    compare_file(output, data.output, 'Record['+num+']');
+                }
+                else {
+                    compare_file(output, data.input, 'Record['+num+']');
+                }
 
                 start();
             });
 
-            this.parser.parse(TEST_DATA.parser_genbank.valid[num].input);
+            this.parser.parse(data.input);
         };
         
     };

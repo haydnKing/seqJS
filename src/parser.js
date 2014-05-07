@@ -89,7 +89,6 @@ var seqJS = seqJS || {};
             JOURNAL: 'journal',
             MEDLINE: 'medline',
             PUBMED: 'pubmed',
-            COMMENT: 'comment'
         };
 
 
