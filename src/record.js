@@ -37,6 +37,16 @@ var seqJS = seqJS || {};
             }
         };
 
+        this.getAnnotations = function() {
+            var ret = [], p;
+            for(p in annotations){
+                if(Object.prototype.hasOwnProperty.call(annotations,p)){
+                    ret.push(p);
+                }
+            }
+            return ret;            
+        };
+
         this.clearAnnotation = function(k) {
             annotations[k] = undefined;
         };
@@ -58,10 +68,16 @@ var seqJS = seqJS || {};
         PROT: /^[ACDEFGHIKLMNPQRSTVWY]+$/,
         aPROT: /^[ACDEFGHIKLMNPQRSTVWYBXZ]+$/
     };
-    seqJS.Seq = function(_seq, _alphabet, _features){
+    seqJS.Seq = function(_seq, _alphabet, _features, _topology, _length_unit, _residue_type){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
         _features = _features || [];
+        _topology = _topology || "linear";
+        if(['linear','circular'].indexOf(_topology) < 0){
+            throw 'topology must be \'linear\' or \'circular\'';
+        }
+        _length_unit = _length_unit || _length_unit;
+        _residue_type= _residue_type || _residue_type;
 
         _seq = _seq.toUpperCase();
         if(seqJS.Alphabets.indexOf(_alphabet) < 0){
@@ -71,11 +87,28 @@ var seqJS = seqJS || {};
         this.length = function() {return _seq.length;};
         this.alphabet = function() {return _alphabet;};
         this.features = function() {return _features;};
-        this.unit = function() {
-            if(_alphabet.indexOf('PROT') > -1){
-                return 'aa';
+        this.lengthUnit = function(v) {
+            if(v === undefined){
+                return _length_unit;
             }
-            return 'bp';
+            _length_unit = v;
+            return this;
+        };
+        this.residueType = function(v) {
+            if(v === undefined){
+                return _residue_type;
+            }
+            _residue_type = v;
+            return this;
+        };
+        this.topology = function() {
+            return _topology;
+        };
+        this.linearize = function() {
+            _tolology = 'linear';
+        };
+        this.circularize = function() {
+            _topology = 'circular';
         };
     };
 
