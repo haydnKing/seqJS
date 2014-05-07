@@ -75,51 +75,6 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 
 var gbrecord_eq = function(actual, expected){
 
-/* TODO:
- *
- *  Improve annotation parsing and testing.
- *
- *  There should be a fixed set of annotations which every SeqRecord is
- *  guaranteed to have, with fixed default values.
- *  Therse annotations are always written out first to file, but can appear in
- *  any order.
- *
- *  Test data should include:
- *      string: input file which should parse correctly
- *      object: {
- *          - this level contains things parsed from the LOCUS line (name,
- *          length, seq etc
- *
- *          annotations: [
- *              ['key', 'value']
- *              ],
- *
- *          references: [
- *              { as before}
- *          ]
- *      },
- *      output: string which should be the result of read/write
- *
- *
- *
- * required annotation keys:
- *  - data_division
- *  - date
- *  - source 
- *  - organism
- *  - taxonomy
- *
- *
- * sequence anotations:
- *  - topology
- *  - residue_type
- *  - alphabet
- *  - length_unit
- *
- *
- *
- */
-
     // ============================= Test Metadata ============================
     equal(actual.name, expected['name'], "Name is wrong");
     equal(actual.id, expected['id'], "ID is wrong");
@@ -144,7 +99,7 @@ var gbrecord_eq = function(actual, expected){
         actual_annotations[i] = actual.annotation(i);
     }
 
-    deelEqual(actual_annotations, expected.annotations, "Annotations are incorrect");
+    deepEqual(actual_annotations, expected.annotations, "Annotations are incorrect");
 
     // ============================= Test References ==========================
     for(i = 0; i < expected.references.length; i++){

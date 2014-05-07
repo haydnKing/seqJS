@@ -22,7 +22,7 @@ var seqJS = seqJS || {};
         this.name = name || "unnamed";
         this.desc = desc || "";
         
-        var annotations = annotations || {};
+        annotations = annotations || {};
 
         this.annotation = function(k, v) {
             if(k === undefined){
@@ -105,7 +105,7 @@ var seqJS = seqJS || {};
             return _topology;
         };
         this.linearize = function() {
-            _tolology = 'linear';
+            _topology = 'linear';
         };
         this.circularize = function() {
             _topology = 'circular';
