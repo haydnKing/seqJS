@@ -21,7 +21,25 @@ var seqJS = seqJS || {};
         this.id = id || 0;
         this.name = name || "unnamed";
         this.desc = desc || "";
-        this.annotations = annotations || {};
+        
+        var annotations = annotations || {};
+
+        this.annotation = function(k, v) {
+            if(k === undefined){
+                throw "Record::annotation(k,v): key is required";
+            }
+            if(v === undefined){
+                return annotations[k];
+            }
+            else {
+                annotations[k] = v;
+                return this;
+            }
+        };
+
+        this.clearAnnotation = function(k) {
+            annotations[k] = undefined;
+        };
 
         this.length = function() {
             return this.seq.length();
