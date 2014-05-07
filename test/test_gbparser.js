@@ -1,4 +1,4 @@
-/* global seqJS:true, TEST_DATA:true */
+/* global seqJS:true, TEST_DATA:true*/
 /* global gbrecord_eq:true */
 
 (function() {
@@ -46,10 +46,10 @@ module('seqJS#GenbankParser', {
                 start();
             });
 
-            this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
+            this.parser.parse(TEST_DATA.parser_genbank.valid[num].input);
         };
     };
-
+/*
     var test_chunk_parse = function(num, chunk_size){
         chunk_size = chunk_size || 64;
         return function() {
@@ -59,13 +59,14 @@ module('seqJS#GenbankParser', {
                 start();
             });
 
-            var d = TEST_DATA.parser_genbank.valid[num].string;
+            var d = TEST_DATA.parser_genbank.valid[num].input;
             for(var i=0; i < d.length; i+=chunk_size){
                 this.parser.parse(d.substr(i,chunk_size));
             }
+
         };
     };
-
+*/
     var test_num;
 
     for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
@@ -73,26 +74,12 @@ module('seqJS#GenbankParser', {
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
-
+/*
     for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
         test_num++)
     {
         asyncTest('chunk parse valid ' + test_num, 
                   test_chunk_parse(test_num));
     }
-
-
-
-    asyncTest('parse old-style record', function(){
-        
-        this.parser.setRecordCb(function(record){
-            gbrecord_eq(record, TEST_DATA.parser_genbank.valid[0].object);
-            start();
-        });
-
-        this.parser.parse(TEST_DATA.parser_genbank.valid[0].old_string);
-
-    });
-
-
+*/
 }());

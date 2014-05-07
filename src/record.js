@@ -37,12 +37,10 @@ var seqJS = seqJS || {};
             }
         };
 
-        this.getAnnotations = function() {
+        this.listAnnotations = function() {
             var ret = [], p;
             for(p in annotations){
-                if(Object.prototype.hasOwnProperty.call(annotations,p)){
-                    ret.push(p);
-                }
+                ret.push(p);
             }
             return ret;            
         };

@@ -88,7 +88,7 @@ var seqJS = seqJS || {};
             return "LOCUS       " +
               name + ' ' + 
               pad_l(len, 27 - name.length) +
-              ' ' + record.seq.unit() + ' ' +
+              ' ' + record.seq.lengthUnit() + ' ' +
               pad_l( (ra.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
               pad_r(ra.residue_type || '', 7) +
               pad_r( (ra.topology === 'circular') ? 'circular' : 'linear', 8) +
@@ -114,7 +114,7 @@ var seqJS = seqJS || {};
             l = l.join('; ');
 
             var r = write_annotation('reference', (num+1).toString() + '  (' +
-                (record.seq.unit() === 'bp' ? 'bases' : 'residues') + ' ' +
+                (record.seq.lengthUnit() === 'bp' ? 'bases' : 'residues') + ' ' +
                 l + ')');
 
             for(i in keys){

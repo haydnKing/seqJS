@@ -2,7 +2,7 @@ var TEST_DATA = {};
 
 TEST_DATA.parser_genbank = {};
 TEST_DATA.parser_genbank.valid = [
-    {
+{
     output :[
         "LOCUS       SCU49845                5028 bp     DNA    linear   PLN 21-JUN-1999",
         "DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p",
@@ -341,6 +341,7 @@ TEST_DATA.parser_genbank.valid = [
      object : {
         /* Meta-data */
         'name': 'SCU49845',
+        'id': 'SCU49845',
         'description': 'Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p (AXL2) and Rev7p (REV7) genes, complete cds.',
 
 
@@ -351,7 +352,7 @@ TEST_DATA.parser_genbank.valid = [
             'accession': 'U49845',
             'version': 1,
             'gi': 1293613,
-            'keywords': [],
+            'keywords': '.',
             'source': 'Saccharomyces cerevisiae (baker\'s yeast)',
             'organism': 'Saccharomyces cerevisiae',
             'taxonomy': ['Eukaryota', 'Fungi', 'Ascomycota', 'Saccharomycotina', 
@@ -592,18 +593,17 @@ TEST_DATA.parser_genbank.valid = [
     object: {
         /* metadata */
         'name': 'AAD51968',
+        'id': 'AAD51968',
         'description': 'transcriptional regulator RovA [Yersinia enterocolitica].',
 
         annotations: {
             'data_division': 'BCT',
             'date': '21-AUG-2001',
-
-            /* Header */
-                //version / accession lines
+            'dbsource': 'locus AF171097 accession AF171097.1',
             'accession': 'AAD51968',
             'version': 1,
             'gi': 5805369,
-            'keywords': [],
+            'keywords': '.',
             'source': 'Yersinia enterocolitica',
             'organism': 'Yersinia enterocolitica',
             'taxonomy': ['Bacteria','Proteobacteria','Gammaproteobacteria',
@@ -686,19 +686,18 @@ TEST_DATA.parser_genbank.valid = [
     object: {
         /* metadata */
         'name': 'test',
+        'id': 'test',
         'description': '',
 
 
         annotations: {
             'data_division': '',
             'date': '10-APR-2014',
-            'accession': '',
-            'version': null,
-            'gi': null,
-            'keywords': [],
             'source': '',
             'organism': '',
             'taxonomy': [],
+            'accession': '',
+            "unimark": "test annotations test"
         },
 
         references: [],

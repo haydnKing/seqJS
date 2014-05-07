@@ -86,17 +86,21 @@ var gbrecord_eq = function(actual, expected){
         'date',
         'source',
         'organism',
-        'taxonomy'];
+        'taxonomy',
+        'references'];
 
     var actual_annotations = {}, i;
 
     for(i = 0; i < required_annotations.length; i++){
-        ok(actual_annotations.indexOf(required_annotations[i]) >= 0, 
+        ok(actual.annotation(required_annotations[i]) !== undefined, 
            "Required annotation " + required_annotations[i] + " is missing");
     }
 
-    for(i in actual.annotations()){
-        actual_annotations[i] = actual.annotation(i);
+    var anames = actual.listAnnotations();
+    for(i in anames){
+        if(anames[i] !== 'references'){
+            actual_annotations[anames[i]] = actual.annotation(anames[i]);
+        }
     }
 
     deepEqual(actual_annotations, expected.annotations, "Annotations are incorrect");
@@ -104,7 +108,7 @@ var gbrecord_eq = function(actual, expected){
     // ============================= Test References ==========================
     for(i = 0; i < expected.references.length; i++){
         var eref = expected.references[i],
-            aref = actual.annotations.references[i];
+            aref = actual.annotation('references')[i];
         deepEqual(aref, eref, "Reference "+i+" is wrong");
     }
 

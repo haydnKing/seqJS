@@ -1,4 +1,4 @@
-/* global seqJS:true, TEST_DATA:true */
+// /* global seqJS:true, TEST_DATA:true */
 
 (function() {
   /*
@@ -21,7 +21,7 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
-
+/*
 module('seqJS#GenbankWriter', {
     setup: function() {
        this.parser = seqJS.getParser('genbank');
@@ -54,13 +54,13 @@ module('seqJS#GenbankWriter', {
                 var output = seqJS.write(record, 'gb');
 
                 compare_file(output, 
-                             TEST_DATA.parser_genbank.valid[num].string,
+                             TEST_DATA.parser_genbank.valid[num].input,
                      'Record['+num+']');
 
                 start();
             });
 
-            this.parser.parse(TEST_DATA.parser_genbank.valid[num].string);
+            this.parser.parse(TEST_DATA.parser_genbank.valid[num].input);
         };
         
     };
@@ -73,6 +73,6 @@ module('seqJS#GenbankWriter', {
         asyncTest('parse/write entire record ' + test_num, 
                   test_write(test_num));
     }
-
+*/
 }());
 

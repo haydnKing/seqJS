@@ -20,6 +20,9 @@ var seqJS = seqJS || {};
 
         this.type = function() {return type;};
         this.parse = function(data){
+            if(data === undefined){
+                throw "Parser::parse: data undefined";
+            }
             try{
                 var lines = (remaining_data + data).split('\n');
                 //last item isn't a full line
@@ -103,11 +106,12 @@ var seqJS = seqJS || {};
                         more = self._find_locus(lines);
                         if(more){
                             c_data = {
-                                seq: '',
+                                s: {},
                                 features: [],
                                 annotations: {
-                                    desc: '',
                                     accession: '',
+                                    data_division: '',
+                                    date: '',
                                     source: '',
                                     organism: '',
                                     taxonomy: [],
@@ -154,11 +158,12 @@ var seqJS = seqJS || {};
 
             var m = LOCUS.exec(line);
             if(m){
-                c_data.name = m[1];
+                c_data.name = c_data.id = m[1];
                 c_data.length = parseInt(m[2],10);
-                c_data.annotations.strand_type = m[4] || '';
-                c_data.annotations.residue_type = m[5] || '';
-                c_data.annotations.topology = m[6] || 'linear';
+                c_data.s.length_unit = m[3] || '';
+                c_data.s.strand_type = m[4] || '';
+                c_data.s.residue_type = m[5] || '';
+                c_data.s.topology = m[6] || 'linear';
                 c_data.annotations.data_division = m[7] || '';
                 c_data.annotations.date = m[8];
                 
@@ -229,55 +234,59 @@ var seqJS = seqJS || {};
                 }
                 c_data.annotations.references[l-1][refmap[key]] = v;
             }
-            switch(key){
-                case 'REFERENCE':
-                    value = value.join(' ');
-                    l = [];
-                    m = /(\d+)\s+\(\w+ (.+)\)/.exec(value);
-                    if(m){
-                        l = m[2].split(';').map(function(v){
-                            m2 = /(\d+) to (\d+)/.exec(v);
-                            if(m2){
-                                return [parseInt(m2[1],10), parseInt(m2[2],10)];
-                            }
-                            else{
-                                throw [c_line, "Badly formatted REFERENCE"];
-                            }
+            else {
+                switch(key){
+                    case 'REFERENCE':
+                        value = value.join(' ');
+                        l = [];
+                        m = /(\d+)\s+\(\w+ (.+)\)/.exec(value);
+                        if(m){
+                            l = m[2].split(';').map(function(v){
+                                m2 = /(\d+) to (\d+)/.exec(v);
+                                if(m2){
+                                    return [parseInt(m2[1],10), 
+                                            parseInt(m2[2],10)];
+                                }
+                                else{
+                                    throw [c_line, "Badly formatted REFERENCE"];
+                                }
+                            });
+                        }
+                        else {
+                            throw [c_line, "Badly formatted REFERENCE"];
+                        }
+                        c_data.annotations.references.push({
+                            location: l
                         });
-                    }
-                    else {
-                        throw [c_line, "Badly formatted REFERENCE"];
-                    }
-                    c_data.annotations.references.push({
-                        location: l
-                    });
-                    break;
-                case 'VERSION':
-                    //version line should be formatted 
-                    //      ACCESSION.version [GI:gi]
-                    m = /(\S+)\.(\d+)(?:\s+GI:(\d+))?/.exec(value.join(' '));
-                    if(m){
-                        c_data.annotations['accession'] = m[1];
-                        c_data.annotations['version'] = m[2];
-                        c_data.annotations['gi'] = m[3];
-                    }
-                    else {
-                        c_data.annotations['version'] = value.join(' ');
-                    }
-                    break;
-                case 'ORGANISM':
-                    //ORGANISM line - organism name \n taxonomy.
-                    c_data.annotations.organism = value[0];
-                    var a = value.slice(1).join(' ').trim();
-                    if(a[a.length-1] === '.'){
-                        a = a.slice(0, a.length-1);
-                    }
-                    c_data.annotations.taxonomy = a.split(';').map(function(v){
-                        return v.trim();
-                    });
-                    break;
-                default: 
-                    c_data.annotations[key.toLowerCase()] = value.join(' ');
+                        break;
+                    case 'VERSION':
+                        //version line should be formatted 
+                        //      ACCESSION.version [GI:gi]
+                        m = /(\S+)\.(\d+)(?:\s+GI:(\d+))?/.exec(value.join(' '));
+                        if(m){
+                            c_data.annotations['accession'] = m[1];
+                            c_data.annotations['version'] = parseInt(m[2],10);
+                            c_data.annotations['gi'] = parseInt(m[3],10);
+                        }
+                        else {
+                            c_data.annotations['version'] = value.join(' ');
+                        }
+                        break;
+                    case 'ORGANISM':
+                        //ORGANISM line - organism name \n taxonomy.
+                        c_data.annotations.organism = value[0];
+                        var a = value.slice(1).join(' ').trim();
+                        if(a[a.length-1] === '.'){
+                            a = a.slice(0, a.length-1);
+                        }
+                        c_data.annotations.taxonomy = a.split(';').map(
+                            function(v){
+                                return v.trim();
+                        });
+                        break;
+                    default: 
+                        c_data.annotations[key.toLowerCase()] = value.join(' ');
+                }
             }
 
         };
@@ -366,17 +375,17 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, rt = (c_data.annotations.residue_type || '').toUpperCase();
+            var line, i, rt = (c_data.s.residue_type || '').toUpperCase();
             if(rt.indexOf('DNA') > -1){
-                c_data.alphabet = 'DNA';
+                c_data.s.alphabet = 'DNA';
             }
             else if(rt.indexOf('RNA') > -1){
-                c_data.alphabet = 'RNA';
+                c_data.s.alphabet = 'RNA';
             }
             else {
-                c_data.alphabet = 'PROT';
+                c_data.s.alphabet = 'PROT';
             }
-            var re = seqJS.Alphabets_RE[c_data.alphabet];
+            var re = seqJS.Alphabets_RE[c_data.s.alphabet];
 
             while(c_line < lines.length){
                 line = lines[c_line];
@@ -392,9 +401,9 @@ var seqJS = seqJS || {};
                 //checkLetters
                 if(!line.match(re)){
                     //check for ambiguous
-                    if(c_data.alphabet[0] !== 'a'){
-                        c_data.alphabet = 'a' + c_data.alphabet;
-                        re = seqJS.Alphabets_RE[c_data.alphabet];
+                    if(c_data.s.alphabet[0] !== 'a'){
+                        c_data.s.alphabet = 'a' + c_data.s.alphabet;
+                        re = seqJS.Alphabets_RE[c_data.s.alphabet];
                         if(!line.match(re)){
                             throw [c_line, "Invalid character '"+line[i]+"'"];
                         }
@@ -403,18 +412,22 @@ var seqJS = seqJS || {};
                         throw [c_line, "Invalid character '"+line[i]+"'"];
                     }
                 }
-                c_data.seq = c_data.seq + line;
+                c_data.s.seq = c_data.s.seq + line;
                 c_line++;
             }
             return c_line < lines.length;
         };
 
         this._build_record = function(){
-            var seq = new seqJS.Seq(c_data.seq, 
-                                    c_data.alphabet, 
-                                    c_data.features);
 
-            var r = new seqJS.Record(seq, 0, c_data.name, c_data.desc, c_data.annotations);
+            var seq = new seqJS.Seq(c_data.s.seq, 
+                                    c_data.s.alphabet, 
+                                    c_data.features,
+                                    c_data.s.topology,
+                                    c_data.s.length_unit,
+                                    c_data.s.residue_type);
+
+            var r = new seqJS.Record(seq, c_data.id, c_data.name, c_data.desc, c_data.annotations);
 
             self._triggerRecordCb(r);
         };
