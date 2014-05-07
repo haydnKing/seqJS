@@ -171,7 +171,7 @@ var seqJS = seqJS || {};
             for(i in qk){
                 v = f.qualifier(qk[i]);
                 if(typeof(v) === 'string' || v instanceof String){
-                    q = word_wrap('/' + qk[i] + '="'+v+'"',59);
+                    q = word_wrap('/' + qk[i] + '="'+v+'"',58);
                 }
                 else
                 {
