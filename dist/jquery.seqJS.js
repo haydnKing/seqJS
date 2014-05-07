@@ -1,4 +1,4 @@
-/*! Seqjs - v0.1.0 - 2014-05-06
+/*! Seqjs - v0.1.0 - 2014-05-07
 * https://github.com/haydnKing/seqJS
 * Copyright (c) 2014 Haydn King; Licensed MIT */
 (function($) {

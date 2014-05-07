@@ -174,6 +174,39 @@ var seqJS = seqJS || {};
             else{
                 throw [c_line, 'Badly formatted LOCUS line'];
             }
+            
+            //guess sequence alphabet
+            var rt = c_data.s.residue_type.toUpperCase(),
+                lu = c_data.s.length_unit;
+            switch(lu){
+                case 'aa':
+                    c_data.s.palphabet = ['PROT', 'aPROT'];
+                    break;
+                case 'bp':
+                    if(rt.indexOf('RNA') >= 0){
+                        c_data.s.palphabet = ['RNA', 'aRNA'];
+                    }
+                    else if(rt.indexOf('DNA') >= 0){
+                        c_data.s.palphabet = ['DNA', 'aDNA'];
+                    }
+                    else{
+                        c_data.s.palphabet = ['DNA', 'aDNA', 'RNA', 'aRNA'];
+                    }
+                    break;
+                case 'rc':
+                    if(rt.indexOf('RNA') >= 0){
+                        c_data.s.palphabet = ['RNA', 'aRNA'];
+                    }
+                    else if(rt.indexOf('DNA') >= 0){
+                        c_data.s.palphabet = ['DNA', 'aDNA'];
+                    }
+                    else{
+                        c_data.s.palphabet = ['DNA', 'aDNA', 'RNA', 'aRNA', 'PROT', 'aPROT'];
+                    }
+                    break;
+
+            }
+            c_data.s.alphabet = c_data.s.palphabet[0];
 
             c_line++;
             return c_line < lines.length;
@@ -377,16 +410,12 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, rt = (c_data.s.residue_type || '').toUpperCase();
-            if(rt.indexOf('DNA') > -1){
-                c_data.s.alphabet = 'DNA';
-            }
-            else if(rt.indexOf('RNA') > -1){
-                c_data.s.alphabet = 'RNA';
-            }
-            else {
-                c_data.s.alphabet = 'PROT';
-            }
+            var line, i, 
+                filter_cb = function(a){
+                        var re = seqJS.Alphabets_RE[a];
+                        return line.match(re);
+                    };
+
             var re = seqJS.Alphabets_RE[c_data.s.alphabet];
 
             while(c_line < lines.length){
@@ -402,17 +431,15 @@ var seqJS = seqJS || {};
                 line = line.substr(10).replace(/ /g, '').toUpperCase();
                 //checkLetters
                 if(!line.match(re)){
-                    //check for ambiguous
-                    if(c_data.s.alphabet[0] !== 'a'){
-                        c_data.s.alphabet = 'a' + c_data.s.alphabet;
-                        re = seqJS.Alphabets_RE[c_data.s.alphabet];
-                        if(!line.match(re)){
-                            throw [c_line, "Invalid character '"+line[i]+"'"];
-                        }
-                    }
-                    else {
+                    //filter all possible alphabets
+                    c_data.s.palphabet.filter(filter_cb);
+
+                    //if there are no possibilities left
+                    if(c_data.s.palphabet.length === 0){
                         throw [c_line, "Invalid character '"+line[i]+"'"];
                     }
+                    c_data.s.alphabet = c_data.s.palphabet[0];
+                    re = seqJS.Alphabets_RE[c_data.s.alphabet];
                 }
                 c_data.s.seq = c_data.s.seq + line;
                 c_line++;
