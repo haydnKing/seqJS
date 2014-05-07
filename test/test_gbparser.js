@@ -49,7 +49,7 @@ module('seqJS#GenbankParser', {
             this.parser.parse(TEST_DATA.parser_genbank.valid[num].input);
         };
     };
-/*
+
     var test_chunk_parse = function(num, chunk_size){
         chunk_size = chunk_size || 64;
         return function() {
@@ -66,7 +66,7 @@ module('seqJS#GenbankParser', {
 
         };
     };
-*/
+
     var test_num;
 
     for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
@@ -74,12 +74,12 @@ module('seqJS#GenbankParser', {
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
-/*
+
     for(test_num=0; test_num < TEST_DATA.parser_genbank.valid.length; 
         test_num++)
     {
         asyncTest('chunk parse valid ' + test_num, 
                   test_chunk_parse(test_num));
     }
-*/
+
 }());
