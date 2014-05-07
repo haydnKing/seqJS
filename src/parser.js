@@ -106,7 +106,9 @@ var seqJS = seqJS || {};
                         more = self._find_locus(lines);
                         if(more){
                             c_data = {
-                                s: {},
+                                s: {
+                                    seq: ''
+                                },
                                 features: [],
                                 annotations: {
                                     accession: '',
