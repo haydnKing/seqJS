@@ -3,7 +3,7 @@ var TEST_DATA = {};
 TEST_DATA.parser_genbank = {};
 TEST_DATA.parser_genbank.valid = [
     {
-    string :[
+    output :[
         "LOCUS       SCU49845                5028 bp     DNA    linear   PLN 21-JUN-1999",
         "DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p",
         "            (AXL2) and Rev7p (REV7) genes, complete cds.",
@@ -171,7 +171,7 @@ TEST_DATA.parser_genbank.valid = [
         "//",
         ""].join('\n'),
 
-    old_string : [
+    input : [
         'LOCUS       SCU49845     5028 bp    DNA             PLN       21-JUN-1999',
         'DEFINITION  Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p',
         '            (AXL2) and Rev7p (REV7) genes, complete cds.',
@@ -339,27 +339,28 @@ TEST_DATA.parser_genbank.valid = [
         '//',
         ''].join('\n'),
      object : {
-        /* Locus line */
+        /* Meta-data */
         'name': 'SCU49845',
-        'length': 5028,
-        'length_unit': 'bp',
-        'residue_type': 'DNA',
-        'alphabet': 'DNA',
-        'topology': 'linear',
-        'data_division': 'PLN',
-        'date': '21-JUN-1999',
+        'description': 'Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p (AXL2) and Rev7p (REV7) genes, complete cds.',
+
+
+
+        annotations: {
+            'date': '21-JUN-1999',
+            'data_division': 'PLN',
+            'accession': 'U49845',
+            'version': 1,
+            'gi': 1293613,
+            'keywords': [],
+            'source': 'Saccharomyces cerevisiae (baker\'s yeast)',
+            'organism': 'Saccharomyces cerevisiae',
+            'taxonomy': ['Eukaryota', 'Fungi', 'Ascomycota', 'Saccharomycotina', 
+                'Saccharomycetes', 'Saccharomycetales', 'Saccharomycetaceae', 
+                'Saccharomyces']
+        },
 
         /* Header */
-        'description': 'Saccharomyces cerevisiae TCP1-beta gene, partial cds, and Axl2p (AXL2) and Rev7p (REV7) genes, complete cds.',
             //version / accession lines
-        'accession': 'U49845',
-        'version': 1,
-        'gi': 1293613,
-        'keywords': [],
-        'source': 'Saccharomyces cerevisiae (baker\'s yeast)',
-        'organism': 'Saccharomyces cerevisiae',
-        'taxonomy': ['Eukaryota', 'Fungi', 'Ascomycota', 'Saccharomycotina', 
-            'Saccharomycetes', 'Saccharomycetales', 'Saccharomycetaceae', 'Saccharomyces'],
 
         /*references*/
         'references': [{
@@ -445,7 +446,14 @@ TEST_DATA.parser_genbank.valid = [
 
         /*seq*/
 
-        seq:  [ 'gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattg',
+
+        sequence: {
+            'length': 5028,
+            'length_unit': 'bp',
+            'residue_type': 'DNA',
+            'alphabet': 'DNA',
+            'topology': 'linear',
+            seq:['gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattg',
                 'ccgacatgagacagttaggtatcgtcgagagttacaagctaaaacgagcagtagtcagct',
                 'ctgcatctgaagccgctgaagttctactaagggtggataacatcatccgtgcaagaccaa',
                 'gaaccgccaatagacaacatatgtaacatatttaggatatacctcgaaaataataaaccg',
@@ -530,11 +538,12 @@ TEST_DATA.parser_genbank.valid = [
                 'ttttcagtgttagattgctctaattctttgagctgttctctcagctcctcatatttttct',
                 'tgccatgactcagattctaattttaagctattcaatttctctttgatc']
                     .join('').toUpperCase()
+        }
 
      }
 },
 {
-    string: [
+    input: [
         'LOCUS       AAD51968                 143 aa            linear   BCT 21-AUG-2001',
         'DEFINITION  transcriptional regulator RovA [Yersinia enterocolitica].',
         'ACCESSION   AAD51968',
@@ -581,27 +590,25 @@ TEST_DATA.parser_genbank.valid = [
         '//',
         ''].join('\n'),
     object: {
-        /* Locus line */
+        /* metadata */
         'name': 'AAD51968',
-        'length': 143,
-        'length_unit': 'aa',
-        'residue_type': '',
-        'alphabet': 'PROT',
-        'topology': 'linear',
-        'data_division': 'BCT',
-        'date': '21-AUG-2001',
-
-        /* Header */
         'description': 'transcriptional regulator RovA [Yersinia enterocolitica].',
-            //version / accession lines
-        'accession': 'AAD51968',
-        'version': 1,
-        'gi': 5805369,
-        'keywords': [],
-        'source': 'Yersinia enterocolitica',
-        'organism': 'Yersinia enterocolitica',
-        'taxonomy': ['Bacteria','Proteobacteria','Gammaproteobacteria',
-            'Enterobacteriales','Enterobacteriaceae','Yersinia'],
+
+        annotations: {
+            'data_division': 'BCT',
+            'date': '21-AUG-2001',
+
+            /* Header */
+                //version / accession lines
+            'accession': 'AAD51968',
+            'version': 1,
+            'gi': 5805369,
+            'keywords': [],
+            'source': 'Yersinia enterocolitica',
+            'organism': 'Yersinia enterocolitica',
+            'taxonomy': ['Bacteria','Proteobacteria','Gammaproteobacteria',
+                'Enterobacteriales','Enterobacteriaceae','Yersinia'],
+        },
 
 
         'references': [{
@@ -642,15 +649,23 @@ TEST_DATA.parser_genbank.valid = [
             ]]
         ],
 
-        seq: [
+        sequence: {
+            'length': 143,
+            'length_unit': 'aa',
+            'residue_type': '',
+            'alphabet': 'PROT',
+            'topology': 'linear',
+
+            seq: [
             'mestlgsdlarlvrvwralidhrlkpleltqthwvtlhninrlppeqsqiqlakaigieq',
             'pslvrtldqleekglitrhtcandrrakriklteqsspiieqvdgvicstrkeilggisp',
             'deiellsglidklerniiqlqsk'].join('').toUpperCase()
+        }
 
     }
 },
 {
-    string: [
+    input: [
         'LOCUS       test                     189 bp                         10-APR-2014',
         'UNIMARK     test annotations',
         '            test',
@@ -669,29 +684,24 @@ TEST_DATA.parser_genbank.valid = [
         '//',
         ''].join('\n'),
     object: {
-        /* Locus line */
+        /* metadata */
         'name': 'test',
-        'length': 189,
-        'length_unit': 'bp',
-        'residue_type': '',
-        'alphabet': 'DNA',
-        'topology': 'linear',
-        'data_division': '',
-        'date': '10-APR-2014',
-
-        /* Header */
         'description': '',
-            //version / accession lines
-        'accession': '',
-        'version': null,
-        'gi': null,
-        'keywords': [],
-        'source': '',
-        'organism': '',
-        'taxonomy': [],
 
 
-        'references': [],
+        annotations: {
+            'data_division': '',
+            'date': '10-APR-2014',
+            'accession': '',
+            'version': null,
+            'gi': null,
+            'keywords': [],
+            'source': '',
+            'organism': '',
+            'taxonomy': [],
+        },
+
+        references: [],
 
         features: [
             ['primer_bind','69..112', []],
@@ -703,12 +713,20 @@ TEST_DATA.parser_genbank.valid = [
             ]]
         ],
 
-        seq: [
-            'CATGCACCATTCCTTGCGGCGGCGGTGCTCAACGGCCTCAACCTACTACTGGGCTGCTTC',
-            'CTAATGCAGGAGTCGCATAAGGGAGAGCGGTTCTTCATTTTCATAAAAGGGCATTGTGAC',
-            'ACTTGATTTTCATCATCTCGCAAGAAGTACTGTTTCCACTCCAGATTGTCTTTTTTTCCA',
-            'TACCATCCT'
-        ].join('')
+        sequence: {
+            'length': 189,
+            'length_unit': 'bp',
+            'residue_type': '',
+            'alphabet': 'DNA',
+            'topology': 'linear',
+
+            seq: [
+                'CATGCACCATTCCTTGCGGCGGCGGTGCTCAACGGCCTCAACCTACTACTGGGCTGCTTC',
+                'CTAATGCAGGAGTCGCATAAGGGAGAGCGGTTCTTCATTTTCATAAAAGGGCATTGTGAC',
+                'ACTTGATTTTCATCATCTCGCAAGAAGTACTGTTTCCACTCCAGATTGTCTTTTTTTCCA',
+                'TACCATCCT'
+            ].join('')
+        }
     }
 
 }];
