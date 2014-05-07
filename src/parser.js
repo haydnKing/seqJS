@@ -454,6 +454,7 @@ var seqJS = seqJS || {};
                                     c_data.features,
                                     c_data.s.topology,
                                     c_data.s.length_unit,
+                                    c_data.s.strand_type,
                                     c_data.s.residue_type);
 
             var r = new seqJS.Record(seq, c_data.id, c_data.name, c_data.desc, c_data.annotations);

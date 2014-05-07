@@ -66,7 +66,7 @@ var seqJS = seqJS || {};
         PROT: /^[ACDEFGHIKLMNPQRSTVWY]+$/,
         aPROT: /^[ACDEFGHIKLMNPQRSTVWYBXZ]+$/
     };
-    seqJS.Seq = function(_seq, _alphabet, _features, _topology, _length_unit, _residue_type){
+    seqJS.Seq = function(_seq, _alphabet, _features, _topology, _length_unit, _strand_type, _residue_type){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
         _features = _features || [];
@@ -74,8 +74,13 @@ var seqJS = seqJS || {};
         if(['linear','circular'].indexOf(_topology) < 0){
             throw 'topology must be \'linear\' or \'circular\'';
         }
-        _length_unit = _length_unit || _length_unit;
-        _residue_type= _residue_type || _residue_type;
+        _length_unit = _length_unit || 'bp';
+        _residue_type= _residue_type || '';
+        _strand_type = _strand_type || '';
+
+        if(['ss','ds','ms',''].indexOf(_strand_type) < 0){
+            throw 'Strand type must be \'ss\', \'ds\', or \'ms\', not \''+_strand_type+'\'';
+        }
 
         _seq = _seq.toUpperCase();
         if(seqJS.Alphabets.indexOf(_alphabet) < 0){

@@ -80,6 +80,7 @@ var seqJS = seqJS || {};
 
         var write_locus = function(record){
             var ra = record.annotations,
+                rs = record.seq,
                 name = record.name,
                 len = record.length().toString();
             if((name.length + len.length) >= 28){
@@ -89,7 +90,7 @@ var seqJS = seqJS || {};
               name + ' ' + 
               pad_l(len, 27 - name.length) +
               ' ' + record.seq.lengthUnit() + ' ' +
-              pad_l( (ra.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
+              pad_l( (rs.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
               pad_r(ra.residue_type || '', 7) +
               pad_r( (ra.topology === 'circular') ? 'circular' : 'linear', 8) +
               ' ' + (ra.data_division || 'SYN') +
