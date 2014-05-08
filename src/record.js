@@ -13,6 +13,16 @@ var seqJS = seqJS || {};
     /*
      * record object
      */
+    var DEF_ANNOTATIONS = {
+        "accession": "",
+        "data_division": "",
+        "date": "",
+        "organism": "",
+        "source": "",
+        "taxonomy": [],
+        "references": []
+    };
+
     seqJS.Record = function(seq, id, name, desc, annotations){
         if(! seq instanceof seqJS.Seq){
             throw("seq must be a seqJS.Seq instance");
@@ -23,6 +33,9 @@ var seqJS = seqJS || {};
         this.desc = desc || "";
         
         annotations = annotations || {};
+        for (var attr in DEF_ANNOTATIONS) { 
+            annotations[attr] = annotations[attr] || DEF_ANNOTATIONS[attr]; 
+        }
 
         this.annotation = function(k, v) {
             if(k === undefined){
