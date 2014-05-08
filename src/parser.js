@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -575,7 +574,6 @@ var seqJS = seqJS || {};
                 re = seqJS.Alphabets_RE[c_data.palpha[0]], 
                 filter_cb = function(a){
                         var re = seqJS.Alphabets_RE[a];
-                        console.log('  '+a+' -- '+line.match(re));
                         return line.match(re);
                     };
             
@@ -596,7 +594,6 @@ var seqJS = seqJS || {};
                 line = line.replace(/ /g, '').toUpperCase();
 
                 if(!line.match(re)){
-                    console.log('Line failed ' + c_data.palpha[0]);
                     //filter all possible alphabets
                     c_data.palpha = c_data.palpha.filter(filter_cb);
 
@@ -604,7 +601,6 @@ var seqJS = seqJS || {};
                     if(c_data.palpha.length === 0){
                         throw [c_line, "Invalid character"];
                     }
-                    console.log('--> Selecting alphabet ' + c_data.palpha[0]);
                     re = seqJS.Alphabets_RE[c_data.palpha[0]];
                 }
 

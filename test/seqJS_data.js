@@ -949,7 +949,7 @@ TEST_DATA.parser_fasta.valid = [
                 'length_unit': 'aa',
                 'residue_type': '',
                 'strand_type': '',
-                'alphabet': 'PROT',
+                'alphabet': 'aPROT',
                 'topology': 'linear',
 
                 seq: [
