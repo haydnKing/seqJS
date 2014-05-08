@@ -224,8 +224,7 @@ var seqJS = seqJS || {};
             '//\n';
     };
 
-    writers['gb'] = gb_write;
-    writers['genbank'] = gb_write;
+    writers['gb'] = writers['genbank'] = gb_write;
 
     /*
      * seqJS.write(record, type) - write the record to a string and return the

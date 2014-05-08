@@ -656,5 +656,21 @@ var seqJS = seqJS || {};
         }
     };
 
+    /*
+     * read(data, format) - read records from a file synchronously
+     *      data: string
+     *      format: file format
+     */
+    seqJS.read = function(data, format){
+        var parser = seqJS.getParser(format),
+            recs = [];
+
+        parser.setRecordCb(function(rec) {recs.push(rec);});
+        parser.parse(data);
+        parser.flush();
+
+        return recs;
+    };
+
 }());
 
