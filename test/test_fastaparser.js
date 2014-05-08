@@ -87,4 +87,26 @@ module('seqJS#FastaParser', {
                   test_chunk_parse(test_num));
     }
 
+    var j_input = '';
+
+    for(test_num=0; test_num < valid_data.length; test_num++){
+        j_input = j_input + '\n' + valid_data[test_num].input;
+    }
+
+    asyncTest('parse several records', function() {
+        var test_num = 0;
+
+        this.parser.setRecordCb(function(record){
+            gbrecord_eq(record, valid_data[test_num].object);
+            test_num++;
+            if(test_num >= valid_data.length){
+                start();
+            }
+        });
+
+        this.parser.parse(j_input);
+        this.parser.flush();
+    });
+
+
 }());
