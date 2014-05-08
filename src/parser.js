@@ -539,8 +539,9 @@ var seqJS = seqJS || {};
             
             while(c_line < lines.length){
                 line = lines[c_line].trim();
-                //skip comments
-                if([';', '/', '#'].indexOf(line[0]) >= 0) {
+                //skip blank and comments
+                if(line === '' ||
+                    [';', '/', '#'].indexOf(line[0]) >= 0) {
                     c_line++;
                     continue;
                 }
@@ -579,8 +580,9 @@ var seqJS = seqJS || {};
             
             while(c_line < lines.length){
                 line = lines[c_line].trim();
-                //skip comments
-                if([';', '/', '#'].indexOf(line[0]) >= 0) {
+                //skip blank and comments
+                if(line === '' ||
+                    [';', '/', '#'].indexOf(line[0]) >= 0) {
                     c_line++;
                     continue;
                 }
