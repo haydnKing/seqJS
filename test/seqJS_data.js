@@ -452,6 +452,7 @@ TEST_DATA.parser_genbank.valid = [
             'length': 5028,
             'length_unit': 'bp',
             'residue_type': 'DNA',
+            'strand_type': '',
             'alphabet': 'DNA',
             'topology': 'linear',
             seq:['gatcctccatatacaacggtatctccacctcaggtttagatctcaacaacggaaccattg',
@@ -699,6 +700,7 @@ TEST_DATA.parser_genbank.valid = [
             'length': 143,
             'length_unit': 'aa',
             'residue_type': '',
+            'strand_type': '',
             'alphabet': 'PROT',
             'topology': 'linear',
 
@@ -786,6 +788,7 @@ TEST_DATA.parser_genbank.valid = [
             'length': 189,
             'length_unit': 'bp',
             'residue_type': '',
+            'strand_type': '',
             'alphabet': 'DNA',
             'topology': 'linear',
 
@@ -799,4 +802,165 @@ TEST_DATA.parser_genbank.valid = [
     }
 
 }];
+
+TEST_DATA.parser_fasta = {};
+TEST_DATA.parser_fasta.valid = [
+    {
+        input:  [
+                    '>test test of FASTA parsing',
+                    'CATgcaccattccttgcggcggcggtgctcaacggcctcaACCTACTACTGGGCTGCTTC',
+                    'CTAatgcaggagtcgcataagggagagcggttcttcatttTCATAAAAGGGCATTGTGAC',
+                    'ACTtgattttcatcatctcgcaagaagtactgtttccactCCAGATTGTCTTTTTTTCCA',
+                    'TACCATCCT'
+                ].join('\n'),
+        output:  [
+                    '>test test of FASTA parsing',
+                    'CATGCACCATTCCTTGCGGCGGCGGTGCTCAACGGCCTCAACCTACTACTGGGCTGCTTCCTAATGCAGG',
+                    'AGTCGCATAAGGGAGAGCGGTTCTTCATTTTCATAAAAGGGCATTGTGACACTTGATTTTCATCATCTCG',
+                    'CAAGAAGTACTGTTTCCACTCCAGATTGTCTTTTTTTCCATACCATCCT'
+                ].join('\n'),
+        object: {
+            /* metadata */
+            'name': 'test',
+            'id': 'test',
+            'description': 'test of FASTA parsing',
+
+
+            annotations: {
+                'data_division': '',
+                'date': '',
+                'source': '',
+                'organism': '',
+                'taxonomy': [],
+                'accession': '',
+            },
+
+            references: [],
+
+            features: [],
+
+            sequence: {
+                'length': 189,
+                'length_unit': 'bp',
+                'residue_type': '',
+                'strand_type': '',
+                'alphabet': 'DNA',
+                'topology': 'linear',
+
+                seq: [
+                    'CATGCACCATTCCTTGCGGCGGCGGTGCTCAACGGCCTCAACCTACTACTGGGCTGCTTC',
+                    'CTAATGCAGGAGTCGCATAAGGGAGAGCGGTTCTTCATTTTCATAAAAGGGCATTGTGAC',
+                    'ACTTGATTTTCATCATCTCGCAAGAAGTACTGTTTCCACTCCAGATTGTCTTTTTTTCCA',
+                    'TACCATCCT'
+                ].join('')
+            }
+        }
+    },
+    {
+        input:  [
+                    '>test test of FASTA parsing',
+                    'CAugcaccauuccuugcggcggcggugcucaacggccucaACCuACuACuGGGCuGCuuC',
+                    'CuAaugcaggagucgcauaagggagagcgguucuucauuuuCAuAAAAGGGCAuuGuGAC',
+                    'ACuugauuuucaucaucucgcaagaaguacuguuuccacuCCAGAuuGuCuuuuuuuCCA',
+                    'uACCAuCCu'
+                ].join('\n'),
+        output:  [
+                    '>test test of FASTA parsing',
+                    'CAUGCACCAUUCCUUGCGGCGGCGGUGCUCAACGGCCUCAACCUACUACUGGGCUGCUUCCUAAUGCAGG',
+                    'AGUCGCAUAAGGGAGAGCGGUUCUUCAUUUUCAUAAAAGGGCAUUGUGACACUUGAUUUUCAUCAUCUCG',
+                    'CAAGAAGUACUGUUUCCACUCCAGAUUGUCUUUUUUUCCAUACCAUCCU'
+                ].join('\n'),
+        object: {
+            /* metadata */
+            'name': 'test',
+            'id': 'test',
+            'description': 'test of FASTA parsing',
+
+
+            annotations: {
+                'data_division': '',
+                'date': '',
+                'source': '',
+                'organism': '',
+                'taxonomy': [],
+                'accession': '',
+            },
+
+            references: [],
+
+            features: [],
+
+            sequence: {
+                'length': 189,
+                'length_unit': 'bp',
+                'residue_type': '',
+                'strand_type': '',
+                'alphabet': 'RNA',
+                'topology': 'linear',
+
+                seq: [
+                    'CAUGCACCAUUCCUUGCGGCGGCGGUGCUCAACGGCCUCAACCUACUACUGGGCUGCUUC',
+                    'CUAAUGCAGGAGUCGCAUAAGGGAGAGCGGUUCUUCAUUUUCAUAAAAGGGCAUUGUGAC',
+                    'ACUUGAUUUUCAUCAUCUCGCAAGAAGUACUGUUUCCACUCCAGAUUGUCUUUUUUUCCA',
+                    'UACCAUCCU'
+                ].join('')
+            }
+        }
+    },
+    {
+        input:  [
+            '>gi|5524211|gb|AAD44166.1| cytochrome b [Elephas maximus maximus]',
+            'LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV',
+            'EWIWGGFSVDKATLNrffafhfilpftmvalagvhltflhetgsnnplglTSDSDKIPFHPYYTIKDFLG',
+            'LLILILLLLLLALLSPDMLGDPDNHMPADPLNTPLHIKPEWYFLFAYAILRSVPNKLGGVLALFLSIVIL',
+            'GLMPFLHTSKHRSMMLRPLSQALFWTLTMDLLTLTWIGSQPVEYPYTIIGQMASILYFSIILAFLPIAGX',
+            'IENY'
+                ].join('\n'),
+        output:  [
+            '>gi|5524211|gb|AAD44166.1| cytochrome b [Elephas maximus maximus]',
+            'LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV',
+            'EWIWGGFSVDKATLNRFFAFHFILPFTMVALAGVHLTFLHETGSNNPLGLTSDSDKIPFHPYYTIKDFLG',
+            'LLILILLLLLLALLSPDMLGDPDNHMPADPLNTPLHIKPEWYFLFAYAILRSVPNKLGGVLALFLSIVIL',
+            'GLMPFLHTSKHRSMMLRPLSQALFWTLTMDLLTLTWIGSQPVEYPYTIIGQMASILYFSIILAFLPIAGX',
+            'IENY'
+                ].join('\n'),
+        object: {
+            /* metadata */
+            'name': 'gi|5524211|gb|AAD44166.1|',
+            'id': 'gi|5524211|gb|AAD44166.1|',
+            'description': 'cytochrome b [Elephas maximus maximus]',
+
+
+            annotations: {
+                'data_division': '',
+                'date': '',
+                'source': '',
+                'organism': '',
+                'taxonomy': [],
+                'accession': '',
+            },
+
+            references: [],
+
+            features: [],
+
+            sequence: {
+                'length': 284,
+                'length_unit': 'aa',
+                'residue_type': '',
+                'strand_type': '',
+                'alphabet': 'PROT',
+                'topology': 'linear',
+
+                seq: [
+            'LCLYTHIGRNIYYGSYLYSETWNTGIMLLLITMATAFMGYVLPWGQMSFWGATVITNLFSAIPYIGTNLV',
+            'EWIWGGFSVDKATLNRFFAFHFILPFTMVALAGVHLTFLHETGSNNPLGLTSDSDKIPFHPYYTIKDFLG',
+            'LLILILLLLLLALLSPDMLGDPDNHMPADPLNTPLHIKPEWYFLFAYAILRSVPNKLGGVLALFLSIVIL',
+            'GLMPFLHTSKHRSMMLRPLSQALFWTLTMDLLTLTWIGSQPVEYPYTIIGQMASILYFSIILAFLPIAGX',
+            'IENY'
+                ].join('')
+            }
+        }
+    }
+];
 
