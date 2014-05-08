@@ -51,6 +51,7 @@ module('seqJS#FastaParser', {
             });
 
             this.parser.parse(valid_data[num].input);
+            this.parser.flush();
         };
     };
 /*
@@ -66,6 +67,7 @@ module('seqJS#FastaParser', {
             for(var i=0; i < d.length; i+=chunk_size){
                 this.parser.parse(d.substr(i,chunk_size));
             }
+            this.parser.flush();
 
         };
     };

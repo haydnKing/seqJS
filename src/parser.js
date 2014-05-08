@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -520,17 +521,22 @@ var seqJS = seqJS || {};
         this.type = function() {return 'fasta';};
         
         this._parse_lines = function(lines) {
+            console.log('_parse_lines(...)');
             var more = true;
             c_line = 0;
             while(more){
+                console.log(' while(more) c_line = ' + c_line + ' lines.length = ' + lines.length);
                 if(c_data === null){
+                    console.log('  this._parse_hdr(lines)');
                     more = this._parse_hdr(lines);
                 }
                 else {
+                    console.log('  this._parse_seq(lines)');
                     more = this._parse_seq(lines);
                 }
             }
 
+            console.log('return '+c_line);
             return c_line;            
         };
 
@@ -557,6 +563,7 @@ var seqJS = seqJS || {};
                         seq: '',
                         palpha: seqJS.Alphabets
                     };
+                    c_line++;
                     break;
                 }
                 else {
@@ -592,7 +599,7 @@ var seqJS = seqJS || {};
 
                 line = line.replace(/ /g, '');
 
-                if(!re.match(line)){
+                if(!line.match(re)){
                     //filter all possible alphabets
                     c_data.palpha.filter(filter_cb);
 
@@ -612,6 +619,7 @@ var seqJS = seqJS || {};
 
 
         this._build_record = function(){
+            console.log('_build_record: c_data = \n' + JSON.stringify(c_data,null,2));
             if(c_data){
 
                 var seq = new seqJS.Seq(c_data.seq, 
@@ -630,6 +638,7 @@ var seqJS = seqJS || {};
 
         
         this._flush = function() {
+            console.log('_flush()');
             this._build_record();
         };
 
