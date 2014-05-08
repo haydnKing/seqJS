@@ -54,16 +54,16 @@ module('seqJS#FastaParser', {
             this.parser.flush();
         };
     };
-/*
+
     var test_chunk_parse = function(num, chunk_size){
         chunk_size = chunk_size || 64;
         return function() {
             this.parser.setRecordCb(function(record){
-                gbrecord_eq(record, this.data[num].object);
+                gbrecord_eq(record, valid_data[num].object);
                 start();
             });
 
-            var d = this.data[num].input;
+            var d = valid_data[num].input;
             for(var i=0; i < d.length; i+=chunk_size){
                 this.parser.parse(d.substr(i,chunk_size));
             }
@@ -71,7 +71,7 @@ module('seqJS#FastaParser', {
 
         };
     };
-*/
+
     var test_num;
 
     for(test_num=0; test_num < valid_data.length; 
@@ -79,12 +79,12 @@ module('seqJS#FastaParser', {
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
-/*
+
     for(test_num=0; test_num < valid_data.length; 
         test_num++)
     {
         asyncTest('chunk parse valid ' + test_num, 
                   test_chunk_parse(test_num));
     }
-*/
+
 }());
