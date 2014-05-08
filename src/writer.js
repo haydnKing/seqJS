@@ -29,6 +29,31 @@ var seqJS = seqJS || {};
         }
         return r;
     };
+    var word_wrap = function(line, max_len, wrap){
+        wrap = wrap || '\n';
+        var lines = [],
+            i,
+            l = '',
+            s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
+            w;
+
+        for(i = 0; i < s.length; i++){
+            w = s[i];
+            while((l.length+w.trim().length) >= max_len){
+                if(l){
+                    lines.push(l.trim());
+                    l = '';
+                }
+                else{
+                    lines.push(w.substring(0,max_len));
+                    w = w.substring(max_len);
+                }
+            }
+            l += w;
+        }
+        lines.push(l);
+        return lines.join(wrap);
+    };
 
     var writers = {};
 
@@ -50,31 +75,6 @@ var seqJS = seqJS || {};
                 'DEC'][d.getMonth()] + '-' + d.getFullYear().toString();
         };
 
-        var word_wrap = function(line, max_len, wrap){
-            wrap = wrap || '\n';
-            var lines = [],
-                i,
-                l = '',
-                s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
-                w;
-
-            for(i = 0; i < s.length; i++){
-                w = s[i];
-                while((l.length+w.trim().length) >= max_len){
-                    if(l){
-                        lines.push(l.trim());
-                        l = '';
-                    }
-                    else{
-                        lines.push(w.substring(0,max_len));
-                        w = w.substring(max_len);
-                    }
-                }
-                l += w;
-            }
-            lines.push(l);
-            return lines.join(wrap);
-        };
 
 
         var write_locus = function(record){
@@ -225,6 +225,18 @@ var seqJS = seqJS || {};
     };
 
     writers['gb'] = writers['genbank'] = gb_write;
+
+
+    var fasta_write = function(record){
+
+        return  '>' + record.name + 
+                ((record.desc === '') ? '' : (' ' + record.desc)) +
+                '\n' +
+                word_wrap(record.seq.seq(), 70);
+
+    };
+    writers['fa'] = writers['fas'] = writers['fasta'] = fasta_write;
+
 
     /*
      * seqJS.write(record, type) - write the record to a string and return the
