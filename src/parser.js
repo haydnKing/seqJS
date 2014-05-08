@@ -470,7 +470,7 @@ var seqJS = seqJS || {};
                 //checkLetters
                 if(!line.match(re)){
                     //filter all possible alphabets
-                    c_data.s.palphabet.filter(filter_cb);
+                    c_data.s.palphabet = c_data.s.palphabet.filter(filter_cb);
 
                     //if there are no possibilities left
                     if(c_data.s.palphabet.length === 0){
@@ -521,22 +521,17 @@ var seqJS = seqJS || {};
         this.type = function() {return 'fasta';};
         
         this._parse_lines = function(lines) {
-            console.log('_parse_lines(...)');
             var more = true;
             c_line = 0;
             while(more){
-                console.log(' while(more) c_line = ' + c_line + ' lines.length = ' + lines.length);
                 if(c_data === null){
-                    console.log('  this._parse_hdr(lines)');
                     more = this._parse_hdr(lines);
                 }
                 else {
-                    console.log('  this._parse_seq(lines)');
                     more = this._parse_seq(lines);
                 }
             }
 
-            console.log('return '+c_line);
             return c_line;            
         };
 
@@ -580,6 +575,7 @@ var seqJS = seqJS || {};
                 re = seqJS.Alphabets_RE[c_data.palpha[0]], 
                 filter_cb = function(a){
                         var re = seqJS.Alphabets_RE[a];
+                        console.log('  '+a+' -- '+line.match(re));
                         return line.match(re);
                     };
             
@@ -597,16 +593,18 @@ var seqJS = seqJS || {};
                     break;
                 }
 
-                line = line.replace(/ /g, '');
+                line = line.replace(/ /g, '').toUpperCase();
 
                 if(!line.match(re)){
+                    console.log('Line failed ' + c_data.palpha[0]);
                     //filter all possible alphabets
-                    c_data.palpha.filter(filter_cb);
+                    c_data.palpha = c_data.palpha.filter(filter_cb);
 
                     //if there are no possibilities left
                     if(c_data.palpha.length === 0){
                         throw [c_line, "Invalid character"];
                     }
+                    console.log('--> Selecting alphabet ' + c_data.palpha[0]);
                     re = seqJS.Alphabets_RE[c_data.palpha[0]];
                 }
 
@@ -619,7 +617,6 @@ var seqJS = seqJS || {};
 
 
         this._build_record = function(){
-            console.log('_build_record: c_data = \n' + JSON.stringify(c_data,null,2));
             if(c_data){
 
                 var seq = new seqJS.Seq(c_data.seq, 
@@ -638,7 +635,6 @@ var seqJS = seqJS || {};
 
         
         this._flush = function() {
-            console.log('_flush()');
             this._build_record();
         };
 
