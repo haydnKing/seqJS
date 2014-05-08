@@ -58,3 +58,45 @@ var test_write = function(data, format){
     };
     
 };
+
+var test_format = function(valid_data, format, name){
+
+    module('seqJS#'+name+'Parser');
+        var test_num;
+
+        for(test_num=0; test_num < valid_data.length; test_num++)
+        {
+            test('parse valid ' + test_num, 
+                 test_parse(valid_data[test_num], format));
+        }
+
+        for(test_num=0; test_num < valid_data.length; test_num++)
+        {
+            asyncTest('chunk parse valid ' + test_num, 
+                      test_chunk_parse(valid_data[test_num], format));
+        }
+
+        test('parse all records', function() {
+            var joined_data = '';
+            for(test_num=0; test_num < valid_data.length; test_num++)
+            {
+                joined_data = joined_data + '\n' + valid_data[test_num].input;
+            }
+
+            var records = seqJS.read(joined_data, format);
+            for(test_num=0; test_num < valid_data.length; test_num++)
+            {
+                gbrecord_eq(records[test_num], valid_data[test_num].object);
+            }
+        });
+
+
+    module('seqJS#'+name+'Writer');
+
+        for(test_num=0; test_num < valid_data.length; test_num++)
+        {
+            test('parse/write entire record ' + test_num, 
+                      test_write(valid_data[test_num], format));
+        }
+
+};
