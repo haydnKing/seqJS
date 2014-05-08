@@ -24,10 +24,11 @@
   */
 
 
+var valid_data = TEST_DATA.parser_fasta.valid;
+
 module('seqJS#FastaParser', {
     setup: function() {
         this.parser = seqJS.getParser('fasta');
-        this.data = TEST_DATA.parser_fasta.valid;
     }
 });
 
@@ -45,11 +46,11 @@ module('seqJS#FastaParser', {
     var test_parse = function(num){
         return function() {
             this.parser.setRecordCb(function(record){
-                gbrecord_eq(record, this.data[num].object);
+                gbrecord_eq(record, valid_data[num].object);
                 start();
             });
 
-            this.parser.parse(this.data[num].input);
+            this.parser.parse(valid_data[num].input);
         };
     };
 /*
@@ -71,13 +72,13 @@ module('seqJS#FastaParser', {
 */
     var test_num;
 
-    for(test_num=0; test_num < this.data.length; 
+    for(test_num=0; test_num < valid_data.length; 
         test_num++)
     {
         asyncTest('parse valid ' + test_num, test_parse(test_num));
     }
 /*
-    for(test_num=0; test_num < this.data.length; 
+    for(test_num=0; test_num < valid_data.length; 
         test_num++)
     {
         asyncTest('chunk parse valid ' + test_num, 

@@ -18,7 +18,21 @@ var seqJS = seqJS || {};
     var Parser = function(type){
         var remaining_data = [], record_cb, self=this, line_num=0;
 
+        var _build_error = function(e, lines) {
+            return {
+                line_num: e[0] + line_num,
+                msg: e[1],
+                line: lines[e[0]],
+                toString: function(){
+                    return "Line "+this.line_num+": "+this.msg+"  \""+
+                        this.line + "\"";
+                }
+            };
+        };
+
         this.type = function() {return type;};
+
+        //parse the given chunk of data
         this.parse = function(data){
             if(data === undefined){
                 throw "Parser::parse: data undefined";
@@ -34,29 +48,53 @@ var seqJS = seqJS || {};
             }
             catch (e) {
                 if(e instanceof Array){
-                    throw {
-                        line_num: e[0] + line_num,
-                        msg: e[1],
-                        line: lines[e[0]],
-                        toString: function(){
-                            return "Line "+this.line_num+": "+this.msg+"  \""+
-                                this.line + "\"";
-                        }
-                    };
+                    throw _build_error(e, lines);
                 }
                 throw e;
             }
         };
 
+        //this function should be called when the input is complete and flushes
+        //any remaining data.
+        this.flush = function() {
+            //parse any remaining data
+            var lines = remaining_data.split('\n');
+            try{
+                var consumed = self._parse_lines(lines);
+                line_num += consumed;
+            }
+            catch (e) {
+                if(e instanceof Array){
+                    throw _build_error(e,lines);
+                }
+                throw e;
+            }
+            //execute format specific EOF code
+            this._flush();
+        };
+
+        /*
+         * This function should be over-ridden, and return the number of lines
+         * used
+         */
         this._parse_lines = function(lines) {
             self._triggerRecordCb(lines);
             return lines.length;
         };
+
+        /*
+         * This function should be over-ridden.
+         * It is called when EOF is reached
+         */
+        this._flush = function() {};
         
         this.setRecordCb = function(cb) {
             record_cb = cb;
         };
 
+        /*
+         * This function should be called when a record has been parsed
+         */
         this._triggerRecordCb = function(record) {
             if(typeof(record_cb) === 'function') {
                 record_cb(record);
@@ -409,7 +447,7 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, 
+            var line, 
                 filter_cb = function(a){
                         var re = seqJS.Alphabets_RE[a];
                         return line.match(re);
@@ -435,7 +473,7 @@ var seqJS = seqJS || {};
 
                     //if there are no possibilities left
                     if(c_data.s.palphabet.length === 0){
-                        throw [c_line, "Invalid character '"+line[i]+"'"];
+                        throw [c_line, "Invalid character"];
                     }
                     c_data.s.alphabet = c_data.s.palphabet[0];
                     re = seqJS.Alphabets_RE[c_data.s.alphabet];
@@ -466,6 +504,140 @@ var seqJS = seqJS || {};
     GenBankParser.prototype = new Parser();
     parsers['gb'] = parsers['genbank'] = GenBankParser;
     
+
+    /*
+     * FASTA Parser
+     *  Parse a FASTA file
+     */
+    var FASTAParser = function() {
+        Parser.call(this);
+
+        var c_data = null, 
+            c_line = 0,
+            HDR = /^>(\S+)? ?(.+)?/,
+            self = this;
+        
+        this.type = function() {return 'fasta';};
+        
+        this._parse_lines = function(lines) {
+            var more = true;
+            c_line = 0;
+            while(more){
+                if(c_data === null){
+                    more = this._parse_hdr(lines);
+                }
+                else {
+                    more = this._parse_seq(lines);
+                }
+            }
+
+            return c_line;            
+        };
+
+        this._parse_hdr = function(lines) {
+            var line, m;
+            
+            while(c_line < lines.length){
+                line = lines[c_line].trim();
+                //skip comments
+                if([';', '/', '#'].indexOf(line[0]) >= 0) {
+                    c_line++;
+                    continue;
+                }
+
+                //If we've not got a header line, raise an error
+                if(line[0] !== '>'){
+                    throw [c_line, 'Expected header line begining with \'>\''];
+                }
+
+                if(m = line.match(HDR)){
+                    c_data = {
+                        name: m[1] || '',
+                        desc: m[2] || '',
+                        seq: '',
+                        palpha: seqJS.Alphabets
+                    };
+                    break;
+                }
+                else {
+                    throw [c_line, 'Badly formatted header line'];
+                }
+
+            }
+
+            return c_line < lines.length;
+        };
+
+        this._parse_seq = function(lines) {
+            var line,
+                re = seqJS.Alphabets_RE[c_data.palpha[0]], 
+                filter_cb = function(a){
+                        var re = seqJS.Alphabets_RE[a];
+                        return line.match(re);
+                    };
+            
+            while(c_line < lines.length){
+                line = lines[c_line].trim();
+                //skip comments
+                if([';', '/', '#'].indexOf(line[0]) >= 0) {
+                    c_line++;
+                    continue;
+                }
+
+                //if we found the begining of the next record
+                if(line[0] === '>') {
+                    this._build_record();
+                    break;
+                }
+
+                line = line.replace(/ /g, '');
+
+                if(!re.match(line)){
+                    //filter all possible alphabets
+                    c_data.palpha.filter(filter_cb);
+
+                    //if there are no possibilities left
+                    if(c_data.palpha.length === 0){
+                        throw [c_line, "Invalid character"];
+                    }
+                    re = seqJS.Alphabets_RE[c_data.palpha[0]];
+                }
+
+                c_data.seq = c_data.seq + line;
+                c_line++;
+            }
+
+            return c_line < lines.length;
+        };
+
+
+        this._build_record = function(){
+            if(c_data){
+
+                var seq = new seqJS.Seq(c_data.seq, 
+                                        c_data.palpha[0]);
+
+                var r = new seqJS.Record(seq, 
+                                         c_data.name, 
+                                         c_data.name, 
+                                         c_data.desc);
+
+                self._triggerRecordCb(r);
+
+                c_data = null;
+            }
+        };
+
+        
+        this._flush = function() {
+            this._build_record();
+        };
+
+    };
+    FASTAParser.prototype = new Parser();
+    parsers['fa'] = parsers['fas'] = parsers['fasta'] = FASTAParser;
+
+
 
     /*
      * getParser(type) - return a parser object
