@@ -87,13 +87,24 @@ var seqJS = seqJS || {};
         if(['linear','circular'].indexOf(_topology) < 0){
             throw 'topology must be \'linear\' or \'circular\'';
         }
-        _length_unit = _length_unit || 'bp';
+        _length_unit = _length_unit || ((_alphabet.indexOf('PROT') >= 0) ? 
+            'aa' : 'bp');
         _residue_type= _residue_type || '';
         _strand_type = _strand_type || '';
 
-        if(['ss','ds','ms',''].indexOf(_strand_type) < 0){
-            throw 'Strand type must be \'ss\', \'ds\', or \'ms\', not \''+_strand_type+'\'';
-        }
+        var test_st = function(st){
+            if(['ss','ds','ms',''].indexOf(st) < 0){
+                throw 'Strand type must be \'ss\', \'ds\', or \'ms\', not \''+st+'\'';
+            }
+        };
+        var test_lu = function(lu){
+            if(['bp', 'aa', 'rc'].indexOf(lu) < 0){
+                throw 'Length unit must be \'bp\', \'aa\', or \'rc\', not \''+lu+'\'';
+            }
+        };
+
+        test_st(_strand_type);
+        test_lu(_length_unit);
 
         _seq = _seq.toUpperCase();
         if(seqJS.Alphabets.indexOf(_alphabet) < 0){
@@ -107,6 +118,7 @@ var seqJS = seqJS || {};
             if(v === undefined){
                 return _length_unit;
             }
+            test_lu(v);
             _length_unit = v;
             return this;
         };
@@ -121,6 +133,7 @@ var seqJS = seqJS || {};
             if(v === undefined){
                 return _strand_type;
             }
+            test_st(v);
             _strand_type = v;
             return this;
         };
