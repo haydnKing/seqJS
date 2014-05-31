@@ -13,6 +13,16 @@ var seqJS = seqJS || {};
     /*
      * record object
      */
+    var DEF_ANNOTATIONS = {
+        "accession": "",
+        "data_division": "",
+        "date": "",
+        "organism": "",
+        "source": "",
+        "taxonomy": [],
+        "references": []
+    };
+
     seqJS.Record = function(seq, id, name, desc, annotations){
         if(! seq instanceof seqJS.Seq){
             throw("seq must be a seqJS.Seq instance");
@@ -21,7 +31,36 @@ var seqJS = seqJS || {};
         this.id = id || 0;
         this.name = name || "unnamed";
         this.desc = desc || "";
-        this.annotations = annotations || {};
+        
+        annotations = annotations || {};
+        for (var attr in DEF_ANNOTATIONS) { 
+            annotations[attr] = annotations[attr] || DEF_ANNOTATIONS[attr]; 
+        }
+
+        this.annotation = function(k, v) {
+            if(k === undefined){
+                throw "Record::annotation(k,v): key is required";
+            }
+            if(v === undefined){
+                return annotations[k];
+            }
+            else {
+                annotations[k] = v;
+                return this;
+            }
+        };
+
+        this.listAnnotations = function() {
+            var ret = [], p;
+            for(p in annotations){
+                ret.push(p);
+            }
+            return ret;            
+        };
+
+        this.clearAnnotation = function(k) {
+            annotations[k] = undefined;
+        };
 
         this.length = function() {
             return this.seq.length();
@@ -40,10 +79,32 @@ var seqJS = seqJS || {};
         PROT: /^[ACDEFGHIKLMNPQRSTVWY]+$/,
         aPROT: /^[ACDEFGHIKLMNPQRSTVWYBXZ]+$/
     };
-    seqJS.Seq = function(_seq, _alphabet, _features){
+    seqJS.Seq = function(_seq, _alphabet, _features, _topology, _length_unit, _strand_type, _residue_type){
         if(_seq === undefined) { throw 'Argument seq is required';}
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
         _features = _features || [];
+        _topology = _topology || "linear";
+        if(['linear','circular'].indexOf(_topology) < 0){
+            throw 'topology must be \'linear\' or \'circular\'';
+        }
+        _length_unit = _length_unit || ((_alphabet.indexOf('PROT') >= 0) ? 
+            'aa' : 'bp');
+        _residue_type= _residue_type || '';
+        _strand_type = _strand_type || '';
+
+        var test_st = function(st){
+            if(['ss','ds','ms',''].indexOf(st) < 0){
+                throw 'Strand type must be \'ss\', \'ds\', or \'ms\', not \''+st+'\'';
+            }
+        };
+        var test_lu = function(lu){
+            if(['bp', 'aa', 'rc'].indexOf(lu) < 0){
+                throw 'Length unit must be \'bp\', \'aa\', or \'rc\', not \''+lu+'\'';
+            }
+        };
+
+        test_st(_strand_type);
+        test_lu(_length_unit);
 
         _seq = _seq.toUpperCase();
         if(seqJS.Alphabets.indexOf(_alphabet) < 0){
@@ -53,11 +114,37 @@ var seqJS = seqJS || {};
         this.length = function() {return _seq.length;};
         this.alphabet = function() {return _alphabet;};
         this.features = function() {return _features;};
-        this.unit = function() {
-            if(_alphabet.indexOf('PROT') > -1){
-                return 'aa';
+        this.lengthUnit = function(v) {
+            if(v === undefined){
+                return _length_unit;
             }
-            return 'bp';
+            test_lu(v);
+            _length_unit = v;
+            return this;
+        };
+        this.residueType = function(v) {
+            if(v === undefined){
+                return _residue_type;
+            }
+            _residue_type = v;
+            return this;
+        };
+        this.strandType = function(v) {
+            if(v === undefined){
+                return _strand_type;
+            }
+            test_st(v);
+            _strand_type = v;
+            return this;
+        };
+        this.topology = function() {
+            return _topology;
+        };
+        this.linearize = function() {
+            _topology = 'linear';
+        };
+        this.circularize = function() {
+            _topology = 'circular';
         };
     };
 

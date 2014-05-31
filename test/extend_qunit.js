@@ -75,80 +75,44 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 
 var gbrecord_eq = function(actual, expected){
 
-/* TODO:
- *
- *  Improve annotation parsing and testing.
- *
- *  There should be a fixed set of annotations which every SeqRecord is
- *  guaranteed to have, with fixed default values.
- *  Therse annotations are always written out first to file, but can appear in
- *  any order.
- *
- *  Test data should include:
- *      string: input file which should parse correctly
- *      object: {
- *          - this level contains things parsed from the LOCUS line (name,
- *          length, seq etc
- *
- *          annotations: [
- *              ['key', 'value']
- *              ],
- *
- *          references: [
- *              { as before}
- *          ]
- *      },
- *      output: string which should be the result of read/write
- *
- *
- *
- * required annotation keys:
- *  - data_division
- *  - date
- *  - source 
- *  - organism
- *  - taxonomy
- *
- *
- * sequence anotations:
- *  - topology
- *  - residue_type
- *  - alphabet
- *  - length_unit
- *
- *
- *
- */
+    // ============================= Test Metadata ============================
+    equal(actual.name, expected['name'], "Name is wrong");
+    equal(actual.id, expected['id'], "ID is wrong");
+    equal(actual.desc, expected['description'], "Description is wrong");
 
-
-    var an_keys = [
-        'residue_type',
-        'topology',
+    // ============================= Test Annotations =========================
+    var required_annotations = [
         'data_division',
         'date',
-        'accession',
-        'version',
-        'gi',
         'source',
-        'organism'];
+        'organism',
+        'taxonomy',
+        'references'];
 
-    equal(actual.name, expected['name'], "Name is wrong");
-    equal(actual.desc, expected['description'], "Description is wrong");
-    equal(actual.length(), expected['length']);
+    var actual_annotations = {}, i;
 
-    for(var i = 0; i < an_keys.length; i++){
-        equal(actual.annotations[an_keys[i]], expected[an_keys[i]], an_keys[i] + " is wrong");
+    for(i = 0; i < required_annotations.length; i++){
+        ok(actual.annotation(required_annotations[i]) !== undefined, 
+           "Required annotation " + required_annotations[i] + " is missing");
     }
 
-    deepEqual(actual.annotations.taxonomy, expected.taxonomy,
-          'taxonomy is wrong');
+    var anames = actual.listAnnotations();
+    for(i in anames){
+        if(anames[i] !== 'references'){
+            actual_annotations[anames[i]] = actual.annotation(anames[i]);
+        }
+    }
 
+    deepEqual(actual_annotations, expected.annotations, "Annotations are incorrect");
+
+    // ============================= Test References ==========================
     for(i = 0; i < expected.references.length; i++){
         var eref = expected.references[i],
-            aref = actual.annotations.references[i];
+            aref = actual.annotation('references')[i];
         deepEqual(aref, eref, "Reference "+i+" is wrong");
     }
 
+    // ============================= Test Features ============================
     var f = actual.seq.features();
     equal(f.length, expected.features.length, 'Wrong number of features');
     for(i = 0; i < expected.features.length; i++)
@@ -157,8 +121,13 @@ var gbrecord_eq = function(actual, expected){
         feature_eq(f[i], e[0], e[1], e[2], 'Feature '+i);
     }
 
-    equal(actual.seq.alphabet(), expected.alphabet, 'alphabet is wrong');
-    equal(actual.seq.seq(), expected.seq, 'seq is wrong');
+    // ============================= Test Sequence ============================
+    equal(actual.seq.length(), expected.sequence.length, 'sequence length is wrong');
+    equal(actual.seq.lengthUnit(), expected.sequence.length_unit, 'sequence length unit is wrong');
+    equal(actual.seq.residueType(), expected.sequence.residue_type, 'sequence residue type is wrong');
+    equal(actual.seq.topology(), expected.sequence.topology, 'sequence topology is wrong');
+    equal(actual.seq.alphabet(), expected.sequence.alphabet, 'sequence alphabet is wrong');
+    equal(actual.seq.seq(), expected.sequence.seq, 'sequence is wrong');
 
 };
 

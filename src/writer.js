@@ -1,4 +1,3 @@
-/* unused:false global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -30,6 +29,31 @@ var seqJS = seqJS || {};
         }
         return r;
     };
+    var word_wrap = function(line, max_len, wrap){
+        wrap = wrap || '\n';
+        var lines = [],
+            i,
+            l = '',
+            s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
+            w;
+
+        for(i = 0; i < s.length; i++){
+            w = s[i];
+            while((l.length+w.trim().length) >= max_len){
+                if(l){
+                    lines.push(l.trim());
+                    l = '';
+                }
+                else{
+                    lines.push(w.substring(0,max_len));
+                    w = w.substring(max_len);
+                }
+            }
+            l += w;
+        }
+        lines.push(l);
+        return lines.join(wrap);
+    };
 
     var writers = {};
 
@@ -51,35 +75,11 @@ var seqJS = seqJS || {};
                 'DEC'][d.getMonth()] + '-' + d.getFullYear().toString();
         };
 
-        var word_wrap = function(line, max_len, wrap){
-            wrap = wrap || '\n';
-            var lines = [],
-                i,
-                l = '',
-                s = line.match(/[^ ,\.]*(?:[ ,\.]|$)/g),
-                w;
-
-            for(i = 0; i < s.length; i++){
-                w = s[i];
-                while((l.length+w.trim().length) >= max_len){
-                    if(l){
-                        lines.push(l.trim());
-                        l = '';
-                    }
-                    else{
-                        lines.push(w.substring(0,max_len));
-                        w = w.substring(max_len);
-                    }
-                }
-                l += w;
-            }
-            lines.push(l);
-            return lines.join(wrap);
-        };
 
 
         var write_locus = function(record){
-            var ra = record.annotations,
+            var ra = record.annotation,
+                rs = record.seq,
                 name = record.name,
                 len = record.length().toString();
             if((name.length + len.length) >= 28){
@@ -88,12 +88,12 @@ var seqJS = seqJS || {};
             return "LOCUS       " +
               name + ' ' + 
               pad_l(len, 27 - name.length) +
-              ' ' + record.seq.unit() + ' ' +
-              pad_l( (ra.strand_type ? (ra.strand_type+'-') : ''), 3) + ' ' + 
-              pad_r(ra.residue_type || '', 7) +
-              pad_r( (ra.topology === 'circular') ? 'circular' : 'linear', 8) +
-              ' ' + (ra.data_division || 'SYN') +
-              ' ' + (ra.date || get_date()) + '\n'; 
+              ' ' + record.seq.lengthUnit() + ' ' +
+              pad_l( (rs.strandType() ? (rs.strandType()+'-') : ''), 3) + ' ' + 
+              pad_r(rs.residueType() || '', 7) +
+              pad_r( (rs.topology() === 'circular') ? 'circular' : 'linear', 8) +
+              ' ' + (ra('data_division') || 'SYN') +
+              ' ' + (ra('date') || get_date()) + '\n'; 
         };
 
         var write_annotation = function(key, value, indent){
@@ -114,7 +114,7 @@ var seqJS = seqJS || {};
             l = l.join('; ');
 
             var r = write_annotation('reference', (num+1).toString() + '  (' +
-                (record.seq.unit() === 'bp' ? 'bases' : 'residues') + ' ' +
+                (record.seq.lengthUnit() === 'bp' ? 'bases' : 'residues') + ' ' +
                 l + ')');
 
             for(i in keys){
@@ -128,33 +128,34 @@ var seqJS = seqJS || {};
 
 
         var write_annotations = function(r){
-            var ra = r.annotations,i,
+            var ra = r.annotation,i,
+                annots = r.listAnnotations(),
                 exclude = ['accession', 'version', 'keywords', 'source', 
                     'organism', 'data_division', 'topology', 'strand_type', 
                     'residue_type',
                     'date', 'definition', 'gi', 'dbsource',
                     'authors', 'title', 'journal', 'pubmed', 'medline'],
                 ret = write_annotation('definition', record.desc) + 
-                write_annotation('accession', ra.accession || '0') + 
-                write_annotation('version', (ra.accession || '0') + '.' + 
-                    (ra.version || '0') + '  GI:' + (ra.gi || '0')) +
-                ((ra.dbsource === undefined) ? 
-                    '' : write_annotation('dbsource',ra.dbsource)) + 
-                write_annotation('keywords', ra.keywords) + 
-                write_annotation('source', ra.source) + 
-                write_annotation('organism', ra.organism, true) + 
-                write_annotation('', ra.taxonomy.join('; ') + '.');
+                write_annotation('accession', ra('accession') || '0') + 
+                write_annotation('version', (ra('accession') || '0') + '.' + 
+                    (ra('version') || '0') + '  GI:' + (ra('gi') || '0')) +
+                ((ra('dbsource') === undefined) ? 
+                    '' : write_annotation('dbsource',ra('dbsource'))) + 
+                write_annotation('keywords', ra('keywords')) + 
+                write_annotation('source', ra('source')) + 
+                write_annotation('organism', ra('organism'), true) + 
+                write_annotation('', ra('taxonomy').join('; ') + '.');
 
 
-            for(i =0; i < ra.references.length; i++){
-                ret += write_reference(i, ra.references[i]);
+            for(i =0; i < ra('references').length; i++){
+                ret += write_reference(i, ra('references')[i]);
             }
 
             //add non-standard annotations
-            for(i in ra){
-                if(exclude.indexOf(i) < 0){
-                    if(typeof(ra[i]) === 'string' || ra[i] instanceof String){
-                        ret += write_annotation(i, ra[i]);
+            for(i in annots){
+                if(exclude.indexOf(annots[i]) < 0){
+                    if(typeof(ra(annots[i])) === 'string' || ra(annots[i]) instanceof String){
+                        ret += write_annotation(annots[i], ra(annots[i]));
                     }
                 }
             }
@@ -170,7 +171,7 @@ var seqJS = seqJS || {};
             for(i in qk){
                 v = f.qualifier(qk[i]);
                 if(typeof(v) === 'string' || v instanceof String){
-                    q = word_wrap('/' + qk[i] + '="'+v+'"',59);
+                    q = word_wrap('/' + qk[i] + '="'+v+'"',58);
                 }
                 else
                 {
@@ -223,8 +224,19 @@ var seqJS = seqJS || {};
             '//\n';
     };
 
-    writers['gb'] = gb_write;
-    writers['genbank'] = gb_write;
+    writers['gb'] = writers['genbank'] = gb_write;
+
+
+    var fasta_write = function(record){
+
+        return  '>' + record.name + 
+                ((record.desc === '') ? '' : (' ' + record.desc)) +
+                '\n' +
+                word_wrap(record.seq.seq(), 70);
+
+    };
+    writers['fa'] = writers['fas'] = writers['fasta'] = fasta_write;
+
 
     /*
      * seqJS.write(record, type) - write the record to a string and return the

@@ -18,8 +18,25 @@ var seqJS = seqJS || {};
     var Parser = function(type){
         var remaining_data = [], record_cb, self=this, line_num=0;
 
+        var _build_error = function(e, lines) {
+            return {
+                line_num: e[0] + line_num,
+                msg: e[1],
+                line: lines[e[0]],
+                toString: function(){
+                    return "Line "+this.line_num+": "+this.msg+"  \""+
+                        this.line + "\"";
+                }
+            };
+        };
+
         this.type = function() {return type;};
+
+        //parse the given chunk of data
         this.parse = function(data){
+            if(data === undefined){
+                throw "Parser::parse: data undefined";
+            }
             try{
                 var lines = (remaining_data + data).split('\n');
                 //last item isn't a full line
@@ -31,29 +48,53 @@ var seqJS = seqJS || {};
             }
             catch (e) {
                 if(e instanceof Array){
-                    throw {
-                        line_num: e[0] + line_num,
-                        msg: e[1],
-                        line: lines[e[0]],
-                        toString: function(){
-                            return "Line "+this.line_num+": "+this.msg+"  \""+
-                                this.line + "\"";
-                        }
-                    };
+                    throw _build_error(e, lines);
                 }
                 throw e;
             }
         };
 
+        //this function should be called when the input is complete and flushes
+        //any remaining data.
+        this.flush = function() {
+            //parse any remaining data
+            var lines = remaining_data.split('\n');
+            try{
+                var consumed = self._parse_lines(lines);
+                line_num += consumed;
+            }
+            catch (e) {
+                if(e instanceof Array){
+                    throw _build_error(e,lines);
+                }
+                throw e;
+            }
+            //execute format specific EOF code
+            this._flush();
+        };
+
+        /*
+         * This function should be over-ridden, and return the number of lines
+         * used
+         */
         this._parse_lines = function(lines) {
             self._triggerRecordCb(lines);
             return lines.length;
         };
+
+        /*
+         * This function should be over-ridden.
+         * It is called when EOF is reached
+         */
+        this._flush = function() {};
         
         this.setRecordCb = function(cb) {
             record_cb = cb;
         };
 
+        /*
+         * This function should be called when a record has been parsed
+         */
         this._triggerRecordCb = function(record) {
             if(typeof(record_cb) === 'function') {
                 record_cb(record);
@@ -86,7 +127,6 @@ var seqJS = seqJS || {};
             JOURNAL: 'journal',
             MEDLINE: 'medline',
             PUBMED: 'pubmed',
-            COMMENT: 'comment'
         };
 
 
@@ -103,11 +143,14 @@ var seqJS = seqJS || {};
                         more = self._find_locus(lines);
                         if(more){
                             c_data = {
-                                seq: '',
+                                s: {
+                                    seq: ''
+                                },
                                 features: [],
                                 annotations: {
-                                    desc: '',
                                     accession: '',
+                                    data_division: '',
+                                    date: '',
                                     source: '',
                                     organism: '',
                                     taxonomy: [],
@@ -154,11 +197,12 @@ var seqJS = seqJS || {};
 
             var m = LOCUS.exec(line);
             if(m){
-                c_data.name = m[1];
+                c_data.name = c_data.id = m[1];
                 c_data.length = parseInt(m[2],10);
-                c_data.annotations.strand_type = m[4] || '';
-                c_data.annotations.residue_type = m[5] || '';
-                c_data.annotations.topology = m[6] || 'linear';
+                c_data.s.length_unit = m[3] || '';
+                c_data.s.strand_type = m[4] || '';
+                c_data.s.residue_type = m[5] || '';
+                c_data.s.topology = m[6] || 'linear';
                 c_data.annotations.data_division = m[7] || '';
                 c_data.annotations.date = m[8];
                 
@@ -167,6 +211,39 @@ var seqJS = seqJS || {};
             else{
                 throw [c_line, 'Badly formatted LOCUS line'];
             }
+            
+            //guess sequence alphabet
+            var rt = c_data.s.residue_type.toUpperCase(),
+                lu = c_data.s.length_unit;
+            switch(lu){
+                case 'aa':
+                    c_data.s.palphabet = ['PROT', 'aPROT'];
+                    break;
+                case 'bp':
+                    if(rt.indexOf('RNA') >= 0){
+                        c_data.s.palphabet = ['RNA', 'aRNA'];
+                    }
+                    else if(rt.indexOf('DNA') >= 0){
+                        c_data.s.palphabet = ['DNA', 'aDNA'];
+                    }
+                    else{
+                        c_data.s.palphabet = ['DNA', 'aDNA', 'RNA', 'aRNA'];
+                    }
+                    break;
+                case 'rc':
+                    if(rt.indexOf('RNA') >= 0){
+                        c_data.s.palphabet = ['RNA', 'aRNA'];
+                    }
+                    else if(rt.indexOf('DNA') >= 0){
+                        c_data.s.palphabet = ['DNA', 'aDNA'];
+                    }
+                    else{
+                        c_data.s.palphabet = ['DNA', 'aDNA', 'RNA', 'aRNA', 'PROT', 'aPROT'];
+                    }
+                    break;
+
+            }
+            c_data.s.alphabet = c_data.s.palphabet[0];
 
             c_line++;
             return c_line < lines.length;
@@ -229,55 +306,59 @@ var seqJS = seqJS || {};
                 }
                 c_data.annotations.references[l-1][refmap[key]] = v;
             }
-            switch(key){
-                case 'REFERENCE':
-                    value = value.join(' ');
-                    l = [];
-                    m = /(\d+)\s+\(\w+ (.+)\)/.exec(value);
-                    if(m){
-                        l = m[2].split(';').map(function(v){
-                            m2 = /(\d+) to (\d+)/.exec(v);
-                            if(m2){
-                                return [parseInt(m2[1],10), parseInt(m2[2],10)];
-                            }
-                            else{
-                                throw [c_line, "Badly formatted REFERENCE"];
-                            }
+            else {
+                switch(key){
+                    case 'REFERENCE':
+                        value = value.join(' ');
+                        l = [];
+                        m = /(\d+)\s+\(\w+ (.+)\)/.exec(value);
+                        if(m){
+                            l = m[2].split(';').map(function(v){
+                                m2 = /(\d+) to (\d+)/.exec(v);
+                                if(m2){
+                                    return [parseInt(m2[1],10), 
+                                            parseInt(m2[2],10)];
+                                }
+                                else{
+                                    throw [c_line, "Badly formatted REFERENCE"];
+                                }
+                            });
+                        }
+                        else {
+                            throw [c_line, "Badly formatted REFERENCE"];
+                        }
+                        c_data.annotations.references.push({
+                            location: l
                         });
-                    }
-                    else {
-                        throw [c_line, "Badly formatted REFERENCE"];
-                    }
-                    c_data.annotations.references.push({
-                        location: l
-                    });
-                    break;
-                case 'VERSION':
-                    //version line should be formatted 
-                    //      ACCESSION.version [GI:gi]
-                    m = /(\S+)\.(\d+)(?:\s+GI:(\d+))?/.exec(value.join(' '));
-                    if(m){
-                        c_data.annotations['accession'] = m[1];
-                        c_data.annotations['version'] = m[2];
-                        c_data.annotations['gi'] = m[3];
-                    }
-                    else {
-                        c_data.annotations['version'] = value.join(' ');
-                    }
-                    break;
-                case 'ORGANISM':
-                    //ORGANISM line - organism name \n taxonomy.
-                    c_data.annotations.organism = value[0];
-                    var a = value.slice(1).join(' ').trim();
-                    if(a[a.length-1] === '.'){
-                        a = a.slice(0, a.length-1);
-                    }
-                    c_data.annotations.taxonomy = a.split(';').map(function(v){
-                        return v.trim();
-                    });
-                    break;
-                default: 
-                    c_data.annotations[key.toLowerCase()] = value.join(' ');
+                        break;
+                    case 'VERSION':
+                        //version line should be formatted 
+                        //      ACCESSION.version [GI:gi]
+                        m = /(\S+)\.(\d+)(?:\s+GI:(\d+))?/.exec(value.join(' '));
+                        if(m){
+                            c_data.annotations['accession'] = m[1];
+                            c_data.annotations['version'] = parseInt(m[2],10);
+                            c_data.annotations['gi'] = parseInt(m[3],10);
+                        }
+                        else {
+                            c_data.annotations['version'] = value.join(' ');
+                        }
+                        break;
+                    case 'ORGANISM':
+                        //ORGANISM line - organism name \n taxonomy.
+                        c_data.annotations.organism = value[0];
+                        var a = value.slice(1).join(' ').trim();
+                        if(a[a.length-1] === '.'){
+                            a = a.slice(0, a.length-1);
+                        }
+                        c_data.annotations.taxonomy = a.split(';').map(
+                            function(v){
+                                return v.trim();
+                        });
+                        break;
+                    default: 
+                        c_data.annotations[key.toLowerCase()] = value.join(' ');
+                }
             }
 
         };
@@ -366,17 +447,13 @@ var seqJS = seqJS || {};
 
 
         this._parse_seq = function(lines){
-            var line, i, rt = (c_data.annotations.residue_type || '').toUpperCase();
-            if(rt.indexOf('DNA') > -1){
-                c_data.alphabet = 'DNA';
-            }
-            else if(rt.indexOf('RNA') > -1){
-                c_data.alphabet = 'RNA';
-            }
-            else {
-                c_data.alphabet = 'PROT';
-            }
-            var re = seqJS.Alphabets_RE[c_data.alphabet];
+            var line, 
+                filter_cb = function(a){
+                        var re = seqJS.Alphabets_RE[a];
+                        return line.match(re);
+                    };
+
+            var re = seqJS.Alphabets_RE[c_data.s.alphabet];
 
             while(c_line < lines.length){
                 line = lines[c_line];
@@ -391,30 +468,33 @@ var seqJS = seqJS || {};
                 line = line.substr(10).replace(/ /g, '').toUpperCase();
                 //checkLetters
                 if(!line.match(re)){
-                    //check for ambiguous
-                    if(c_data.alphabet[0] !== 'a'){
-                        c_data.alphabet = 'a' + c_data.alphabet;
-                        re = seqJS.Alphabets_RE[c_data.alphabet];
-                        if(!line.match(re)){
-                            throw [c_line, "Invalid character '"+line[i]+"'"];
-                        }
+                    //filter all possible alphabets
+                    c_data.s.palphabet = c_data.s.palphabet.filter(filter_cb);
+
+                    //if there are no possibilities left
+                    if(c_data.s.palphabet.length === 0){
+                        throw [c_line, "Invalid character"];
                     }
-                    else {
-                        throw [c_line, "Invalid character '"+line[i]+"'"];
-                    }
+                    c_data.s.alphabet = c_data.s.palphabet[0];
+                    re = seqJS.Alphabets_RE[c_data.s.alphabet];
                 }
-                c_data.seq = c_data.seq + line;
+                c_data.s.seq = c_data.s.seq + line;
                 c_line++;
             }
             return c_line < lines.length;
         };
 
         this._build_record = function(){
-            var seq = new seqJS.Seq(c_data.seq, 
-                                    c_data.alphabet, 
-                                    c_data.features);
 
-            var r = new seqJS.Record(seq, 0, c_data.name, c_data.desc, c_data.annotations);
+            var seq = new seqJS.Seq(c_data.s.seq, 
+                                    c_data.s.alphabet, 
+                                    c_data.features,
+                                    c_data.s.topology,
+                                    c_data.s.length_unit,
+                                    c_data.s.strand_type,
+                                    c_data.s.residue_type);
+
+            var r = new seqJS.Record(seq, c_data.id, c_data.name, c_data.desc, c_data.annotations);
 
             self._triggerRecordCb(r);
         };
@@ -424,6 +504,143 @@ var seqJS = seqJS || {};
     GenBankParser.prototype = new Parser();
     parsers['gb'] = parsers['genbank'] = GenBankParser;
     
+
+    /*
+     * FASTA Parser
+     *  Parse a FASTA file
+     */
+    var FASTAParser = function() {
+        Parser.call(this);
+
+        var c_data = null, 
+            c_line = 0,
+            HDR = /^>(\S+)? ?(.+)?/,
+            self = this;
+        
+        this.type = function() {return 'fasta';};
+        
+        this._parse_lines = function(lines) {
+            var more = true;
+            c_line = 0;
+            while(more){
+                if(c_data === null){
+                    more = this._parse_hdr(lines);
+                }
+                else {
+                    more = this._parse_seq(lines);
+                }
+            }
+
+            return c_line;            
+        };
+
+        this._parse_hdr = function(lines) {
+            var line, m;
+            
+            while(c_line < lines.length){
+                line = lines[c_line].trim();
+                //skip blank and comments
+                if(line === '' ||
+                    [';', '/', '#'].indexOf(line[0]) >= 0) {
+                    c_line++;
+                    continue;
+                }
+
+                //If we've not got a header line, raise an error
+                if(line[0] !== '>'){
+                    throw [c_line, 'Expected header line begining with \'>\''];
+                }
+
+                if(m = line.match(HDR)){
+                    c_data = {
+                        name: m[1] || '',
+                        desc: m[2] || '',
+                        seq: '',
+                        palpha: seqJS.Alphabets
+                    };
+                    c_line++;
+                    break;
+                }
+                else {
+                    throw [c_line, 'Badly formatted header line'];
+                }
+
+            }
+
+            return c_line < lines.length;
+        };
+
+        this._parse_seq = function(lines) {
+            var line,
+                re = seqJS.Alphabets_RE[c_data.palpha[0]], 
+                filter_cb = function(a){
+                        var re = seqJS.Alphabets_RE[a];
+                        return line.match(re);
+                    };
+            
+            while(c_line < lines.length){
+                line = lines[c_line].trim();
+                //skip blank and comments
+                if(line === '' ||
+                    [';', '/', '#'].indexOf(line[0]) >= 0) {
+                    c_line++;
+                    continue;
+                }
+
+                //if we found the begining of the next record
+                if(line[0] === '>') {
+                    this._build_record();
+                    break;
+                }
+
+                line = line.replace(/ /g, '').toUpperCase();
+
+                if(!line.match(re)){
+                    //filter all possible alphabets
+                    c_data.palpha = c_data.palpha.filter(filter_cb);
+
+                    //if there are no possibilities left
+                    if(c_data.palpha.length === 0){
+                        throw [c_line, "Invalid character"];
+                    }
+                    re = seqJS.Alphabets_RE[c_data.palpha[0]];
+                }
+
+                c_data.seq = c_data.seq + line;
+                c_line++;
+            }
+
+            return c_line < lines.length;
+        };
+
+
+        this._build_record = function(){
+            if(c_data){
+
+                var seq = new seqJS.Seq(c_data.seq, 
+                                        c_data.palpha[0]);
+
+                var r = new seqJS.Record(seq, 
+                                         c_data.name, 
+                                         c_data.name, 
+                                         c_data.desc);
+
+                self._triggerRecordCb(r);
+
+                c_data = null;
+            }
+        };
+
+        
+        this._flush = function() {
+            this._build_record();
+        };
+
+    };
+    FASTAParser.prototype = new Parser();
+    parsers['fa'] = parsers['fas'] = parsers['fasta'] = FASTAParser;
+
+
 
     /*
      * getParser(type) - return a parser object
@@ -437,6 +654,22 @@ var seqJS = seqJS || {};
             throw "Unknown parser type \'"+type+"\'. Known types are " + 
                 Object.keys(parsers).join(', ') + '.';
         }
+    };
+
+    /*
+     * read(data, format) - read records from a file synchronously
+     *      data: string
+     *      format: file format
+     */
+    seqJS.read = function(data, format){
+        var parser = seqJS.getParser(format),
+            recs = [];
+
+        parser.setRecordCb(function(rec) {recs.push(rec);});
+        parser.parse(data);
+        parser.flush();
+
+        return recs;
     };
 
 }());
