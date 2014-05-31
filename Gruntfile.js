@@ -78,7 +78,7 @@ module.exports = function(grunt) {
             version: '<%= pkg.version %>',
             url: '<%= pkg.homepage %>',
             options: {
-                paths: ['./src/*.js'],
+                paths: ['./src/'],
                 outdir: './docs/'
             }
         }
