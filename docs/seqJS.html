@@ -100,6 +100,9 @@
             <dt><a href="seqJS.LocationOperator.html">LocationOperator</a></dt>
             <dd></dd>
         
+            <dt><a href="seqJS.Parser.html">Parser</a></dt>
+            <dd></dd>
+        
             <dt><a href="seqJS.Record.html">Record</a></dt>
             <dd></dd>
         
@@ -249,6 +252,312 @@ should match
     
     
     
+        <h3 class="subsection-title">Methods</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="getParser"><span class="type-signature">&lt;static> </span>getParser<span class="signature">(type)</span><span class="type-signature"> &rarr; {Parser}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Construct and return a new object which inherits <a href="seqJS.Parser.html">seqJS.Parser</a>
+of the requested type
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">'gb' or 'fasta'</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line668">line 668</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    A parser object
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Parser</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="read"><span class="type-signature">&lt;static> </span>read<span class="signature">(data, format)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="seqJS.Record.html">seqJS.Record</a>>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Read all records from a string synchronously
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The data to parse</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>format</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The format of the data (e.g. 'gb' or 'fasta')</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line683">line 683</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    An array containing all the records found
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Array.&lt;<a href="seqJS.Record.html">seqJS.Record</a>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        </dl>
+    
     
     
     
@@ -263,13 +572,13 @@ should match
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.LocationOperator.html">LocationOperator</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.LocationOperator.html">LocationOperator</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 11 2014 15:04:14 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 11 2014 15:42:34 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

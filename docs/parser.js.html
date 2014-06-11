@@ -1,4 +1,31 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: parser.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: parser.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*
  * seqJS
  * https://github.com/haydnKing/seqJS
  *
@@ -193,7 +220,7 @@ var seqJS = seqJS || {};
 
         this._find_locus = function(lines){
             var line;
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 line = lines[c_line].trim();
                 //if line is a locus line
                 if(line.substr(0,12) === 'LOCUS       '){
@@ -264,12 +291,12 @@ var seqJS = seqJS || {};
             c_data.s.alphabet = c_data.s.palphabet[0];
 
             c_line++;
-            return c_line < lines.length;
+            return c_line &lt; lines.length;
         };
 
         this._parse_hdr = function(lines){
             var c_key, c_val, lline, rline, s_line = c_line;
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 lline = lines[c_line].substring(0,12);
                 rline = lines[c_line].substring(12);
                 //continue an annotation
@@ -295,7 +322,7 @@ var seqJS = seqJS || {};
                 if(c_key === 'FEATURES'){
                     state = S_FT;
                     c_line++;
-                    return c_line < lines.length;
+                    return c_line &lt; lines.length;
                 }
                 
                 
@@ -384,7 +411,7 @@ var seqJS = seqJS || {};
         this._parse_ft = function(lines){
             var feature_start, type;
 
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 feature_start = c_line;
                 type = lines[c_line].substr(0,21).trim();
                 if(type === ''){
@@ -393,7 +420,7 @@ var seqJS = seqJS || {};
                 else if(type === 'ORIGIN'){
                     state = S_SEQ;
                     c_line++;
-                    return c_line < lines.length;
+                    return c_line &lt; lines.length;
                 }
                 else if(type === '//'){
                     throw [c_line, 'Premature end of record'];
@@ -401,7 +428,7 @@ var seqJS = seqJS || {};
 
                 //consume the feature
                 c_line++;
-                while(c_line < lines.length){
+                while(c_line &lt; lines.length){
                     if(lines[c_line].substr(0,21).trim() !== ''){
                         //save the feature
                         this._parse_feat(lines.slice(feature_start, c_line), feature_start);
@@ -426,7 +453,7 @@ var seqJS = seqJS || {};
             lines.push('                     /');
 
             //parse any remaining pos
-            while(l < lines.length){
+            while(l &lt; lines.length){
                 line = lines[l++].substr(21);
                 if(line[0] === '/'){
                     break;
@@ -443,7 +470,7 @@ var seqJS = seqJS || {};
             }
 
             //parse the qualifiers
-            while(l < lines.length){
+            while(l &lt; lines.length){
                 _line = lines[l++].substr(21);
                 if(_line[0] === '/'){
                     if(m = /\/(\w+)="(.+)"/.exec(line)){
@@ -473,14 +500,14 @@ var seqJS = seqJS || {};
 
             var re = seqJS.Alphabets_RE[c_data.s.alphabet];
 
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 line = lines[c_line];
 
                 if(line.trim() === '//'){
                     state = S_LOCUS;
                     self._build_record();
                     c_line++;
-                    return c_line < lines.length;
+                    return c_line &lt; lines.length;
                 }
                 
                 line = line.substr(10).replace(/ /g, '').toUpperCase();
@@ -499,7 +526,7 @@ var seqJS = seqJS || {};
                 c_data.s.seq = c_data.s.seq + line;
                 c_line++;
             }
-            return c_line < lines.length;
+            return c_line &lt; lines.length;
         };
 
         this._build_record = function(){
@@ -555,7 +582,7 @@ var seqJS = seqJS || {};
         this._parse_hdr = function(lines) {
             var line, m;
             
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 line = lines[c_line].trim();
                 //skip blank and comments
                 if(line === '' ||
@@ -585,7 +612,7 @@ var seqJS = seqJS || {};
 
             }
 
-            return c_line < lines.length;
+            return c_line &lt; lines.length;
         };
 
         this._parse_seq = function(lines) {
@@ -596,7 +623,7 @@ var seqJS = seqJS || {};
                         return line.match(re);
                     };
             
-            while(c_line < lines.length){
+            while(c_line &lt; lines.length){
                 line = lines[c_line].trim();
                 //skip blank and comments
                 if(line === '' ||
@@ -628,7 +655,7 @@ var seqJS = seqJS || {};
                 c_line++;
             }
 
-            return c_line < lines.length;
+            return c_line &lt; lines.length;
         };
 
 
@@ -678,7 +705,7 @@ var seqJS = seqJS || {};
     /** Read all records from a string synchronously
      * @param {string} data The data to parse
      * @param {string} format The format of the data (e.g. 'gb' or 'fasta')
-     * @returns {Array.<seqJS.Record>} An array containing all the records found
+     * @returns {Array.&lt;seqJS.Record>} An array containing all the records found
      */
     seqJS.read = function(data, format){
         var parser = seqJS.getParser(format),
@@ -693,3 +720,26 @@ var seqJS = seqJS || {};
 
 }());
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.LocationOperator.html">LocationOperator</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 11 2014 15:42:34 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

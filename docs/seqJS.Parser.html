@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Location</title>
+    <title>JSDoc: Class: Parser</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Location</h1>
+    <h1 class="page-title">Class: Parser</h1>
     
     
 
@@ -29,7 +29,7 @@
     <h2>
         <span class="ancestors"><a href="seqJS.html">seqJS</a>.</span>
     
-    Location
+    Parser
     </h2>
     
 </header>  
@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Location"><span class="type-signature"></span>new Location<span class="signature">(_location, <span class="optional">_operator</span>, <span class="optional">_location2</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Parser"><span class="type-signature">&lt;private> </span>new Parser<span class="signature">(type)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,9 +49,9 @@
     
     
     <div class="description">
-        Represent a single location as either and exact base (''), before a
- specific base ('<'), after a specific base ('>') or between two specific
- bases ('A.B')
+        A generic parser which provides the interface for the specific parsers, 
+such as GenBankParser or FastaParser. This constructor should not be
+called direcly, instead call <a href="seqJS.html#getParser">seqJS.getParser</a>
     </div>
     
 
@@ -73,8 +73,6 @@
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
-		
 		
 		
 		
@@ -87,42 +85,7 @@
 	
         <tr>
             
-                <td class="name"><code>_location</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">number</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">Either a string defining a location to
-be parsed or the position of the location</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>_operator</code></td>
+                <td class="name"><code>type</code></td>
             
             
             <td class="type">
@@ -135,56 +98,10 @@ be parsed or the position of the location</td>
             </td>
             
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-            
-            <td class="description last">The operator which applies, either '', '<', 
-'.', or '>'. If this parameter is given, then _location must be an 
-integer. If _operator is given as '.', then _location2 is required</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>_location2</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-            
-            <td class="description last">The second location, used only when
-representing locations which are between two points, e.g 100.200</td>
+            <td class="description last"></td>
         </tr>
 	
 	
@@ -215,7 +132,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line253">line 253</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line21">line 21</a>
     </li></ul></dd>
     
     
@@ -261,7 +178,7 @@ representing locations which are between two points, e.g 100.200</td>
         <dl>
             
 <dt>
-    <h4 class="name" id="gt"><span class="type-signature"></span>gt<span class="signature">(rhs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="_flush"><span class="type-signature">&lt;abstract> </span>_flush<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -269,7 +186,78 @@ representing locations which are between two points, e.g 100.200</td>
     
     
     <div class="description">
-        Is the location greater than rhs
+        This function should be over-ridden. It is called when EOF is 
+reached
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line102">line 102</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="_parse_lines"><span class="type-signature">&lt;abstract> </span>_parse_lines<span class="signature">(lines)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        This function should be over-ridden, and return the number of lines
+ used
     </div>
     
 
@@ -303,509 +291,92 @@ representing locations which are between two points, e.g 100.200</td>
 	
         <tr>
             
-                <td class="name"><code>rhs</code></td>
+                <td class="name"><code>lines</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the location to compare with</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line314">line 314</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    true if rhs is greater than this
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">boolean</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="location"><span class="type-signature"></span>location<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Get the first location
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line294">line 294</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The first location - equal to the exact location
-if operator is ''
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="location2"><span class="type-signature"></span>location2<span class="signature">()</span><span class="type-signature"> &rarr; {number|undefined}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Get the second location. This is only defined if operator is '.'
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line299">line 299</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    returns the second location if operator
-is '.'
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">number</span>
-|
-
-<span class="param-type">undefined</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="lt"><span class="type-signature"></span>lt<span class="signature">(rhs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Is the location less than rhs
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>rhs</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the location to compare with</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line309">line 309</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    true if rhs is strictly smaller than this
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type">boolean</span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="operator"><span class="type-signature"></span>operator<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Get the operator
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line303">line 303</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    either '', '<', '>' or '.'
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
 <span class="param-type">string</span>
 
 
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The lines of data to parse</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line93">line 93</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The number of lines which were parsed
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">number</span>
+
+
 	</dd>
 </dl>
 
@@ -817,7 +388,7 @@ is '.'
         
             
 <dt>
-    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="_triggerRecordCb"><span class="type-signature"></span>_triggerRecordCb<span class="signature">(record)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -825,7 +396,126 @@ is '.'
     
     
     <div class="description">
-        Get a genbank style string representation
+        This function should be called when a record has been parsed and
+triggers the callback
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>record</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="seqJS.Record.html">seqJS.Record</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The record to pass to the callback</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line116">line 116</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="flush"><span class="type-signature"></span>flush<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Flushes any remaining data. Should be called after all input has
+been given, i.e. after a series of calls to Parser.Parse
     </div>
     
 
@@ -858,7 +548,312 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line324">line 324</a>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="parse"><span class="type-signature"></span>parse<span class="signature">(data)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Parse a chunk of data
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The chunk of data to parse. Records are
+returned via the callback function, see Parser.setRecordCB</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setRecordCb"><span class="type-signature"></span>setRecordCb<span class="signature">(cb)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set the function to be called when a <a href="seqJS.Record.html">seqJS.Record</a> has been
+generated
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The function to call</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line108">line 108</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="type"><span class="type-signature">&lt;abstract> </span>type<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the type of the parser
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="parser.js.html">parser.js</a>, <a href="parser.js.html#line40">line 40</a>
     </li></ul></dd>
     
     
@@ -882,6 +877,10 @@ is '.'
     <h5>Returns:</h5>
     
             
+<div class="param-desc">
+    The type of parser, e.g. 'genbank', 'fasta'
+</div>
+
 
 
 <dl>
