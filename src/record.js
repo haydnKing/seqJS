@@ -27,7 +27,10 @@ var seqJS = seqJS || {};
     };
 
     /**
-     * Record object. Stores a biological sequence record.
+     * Stores a biological sequence record. Records are typically created 
+     * synchronously using {@link seqJS.read} or asynchronously using 
+     * {@link seqJS.getParser}. They can be written to strings using 
+     * {@link seqJS.write}.
      * @constructor
      * @param {seqJS.Seq} seq the sequence object
      * @param {string} id the record's id
