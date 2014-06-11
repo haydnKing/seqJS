@@ -1,4 +1,31 @@
-/*
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: record.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: record.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/*
  * seqJS
  * https://github.com/haydnKing/seqJS
  *
@@ -140,7 +167,7 @@ var seqJS = seqJS || {};
         if(_alphabet === undefined) { throw 'Argument alphabet is required';}
         _features = _features || [];
         _topology = _topology || "linear";
-        if(['linear','circular'].indexOf(_topology) < 0){
+        if(['linear','circular'].indexOf(_topology) &lt; 0){
             throw 'topology must be \'linear\' or \'circular\'';
         }
         _length_unit = _length_unit || ((_alphabet.indexOf('PROT') >= 0) ? 
@@ -149,12 +176,12 @@ var seqJS = seqJS || {};
         _strand_type = _strand_type || '';
 
         var test_st = function(st){
-            if(['ss','ds','ms',''].indexOf(st) < 0){
+            if(['ss','ds','ms',''].indexOf(st) &lt; 0){
                 throw 'Strand type must be \'ss\', \'ds\', or \'ms\', not \''+st+'\'';
             }
         };
         var test_lu = function(lu){
-            if(['bp', 'aa', 'rc'].indexOf(lu) < 0){
+            if(['bp', 'aa', 'rc'].indexOf(lu) &lt; 0){
                 throw 'Length unit must be \'bp\', \'aa\', or \'rc\', not \''+lu+'\'';
             }
         };
@@ -163,7 +190,7 @@ var seqJS = seqJS || {};
         test_lu(_length_unit);
 
         _seq = _seq.toUpperCase();
-        if(seqJS.Alphabets.indexOf(_alphabet) < 0){
+        if(seqJS.Alphabets.indexOf(_alphabet) &lt; 0){
             throw "Invalid Alphabet";
         }
         /** Get the sequence
@@ -236,15 +263,15 @@ var seqJS = seqJS || {};
         };
     };
 
-    var loc_fmt = /(?:^([<>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
+    var loc_fmt = /(?:^([&lt;>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
  
     /** Represent a single location as either and exact base (''), before a
-     *  specific base ('<'), after a specific base ('>') or between two specific
+     *  specific base ('&lt;'), after a specific base ('>') or between two specific
      *  bases ('A.B')
      * @constructor
      * @param {string|number} _location Either a string defining a location to
      * be parsed or the position of the location
-     * @param {string} [_operator] The operator which applies, either '', '<', 
+     * @param {string} [_operator] The operator which applies, either '', '&lt;', 
      * '.', or '>'. If this parameter is given, then _location must be an 
      * integer. If _operator is given as '.', then _location2 is required
      * @param {number} [_location2] The second location, used only when
@@ -268,17 +295,17 @@ var seqJS = seqJS || {};
             }
         }
         _operator = _operator || '';
-        if(['', '<', '>', '.'].indexOf(_operator) === -1){
+        if(['', '&lt;', '>', '.'].indexOf(_operator) === -1){
             throw "Invalid location operator \'" + _operator + "\'";
         }
-        if(_location < 1){
+        if(_location &lt; 1){
             throw "Invalid location \'" + _location + "\'";
         }
         if(_operator === '.'){
             if(_location2 === undefined){
                 throw "Must have two locations for '.' operator";
             }
-            if(_location2 < _location){
+            if(_location2 &lt; _location){
                 throw "Second location must be less than the first";
             }
         }
@@ -298,7 +325,7 @@ var seqJS = seqJS || {};
          */
         this.location2= function() {return _location2;};
         /** Get the operator
-         * @returns {string} either '', '<', '>' or '.'
+         * @returns {string} either '', '&lt;', '>' or '.'
          */
         this.operator = function() {return _operator;};
 
@@ -331,7 +358,7 @@ var seqJS = seqJS || {};
 
     var span_fmt = /(\S+)\.\.(\S+)/;
     /** Represent a span between two locations. By definition 
-     *  location1 < location 2.
+     *  location1 &lt; location 2.
      *  @constructor 
      *  @param {string|seqJS.Location} _location1 the first location
      *  @param {string|seqJS.Location} _location2 the second location
@@ -440,7 +467,7 @@ var seqJS = seqJS || {};
     var tokenize = function(string){
         var ret = [], items = string.split(',');
         var depth = 0, current = '';
-        for(var i = 0; i < items.length; i++){
+        for(var i = 0; i &lt; items.length; i++){
             if(current){
                 current = current + ',' + items[i];
             }
@@ -483,7 +510,7 @@ var seqJS = seqJS || {};
                         throw "Location lines cannot mix join(...) and order(...)";
                     }
                     var s_items = tokenize(m[2]);
-                    for(var i = 0; i < s_items.length; i++){
+                    for(var i = 0; i &lt; s_items.length; i++){
                         items.push(new seqJS.LocationOperator(s_items[i], operator));
                     }
             }
@@ -497,7 +524,7 @@ var seqJS = seqJS || {};
          */
         this.toString = function() {
             var s = [];
-            for(var i = 0; i < items.length; i++){
+            for(var i = 0; i &lt; items.length; i++){
                 s.push(items[i].toString());
             }
             if(operator){
@@ -516,7 +543,7 @@ var seqJS = seqJS || {};
             if(operator === 'complement'){
                 value = !value;
             }
-            for(var i = 0; i < items.length; i++){
+            for(var i = 0; i &lt; items.length; i++){
                 items[i].setComplement(value);
             }
         };
@@ -532,7 +559,7 @@ var seqJS = seqJS || {};
                 }
             }
             else{
-                for(i = 0; i < items.length; i++){
+                for(i = 0; i &lt; items.length; i++){
                     spans = spans.concat(items[i].getSpans());
                 }
             }
@@ -548,7 +575,7 @@ var seqJS = seqJS || {};
                 return prev_op;
             }
             else {
-                for(var i = 0; i < items.length; i++){
+                for(var i = 0; i &lt; items.length; i++){
                     if(!items[i].isSpan()){
                         op = items[i].getMergeOperator();
                         if(op){
@@ -686,7 +713,7 @@ var seqJS = seqJS || {};
                 return qualifiers[key];
             }
             else{
-                if(q_keys.indexOf(key) < 0){
+                if(q_keys.indexOf(key) &lt; 0){
                     q_keys.push(key);
                 }
                 qualifiers[key] = value;
@@ -707,7 +734,7 @@ var seqJS = seqJS || {};
                 qualifiers = {};
             }
             else if(to_remove instanceof Array){
-                for(var i = 0; i < to_remove.length; i++){
+                for(var i = 0; i &lt; to_remove.length; i++){
                     qualifiers[to_remove[i]] = undefined;
                     idx = q_keys.indexOf(to_remove[i]);
                     if(idx > -1){
@@ -737,3 +764,26 @@ var seqJS = seqJS || {};
 
 
 }());
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.LocationOperator.html">LocationOperator</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jun 11 2014 15:04:14 GMT+0100 (BST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
