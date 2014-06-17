@@ -614,7 +614,6 @@ var seqJS = seqJS || {};
     /**
      * FeatureLocation
      *  Store base LocationOperator and procide access to the underlying data
-     *  (somehow)
      * @constructor
      * @param {seqJS.FeatureLocation} location the location of the feature
      */
@@ -629,14 +628,27 @@ var seqJS = seqJS || {};
         //set complement flags on Spans
         loc.setComplement();
 
+        /**
+         * Get a string representation of the location
+         * @returns {string} String representation
+         */
         this.toString = function(){
             return loc.toString();
         };
 
+        /**
+         * Return a list of {@link seqJS.Span}s in the approptiate order
+         * @returns {Array.<seqJS.Span>} An array of spans
+         */
         this.getSpans = function() {
             return loc.getSpans();
         };
 
+        /**
+         * Returns the type of merge which should be performed with this
+         * location
+         * @returns {string} 'join' or 'order'
+         */
         this.getMergeOperator = function() {
             return loc.getMergeOperator();
         };
