@@ -79,8 +79,8 @@ var seqJS = seqJS || {};
 
         var write_locus = function(record){
             var ra = record.annotation,
-                rs = record.seq,
-                name = record.name,
+                rs = record.seq(),
+                name = record.name(),
                 len = record.length().toString();
             if((name.length + len.length) >= 28){
                 name = name.substr(0, 27 - len.length);
@@ -88,7 +88,7 @@ var seqJS = seqJS || {};
             return "LOCUS       " +
               name + ' ' + 
               pad_l(len, 27 - name.length) +
-              ' ' + record.seq.lengthUnit() + ' ' +
+              ' ' + record.seq().lengthUnit() + ' ' +
               pad_l( (rs.strandType() ? (rs.strandType()+'-') : ''), 3) + ' ' + 
               pad_r(rs.residueType() || '', 7) +
               pad_r( (rs.topology() === 'circular') ? 'circular' : 'linear', 8) +
@@ -114,7 +114,7 @@ var seqJS = seqJS || {};
             l = l.join('; ');
 
             var r = write_annotation('reference', (num+1).toString() + '  (' +
-                (record.seq.lengthUnit() === 'bp' ? 'bases' : 'residues') + ' ' +
+                (record.seq().lengthUnit() === 'bp' ? 'bases' : 'residues') + ' ' +
                 l + ')');
 
             for(i in keys){
@@ -135,7 +135,7 @@ var seqJS = seqJS || {};
                     'residue_type',
                     'date', 'definition', 'gi', 'dbsource',
                     'authors', 'title', 'journal', 'pubmed', 'medline'],
-                ret = write_annotation('definition', record.desc) + 
+                ret = write_annotation('definition', record.desc()) + 
                 write_annotation('accession', ra('accession') || '0') + 
                 write_annotation('version', (ra('accession') || '0') + '.' + 
                     (ra('version') || '0') + '  GI:' + (ra('gi') || '0')) +
@@ -188,7 +188,7 @@ var seqJS = seqJS || {};
         var write_features = function(r){
 
             var ret = 'FEATURES             Location/Qualifiers\n',
-                i, fs = r.seq.features();
+                i, fs = r.seq().features();
 
             for(i = 0; i < fs.length; i++){
                 ret += write_feature(fs[i]);
@@ -200,7 +200,7 @@ var seqJS = seqJS || {};
         var write_sequence = function(r){
             var o = "ORIGIN\n",
                 p,
-                s = r.seq.seq();
+                s = r.seq().seq();
 
             for(p=0; p < s.length; p += 60)
             {
@@ -227,10 +227,10 @@ var seqJS = seqJS || {};
 
     var fasta_write = function(record){
 
-        return  '>' + record.name + 
-                ((record.desc === '') ? '' : (' ' + record.desc)) +
+        return  '>' + record.name() + 
+                ((record.desc() === '') ? '' : (' ' + record.desc())) +
                 '\n' +
-                word_wrap(record.seq.seq(), 70);
+                word_wrap(record.seq().seq(), 70);
 
     };
     writers['fa'] = writers['fas'] = writers['fasta'] = fasta_write;

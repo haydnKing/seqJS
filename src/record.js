@@ -42,15 +42,54 @@ var seqJS = seqJS || {};
         if(! seq instanceof seqJS.Seq){
             throw("seq must be a seqJS.Seq instance");
         }
-        /** The sequence object */
-        this.seq = seq;
-        /** The record id */
-        this.id = id || 0;
-        /** The record name */
-        this.name = name || "unnamed";
-        /** The record description */
-        this.desc = desc || "";
-        
+        /** 
+         * Get the sequence object 
+         * @returns {SeqJS.Seq} The sequence object 
+         */
+        this.seq = function() {return seq;};
+        /** 
+         * Get or set the record id
+         * @param {string|Number} [_id] The new ID
+         * @returns {string|Number|seqJS.Record} Either the record's ID if no 
+         * arguments, or this if the ID was set
+         */
+        this.id = function (_id) {
+            if(_id === undefined)
+            {
+                return id || 0;
+            }
+            id = _id;
+            return this;
+        };
+        /** 
+         * Get or set the record's name
+         * @param {string} [_name] The new name
+         * @returns {string|seqJS.Record} Either the name if no argument was
+         * given or this if the name was set
+         */
+        this.name = function(_name) {
+            if(_name === undefined) {
+                return name || "unnamed";
+            }
+            name = _name;
+            return this;
+        };
+        /** 
+         * Get or set the record description
+         * @param {string} [_desc] The new description
+         * @returns {string|seqJS.Record} Either the description if no argument
+         * was given or this if the description was set
+         */
+        this.desc = function(_desc) {
+            if(_desc === undefined){
+                return desc || "";
+            }
+            desc = _desc;
+            return this;
+        };
+
+
+        //Initialise the annotations
         annotations = annotations || {};
         for (var attr in DEF_ANNOTATIONS) { 
             annotations[attr] = annotations[attr] || DEF_ANNOTATIONS[attr]; 
@@ -95,11 +134,11 @@ var seqJS = seqJS || {};
             return this;
         };
 
-        /** Get sequence length, an alias for this.seq.length()
+        /** Get sequence length, an alias for this.seq().length()
          * @returns {Number} the number of nucleotides in the sequence
          */
         this.length = function() {
-            return this.seq.length();
+            return this.seq().length();
         };
     };
 

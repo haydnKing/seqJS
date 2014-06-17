@@ -76,9 +76,9 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 var gbrecord_eq = function(actual, expected){
 
     // ============================= Test Metadata ============================
-    equal(actual.name, expected['name'], "Name is wrong");
-    equal(actual.id, expected['id'], "ID is wrong");
-    equal(actual.desc, expected['description'], "Description is wrong");
+    equal(actual.name(), expected['name'], "Name is wrong");
+    equal(actual.id(), expected['id'], "ID is wrong");
+    equal(actual.desc(), expected['description'], "Description is wrong");
 
     // ============================= Test Annotations =========================
     var required_annotations = [
@@ -113,7 +113,7 @@ var gbrecord_eq = function(actual, expected){
     }
 
     // ============================= Test Features ============================
-    var f = actual.seq.features();
+    var f = actual.seq().features();
     equal(f.length, expected.features.length, 'Wrong number of features');
     for(i = 0; i < expected.features.length; i++)
     {
@@ -122,12 +122,12 @@ var gbrecord_eq = function(actual, expected){
     }
 
     // ============================= Test Sequence ============================
-    equal(actual.seq.length(), expected.sequence.length, 'sequence length is wrong');
-    equal(actual.seq.lengthUnit(), expected.sequence.length_unit, 'sequence length unit is wrong');
-    equal(actual.seq.residueType(), expected.sequence.residue_type, 'sequence residue type is wrong');
-    equal(actual.seq.topology(), expected.sequence.topology, 'sequence topology is wrong');
-    equal(actual.seq.alphabet(), expected.sequence.alphabet, 'sequence alphabet is wrong');
-    equal(actual.seq.seq(), expected.sequence.seq, 'sequence is wrong');
+    equal(actual.seq().length(), expected.sequence.length, 'sequence length is wrong');
+    equal(actual.seq().lengthUnit(), expected.sequence.length_unit, 'sequence length unit is wrong');
+    equal(actual.seq().residueType(), expected.sequence.residue_type, 'sequence residue type is wrong');
+    equal(actual.seq().topology(), expected.sequence.topology, 'sequence topology is wrong');
+    equal(actual.seq().alphabet(), expected.sequence.alphabet, 'sequence alphabet is wrong');
+    equal(actual.seq().seq(), expected.sequence.seq, 'sequence is wrong');
 
 };
 
