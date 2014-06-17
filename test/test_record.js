@@ -334,7 +334,25 @@ module('seqJS#Feature');
         feature_eq(f, 'CDS', '200.202..300', []);
     });
 
+    test('extract sequence', function() {
 
+        var s = new seqJS.Seq(
+            'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
+            'DNA');
+
+        var f = new seqJS.Feature('gene', '10..20');
+        equal(f.extract(s), "ATATCGATCG");
+
+        f = new seqJS.Feature('gene', 'complement(10..20)');
+        equal(f.extract(s), "CGATCGATAT");
+
+        f = new seqJS.Feature('gene', 'join(10..20,30..40)');
+        equal(f.extract(s), "ATATCGATCGTAGCTAGTCG");
+
+        f = new seqJS.Feature('gene', 'join(10..20,complement(30..40))');
+        equal(f.extract(s), "ATATCGATCGCGACTAGCTA");
+
+    });
 
 
   module('jQuery#seqJS', {
