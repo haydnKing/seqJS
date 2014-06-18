@@ -341,16 +341,16 @@ module('seqJS#Feature');
             'DNA');
 
         var f = new seqJS.Feature('gene', '10..20');
-        equal(f.extract(s), "ATATCGATCG");
+        equal(f.extract(s).seq(), "ATATCGATCG");
 
         f = new seqJS.Feature('gene', 'complement(10..20)');
-        equal(f.extract(s), "CGATCGATAT");
+        equal(f.extract(s).seq(), "CGATCGATAT");
 
         f = new seqJS.Feature('gene', 'join(10..20,30..40)');
-        equal(f.extract(s), "ATATCGATCGTAGCTAGTCG");
+        equal(f.extract(s).seq(), "ATATCGATCGTAGCTAGTCG");
 
         f = new seqJS.Feature('gene', 'join(10..20,complement(30..40))');
-        equal(f.extract(s), "ATATCGATCGCGACTAGCTA");
+        equal(f.extract(s).seq(), "ATATCGATCGCGACTAGCTA");
 
     });
 

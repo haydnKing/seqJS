@@ -276,6 +276,60 @@ var seqJS = seqJS || {};
             _topology = 'circular';
             return this;
         };
+        /** Return a substring from start to end
+         * @param {Number} start The position to start at
+         * @param {Number} end The position to end at
+         * @param {boolean} [complement=false] If true, return the reverse
+         * complement of the sub-sequence instead
+         * @returns {seqJS.Seq} The sub-sequence
+         */
+        this.subseq = function(start, end, complement) {
+            complement = complement || false;
+            var s = new seqJS.Seq(this.seq().substring(start, end), 
+                                  this.alphabet(),
+                                  this.features(start, end),
+                                  'linear',
+                                  this.lengthUnit(),
+                                  this.strandType(),
+                                  this.residueType());
+            if(complement){
+                s.reverseComplement();
+            }
+            return s;
+        };
+        /** Perform a reverse complement on the seq
+         * @returns {seqJS.Seq} this
+         */
+        this.reverseComplement = function(){
+            var c, replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
+            for(var i = 0; i < Math.floor(_seq.length / 2); i += 1){
+                c = replace[_seq[i]];
+                _seq[i] = replace[_seq[_seq.length-i-1]];
+                _seq[_seq.length-i-1] = c;
+            }
+            if(_seq.length % 2 === 0){
+                _seq[_seq.length / 2] = replace[_seq.length / 2];
+            }
+
+            //TODO: Reverse complement features
+            
+        };
+        /** Append a sequence to the end of the sequence
+         * @param {seqJS.Seq} rhs A linear sequence
+         * @returns {seqJS.Seq} this
+         */
+        this.append = function(rhs){
+            if(this.alphabet() === rhs.alphabet() &&
+               this.topology() === 'linear' &&
+               rhs.topology() === 'linear'){
+                this._seq = this._seq + rhs.seq();
+                //TODO: append features with an offset
+                
+                return this;
+            }
+            throw "Could not join sequences";
+        };
+
     };
 
     var loc_fmt = /(?:^([<>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
@@ -403,14 +457,14 @@ var seqJS = seqJS || {};
         }
 
 
-        /** Get the first location
+        /** Get the leftmost location
          * @returns {seqJS.Location} The first (smallest) location
          */
-        this.location1 = function() {return _location1;};
-        /** Get the second location
+        this.left = function() {return _location1;};
+        /** Get the rightmost location
          * @returns {seqJS.Location} The second (largest) location
          */
-        this.location2 = function() {return _location2;};
+        this.right = function() {return _location2;};
 
         /** Does this span overlap with another span
          * @param {seqJS.Span} rhs the other span
@@ -784,6 +838,25 @@ var seqJS = seqJS || {};
          */
         this.qualifierKeys = function() {
             return q_keys;
+        };
+
+        /**
+         * Extract the sequence that the feature refers to
+         * @param {seqJS.Seq} seq The sequence to extract from
+         * @returns {string} The string sequence that the feature refers to
+         */
+        this.extract = function(seq) {
+            //get the spans
+            var s = new seqJS.Seq('', seq.alphabet()), 
+                span, 
+                spans = _location.getSpans();
+            
+            for(var i = 0; i < spans.length; i++){
+                span = spans[i];
+                s.append(seq.subseq(span.left(), span.right(), span.isComplement())); 
+            }
+
+            return s;
         };
 
         init();

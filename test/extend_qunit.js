@@ -25,8 +25,8 @@ var location_eq = function(actual, location1, operator, location2) {
 
 var span_eq = function(actual, location1, location2, complement, string){
 
-    location_eq(actual.location1(), location1[0], location1[1], location1[2]);
-    location_eq(actual.location2(), location2[0], location2[1], location2[2]);
+    location_eq(actual.left(), location1[0], location1[1], location1[2]);
+    location_eq(actual.right(), location2[0], location2[1], location2[2]);
 
     equal(actual.isComplement(), complement, "Complement flag wrong");
     equal(actual.toString(), string, "toString() is incorrect"); 
