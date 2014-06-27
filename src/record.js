@@ -337,6 +337,9 @@ var seqJS = seqJS || {};
     /** Represent a single location as either and exact base (''), before a
      *  specific base ('<'), after a specific base ('>') or between two specific
      *  bases ('A.B')
+     *
+     *  TODO: Perhaps Locations should be aware of the seq? That way, reversing
+     *  or going below 0 could be handled automatically
      * @constructor
      * @param {string|number} _location Either a string defining a location to
      * be parsed or the position of the location
@@ -422,6 +425,51 @@ var seqJS = seqJS || {};
                 return _location + '.' + _location2;
             }
             return _operator + _location;
+        };
+
+        /** Add the offset to the location
+         * @param {int} offset the amount to add
+         * @returns this
+         */
+        this.add = function(o) {
+            if (_location + o > 0){
+                _location = _location + o;
+
+                if(_operator === '.'){
+                    _location2 = _location2 + o;
+                }
+            }
+            else {
+                throw "location cannot be negative";
+            }
+            return this;
+        };
+
+        /** Subtracts the offset from the location
+         * @param {int} offset the amount to subtract
+         * @returns this
+         */
+        this.subtract = function(o) {
+            return this.add(-o);
+        };
+
+        /** Invert the datum point - the location will now be measured from the
+         * far end of the sequence
+         * @param {int} length the length of the sequence
+         * @returns this
+         */
+        this.reverse = function(l) {
+            //invert location and operator
+            _location = l - _location;
+            _operator = {'': '', '<': '>', '>': '<', '.': '.'}[_operator];
+            //if _location2 exists, we also need to swap the locations
+            // such that _location < _location2
+            if(_operator === '.'){
+                var t = l - _location2;
+                _location2 = _location;
+                _location = t;
+            }
+            return this;
         };
     };
 

@@ -136,6 +136,52 @@ module('seqJS#location');
         });
     });
 
+    test('add', function(){
+        var l;
+
+        l = new seqJS.Location('10');
+        l.add(5);
+        location_eq(l, 15, '');
+
+        l = new seqJS.Location('<10');
+        l.add(6);
+        location_eq(l, 16, '<');
+
+        l = new seqJS.Location('>10');
+        l.add(6);
+        location_eq(l, 16, '>');
+
+        l = new seqJS.Location('5.10');
+        l.add(6);
+        location_eq(l, 11, '.', 16);
+
+        l = new seqJS.Location('50');
+        l.add(-40);
+        location_eq(l, 10, '');
+    });
+
+    test('reverse', function() {
+        var l;
+
+        l = new seqJS.Location('5');
+        l.reverse(100);
+        location_eq(l, 95, '');
+
+        l = new seqJS.Location('<5');
+        l.reverse(100);
+        location_eq(l, 95, '>');
+
+        l = new seqJS.Location('>5');
+        l.reverse(100);
+        location_eq(l, 95, '<');
+
+        l = new seqJS.Location('5.10');
+        l.reverse(100);
+        location_eq(l, 90, '.', 95);
+    });
+        
+
+
 module('seqJS.Span');
 
     test('span from string A', function(){
