@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -276,6 +277,17 @@ var seqJS = seqJS || {};
             _topology = 'circular';
             return this;
         };
+        /** String representation for debugging
+         * @returns {String} a string
+         */
+        this.toString = function() {
+           return '[seqJS.Seq \"' + 
+                (this.length() < 13 ? this.seq() : 
+                    (this.seq().substring(0,5) + '...' + 
+                     this.seq().substring(this.length()-5))) +
+                '\",'+this.length()+'bp,\"' + this.alphabet() + '\",'+this.topology() + ']';
+        };
+
         /** Return a substring from start to end
          * @param {Number} start The position to start at
          * @param {Number} end The position to end at
@@ -284,6 +296,7 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} The sub-sequence
          */
         this.subseq = function(start, end, complement) {
+            console.log('\t\tSeq.subseq('+start+', '+end+', '+complement+')');
             complement = complement || false;
             var s = new seqJS.Seq(this.seq().substring(start, end), 
                                   this.alphabet(),
@@ -295,6 +308,7 @@ var seqJS = seqJS || {};
             if(complement){
                 s.reverseComplement();
             }
+            console.log('\t\t -- return ' + s);
             return s;
         };
         /** Perform a reverse complement on the seq
@@ -319,15 +333,47 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} this
          */
         this.append = function(rhs){
+            console.log('\tseqJS.Seq.append(...)\n\t'+this+'.append('+rhs+') = ');
             if(this.alphabet() === rhs.alphabet() &&
                this.topology() === 'linear' &&
                rhs.topology() === 'linear'){
-                this._seq = this._seq + rhs.seq();
+                _seq = _seq + rhs.seq();
                 //TODO: append features with an offset
                 
+                console.log('\t' + this);
                 return this;
             }
             throw "Could not join sequences";
+        };
+
+        /** Extract the sequence that the feature refers to
+         * TODO: find out which features should be kept
+         * @param {seqJS.Feature} feat The feature whose sequence we want
+         * @returns {seqJS.Seq} A new sequence representing that of the feature
+         */
+        this.extract = function(feat) {
+            console.log('Seq.extract('+feat+')');
+            //get the spans
+            var subfeats = [];
+            //TODO find out which features to keep
+            var s = new seqJS.Seq('', 
+                                  this.alphabet(),
+                                  subfeats,
+                                  'linear',
+                                  this.lengthUnit(),
+                                  this.strandType(),
+                                  this.residueType()), 
+                span, 
+                spans = feat.location().getSpans();
+            
+            for(var i = 0; i < spans.length; i++){
+                span = spans[i];
+                s.append(this.subseq(span.left(), span.right(), span.isComplement())); 
+                console.log('span['+i+'] = '+span+' -> s = '+s);
+            }
+
+            console.log('return '+s);
+            return s;
         };
 
     };
@@ -886,25 +932,6 @@ var seqJS = seqJS || {};
          */
         this.qualifierKeys = function() {
             return q_keys;
-        };
-
-        /**
-         * Extract the sequence that the feature refers to
-         * @param {seqJS.Seq} seq The sequence to extract from
-         * @returns {string} The string sequence that the feature refers to
-         */
-        this.extract = function(seq) {
-            //get the spans
-            var s = new seqJS.Seq('', seq.alphabet()), 
-                span, 
-                spans = _location.getSpans();
-            
-            for(var i = 0; i < spans.length; i++){
-                span = spans[i];
-                s.append(seq.subseq(span.left(), span.right(), span.isComplement())); 
-            }
-
-            return s;
         };
 
         init();
