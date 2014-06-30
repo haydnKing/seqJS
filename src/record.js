@@ -337,8 +337,10 @@ var seqJS = seqJS || {};
     /** Represent a single location as either and exact base (''), before a
      *  specific base ('<'), after a specific base ('>') or between two specific
      *  bases ('A.B')
+     *
+     *  TODO: Perhaps Locations should be aware of the seq? That way, reversing
+     *  or going below 0 could be handled automatically
      * @constructor
-     * @param {seqJS.Seq} _seq The sequence to which the location refers
      * @param {string|number} _location Either a string defining a location to
      * be parsed or the position of the location
      * @param {string} [_operator] The operator which applies, either '', '<', 
@@ -347,12 +349,8 @@ var seqJS = seqJS || {};
      * @param {number} [_location2] The second location, used only when
      * representing locations which are between two points, e.g 100.200
      */   
-    seqJS.Location = function(_seq, _location, _operator, _location2) {
+    seqJS.Location = function(_location, _operator, _location2) {
         var self = this;
-        //_seq must at least have a length() function
-        if(typeof _seq.length !== 'function'){
-            throw "seqJS.Location(.) argument 1 must at least have length()";
-        }
         if (typeof _location === 'string' || _location instanceof String){
             var m = loc_fmt.exec(_location);
             if(m===null){
@@ -479,12 +477,11 @@ var seqJS = seqJS || {};
     /** Represent a span between two locations. By definition 
      *  location1 < location 2.
      *  @constructor 
-     *  @param {seqJS.Seq} _seq the sequence to which the span refers
      *  @param {string|seqJS.Location} _location1 the first location
      *  @param {string|seqJS.Location} _location2 the second location
      *  @param {boolean} complement true if the span is on the reverse strand
      */
-    seqJS.Span = function(_seq, _location1, _location2, complement){
+    seqJS.Span = function(_location1, _location2, complement){
         var self = this;
         complement = complement || false;
         //if we're given a string
@@ -493,14 +490,14 @@ var seqJS = seqJS || {};
             if(m===null){
                 throw "Malformed location string \'"+_location1+"\'";
             }
-            _location1 = new seqJS.Location(_seq, m[1]);
-            _location2 = new seqJS.Location(_seq, m[2]);
+            _location1 = new seqJS.Location(m[1]);
+            _location2 = new seqJS.Location(m[2]);
         }
 
         //if we're given numbers then implicit exact
         if(typeof _location1 === 'number' && typeof _location2 === 'number'){
-            _location1 = new seqJS.Location(_seq, _location1);
-            _location2 = new seqJS.Location(_seq, _location2);
+            _location1 = new seqJS.Location(_location1);
+            _location2 = new seqJS.Location(_location2);
         }
 
         if(_location1.gt(_location2)){
@@ -609,12 +606,11 @@ var seqJS = seqJS || {};
     /** Stores an operator like 'complement', 'join' or 'order' and the span(s)
      * on which they operate
      * @constructor
-     * @param {seqJS.Seq} _seq the sequence to which the operator refers
      * @param {string} location the location string to parse
      * @param {string} [prev_op] the previous operator, used to catch errors
      * where joins and complements are both used
      */
-    seqJS.LocationOperator = function(_seq, location, prev_op){
+    seqJS.LocationOperator = function(location, prev_op){
         var items = [], operator = '';
 
         var m = operator_fmt.exec(location);
@@ -622,7 +618,7 @@ var seqJS = seqJS || {};
             operator = m[1];
             switch(operator){
                 case 'complement':
-                    items.push(new seqJS.LocationOperator(_seq, m[2].trim()));
+                    items.push(new seqJS.LocationOperator(m[2].trim()));
                     break;
                 case 'join':
                 case 'order':
@@ -632,12 +628,12 @@ var seqJS = seqJS || {};
                     }
                     var s_items = tokenize(m[2]);
                     for(var i = 0; i < s_items.length; i++){
-                        items.push(new seqJS.LocationOperator(_seq, s_items[i], operator));
+                        items.push(new seqJS.LocationOperator(s_items[i], operator));
                     }
             }
         }
         else {
-            items.push(new seqJS.Span(_seq, location));
+            items.push(new seqJS.Span(location));
         }
 
         /** Convert to a genbank style string
@@ -719,15 +715,14 @@ var seqJS = seqJS || {};
 
     /**
      * FeatureLocation
-     *  Store base LocationOperator and provide access to the underlying data
+     *  Store base LocationOperator and procide access to the underlying data
      * @constructor
-     * @param {seqJS.Seq} _seq the sequence to which the Feature refers
      * @param {seqJS.FeatureLocation} location the location of the feature
      */
-    seqJS.FeatureLocation = function(_seq, location){
+    seqJS.FeatureLocation = function(location){
         var loc;
         try{
-            loc = new seqJS.LocationOperator(_seq, location);
+            loc = new seqJS.LocationOperator(location);
         }
         catch(e){
             throw e + " while parsing location string \'"+location+"\'";
@@ -769,13 +764,12 @@ var seqJS = seqJS || {};
      *          feature
      *
      * @constructor
-     * @param {seqJS.Seq} _seq the sequence to which the Feature refers
      * @param {string} _type the Feature type (e.g. 'gene', 'CDS', ...)
      * @param {seqJS.FeatureLocation|string} _location The feature's location, either
      * as a string in genbank format (e.g. 1..50) or a 
      * {@link seqJS.FeatureLocation} object
      */
-    seqJS.Feature = function(_seq, _type, _location, _qualifiers){
+    seqJS.Feature = function(_type, _location, _qualifiers){
         var self = this;
 
         if(_type === undefined){
@@ -786,7 +780,7 @@ var seqJS = seqJS || {};
         }
 
         if(typeof _location === 'string' || _location instanceof String){
-            _location = new seqJS.FeatureLocation(_seq, _location);
+            _location = new seqJS.FeatureLocation(_location);
         }
 
         
@@ -824,7 +818,7 @@ var seqJS = seqJS || {};
             if(new_location){
                 if(typeof new_location === 'string' || 
                                     new_location instanceof String){
-                    _location = new seqJS.FeatureLocation(_seq, new_location);
+                    _location = new seqJS.FeatureLocation(new_location);
                 }
                 else {
                     _location = new_location;
