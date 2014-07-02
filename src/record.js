@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -289,14 +288,19 @@ var seqJS = seqJS || {};
         };
 
         /** Return a substring from start to end
-         * @param {Number} start The position to start at
-         * @param {Number} end The position to end at
+         * @param {seqJS.Location|Number} start The position to start at
+         * @param {seqJS.Location|Number} end The position to end at
          * @param {boolean} [complement=false] If true, return the reverse
          * complement of the sub-sequence instead
          * @returns {seqJS.Seq} The sub-sequence
          */
         this.subseq = function(start, end, complement) {
-            console.log('\t\tSeq.subseq('+start+', '+end+', '+complement+')');
+            if(start.toInt instanceof Function) {
+                start = start.toInt();
+            }
+            if(end.toInt instanceof Function) {
+                end = end.toInt();
+            }
             complement = complement || false;
             var s = new seqJS.Seq(this.seq().substring(start, end), 
                                   this.alphabet(),
@@ -308,24 +312,26 @@ var seqJS = seqJS || {};
             if(complement){
                 s.reverseComplement();
             }
-            console.log('\t\t -- return ' + s);
             return s;
         };
         /** Perform a reverse complement on the seq
          * @returns {seqJS.Seq} this
          */
         this.reverseComplement = function(){
-            var c, replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
-            for(var i = 0; i < Math.floor(_seq.length / 2); i += 1){
-                c = replace[_seq[i]];
-                _seq[i] = replace[_seq[_seq.length-i-1]];
-                _seq[_seq.length-i-1] = c;
-            }
-            if(_seq.length % 2 === 0){
-                _seq[_seq.length / 2] = replace[_seq.length / 2];
+            if(this.alphabet() !== 'DNA'){
+                throw "Can only reverse complement DNA";
             }
 
+            var replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
+            _seq = _seq.split('')
+                       .reverse()
+                       .map(function(c){return replace[c];})
+                       .join('');
+
             //TODO: Reverse complement features
+            
+
+            return this;
             
         };
         /** Append a sequence to the end of the sequence
@@ -333,14 +339,12 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} this
          */
         this.append = function(rhs){
-            console.log('\tseqJS.Seq.append(...)\n\t'+this+'.append('+rhs+') = ');
             if(this.alphabet() === rhs.alphabet() &&
                this.topology() === 'linear' &&
                rhs.topology() === 'linear'){
                 _seq = _seq + rhs.seq();
                 //TODO: append features with an offset
                 
-                console.log('\t' + this);
                 return this;
             }
             throw "Could not join sequences";
@@ -352,7 +356,6 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
         this.extract = function(feat) {
-            console.log('Seq.extract('+feat+')');
             //get the spans
             var subfeats = [];
             //TODO find out which features to keep
@@ -369,10 +372,8 @@ var seqJS = seqJS || {};
             for(var i = 0; i < spans.length; i++){
                 span = spans[i];
                 s.append(this.subseq(span.left(), span.right(), span.isComplement())); 
-                console.log('span['+i+'] = '+span+' -> s = '+s);
             }
 
-            console.log('return '+s);
             return s;
         };
 
@@ -382,15 +383,16 @@ var seqJS = seqJS || {};
  
     /** Represent a single location as either and exact base (''), before a
      *  specific base ('<'), after a specific base ('>') or between two specific
-     *  bases ('A.B')
-     *
-     *  TODO: Perhaps Locations should be aware of the seq? That way, reversing
-     *  or going below 0 could be handled automatically
+     *  bases ('A.B').
+     *  If location is passed as a string, it is assumed to be 'biologist
+     *  style' (i.e. 1-offset), if passed as an integer it is assumed to be
+     *  0-offset
      * @constructor
-     * @param {string|number} _location Either a string defining a location to
-     * be parsed or the position of the location
-     * @param {string} [_operator] The operator which applies, either '', '<', 
-     * '.', or '>'. If this parameter is given, then _location must be an 
+     * @param {string|number} _location Either a 1-offset string specifying the
+     * location in genbank style or a 0-offset integer defining the first 
+     * location
+     * @param {string} [_operator=''] The operator which applies, either '', '<', 
+     * '.', or '>'. This parameter can only be given if _location is an
      * integer. If _operator is given as '.', then _location2 is required
      * @param {number} [_location2] The second location, used only when
      * representing locations which are between two points, e.g 100.200
@@ -404,19 +406,19 @@ var seqJS = seqJS || {};
             }
             if(m[1] !== undefined){
                 _operator = m[1] || '';
-                _location = parseInt(m[2],10);
+                _location = parseInt(m[2],10) - 1;
             }
             else{
-                _location = parseInt(m[3],10);
+                _location = parseInt(m[3],10) - 1;
                 _operator = '.';
-                _location2= parseInt(m[4],10);
+                _location2= parseInt(m[4],10) - 1;
             }
         }
         _operator = _operator || '';
         if(['', '<', '>', '.'].indexOf(_operator) === -1){
             throw "Invalid location operator \'" + _operator + "\'";
         }
-        if(_location < 1){
+        if(_location < 0){
             throw "Invalid location \'" + _location + "\'";
         }
         if(_operator === '.'){
@@ -463,14 +465,22 @@ var seqJS = seqJS || {};
             return _location > rhs.location();
         };
 
-        /** Get a genbank style string representation
+        /** Get a 1-offset genbank style string representation
          * @returns {string} 
          */
         this.toString = function() {
             if(_operator === '.'){
-                return _location + '.' + _location2;
+                return (_location + 1) + '.' + (_location2 + 1);
             }
-            return _operator + _location;
+            return _operator + (_location + 1);
+        };
+
+        /** Convert the location to an integer. By default just return the
+         * first location
+         * @returns {int} location as integer
+         */
+        this.toInt = function() {
+            return this.location();
         };
 
         /** Add the offset to the location
@@ -506,12 +516,12 @@ var seqJS = seqJS || {};
          */
         this.reverse = function(l) {
             //invert location and operator
-            _location = l - _location;
+            _location = l - _location - 1;
             _operator = {'': '', '<': '>', '>': '<', '.': '.'}[_operator];
             //if _location2 exists, we also need to swap the locations
             // such that _location < _location2
             if(_operator === '.'){
-                var t = l - _location2;
+                var t = l - _location2 - 1;
                 _location2 = _location;
                 _location = t;
             }
@@ -932,6 +942,14 @@ var seqJS = seqJS || {};
          */
         this.qualifierKeys = function() {
             return q_keys;
+        };
+
+        /** Get a string representation for debugging
+         * @returns {string} the string
+         */
+        this.toString = function() {
+            return '[seqJS.Feature \"'+this.type()+'\",'+
+                this.location().toString()+']';
         };
 
         init();

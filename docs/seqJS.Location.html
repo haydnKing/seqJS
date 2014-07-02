@@ -51,10 +51,10 @@
     <div class="description">
         Represent a single location as either and exact base (''), before a
  specific base ('<'), after a specific base ('>') or between two specific
- bases ('A.B')
-
- TODO: Perhaps Locations should be aware of the seq? That way, reversing
- or going below 0 could be handled automatically
+ bases ('A.B').
+ If location is passed as a string, it is assumed to be 'biologist
+ style' (i.e. 1-offset), if passed as an integer it is assumed to be
+ 0-offset
     </div>
     
 
@@ -79,6 +79,8 @@
 		<th>Argument</th>
 		
 		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -116,9 +118,14 @@
             
             
             
+                <td class="default">
+                
+                </td>
             
-            <td class="description last">Either a string defining a location to
-be parsed or the position of the location</td>
+            
+            <td class="description last">Either a 1-offset string specifying the
+location in genbank style or a 0-offset integer defining the first 
+location</td>
         </tr>
 	
 	
@@ -150,9 +157,15 @@ be parsed or the position of the location</td>
             
             
             
+                <td class="default">
+                
+                    ''
+                
+                </td>
+            
             
             <td class="description last">The operator which applies, either '', '<', 
-'.', or '>'. If this parameter is given, then _location must be an 
+'.', or '>'. This parameter can only be given if _location is an
 integer. If _operator is given as '.', then _location2 is required</td>
         </tr>
 	
@@ -184,6 +197,10 @@ integer. If _operator is given as '.', then _location2 is required</td>
                 </td>
             
             
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">The second location, used only when
@@ -218,7 +235,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line352">line 352</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line400">line 400</a>
     </li></ul></dd>
     
     
@@ -353,7 +370,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line434">line 434</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line490">line 490</a>
     </li></ul></dd>
     
     
@@ -480,7 +497,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line413">line 413</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line461">line 461</a>
     </li></ul></dd>
     
     
@@ -571,7 +588,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line393">line 393</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line441">line 441</a>
     </li></ul></dd>
     
     
@@ -663,7 +680,7 @@ if operator is ''
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line398">line 398</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line446">line 446</a>
     </li></ul></dd>
     
     
@@ -806,7 +823,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line408">line 408</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line456">line 456</a>
     </li></ul></dd>
     
     
@@ -897,7 +914,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line402">line 402</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line450">line 450</a>
     </li></ul></dd>
     
     
@@ -1037,7 +1054,7 @@ far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line461">line 461</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line517">line 517</a>
     </li></ul></dd>
     
     
@@ -1164,7 +1181,7 @@ far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line452">line 452</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line508">line 508</a>
     </li></ul></dd>
     
     
@@ -1202,7 +1219,7 @@ far end of the sequence
         
             
 <dt>
-    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    <h4 class="name" id="toInt"><span class="type-signature"></span>toInt<span class="signature">()</span><span class="type-signature"> &rarr; {int}</span></h4>
     
     
 </dt>
@@ -1210,7 +1227,8 @@ far end of the sequence
     
     
     <div class="description">
-        Get a genbank style string representation
+        Convert the location to an integer. By default just return the
+first location
     </div>
     
 
@@ -1243,7 +1261,98 @@ far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line423">line 423</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line482">line 482</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    location as integer
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get a 1-offset genbank style string representation
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line471">line 471</a>
     </li></ul></dd>
     
     
@@ -1308,7 +1417,7 @@ far end of the sequence
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Mon Jun 30 2014 16:16:04 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 02 2014 15:39:04 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
