@@ -407,6 +407,23 @@ module('seqJS#Feature');
         feature_eq(f, 'CDS', '200.202..300', []);
     });
 
+    test('feature - overlaps', function() {
+        var a = new seqJS.Feature('gene', '100..200'),
+            b = new seqJS.Feature('gene', '150..250'),
+            c = new seqJS.Feature('gene', 'join(1..99,201..300)');
+
+        //Test feature
+        ok(a.overlaps(b), '100..200 should overlap with 150..250');
+        ok(!a.overlaps(c), '100..200 shouldi not overlap with join(1..99,201..300)');
+        ok(b.overlaps(c), '150..250 should overlap with join(1..99,201..300)');
+
+        //test numbers
+        ok(a.overlaps(149,249), '100..200 should overlap with 149,249');
+        ok(!a.overlaps(200,249), '100..200 should not overlap with 200,249');
+
+    });
+             
+
 
   module('jQuery#seqJS', {
     // This will run before each test in this module.

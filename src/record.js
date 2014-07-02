@@ -44,7 +44,7 @@ var seqJS = seqJS || {};
         }
         /** 
          * Get the sequence object 
-         * @returns {SeqJS.Seq} The sequence object 
+         * @returns {seqJS.Seq} The sequence object 
          */
         this.seq = function() {return seq;};
         /** 
@@ -221,7 +221,7 @@ var seqJS = seqJS || {};
          */
         this.alphabet = function() {return _alphabet;};
         /** Get the list of features
-         * @returns {Array} an array of {@link SeqJS.Feature} objects
+         * @returns {Array} an array of {@link seqJS.Feature} objects
          */
         this.features = function() {return _features;};
         /** Get the length unit
