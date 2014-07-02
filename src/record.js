@@ -398,7 +398,6 @@ var seqJS = seqJS || {};
      * representing locations which are between two points, e.g 100.200
      */   
     seqJS.Location = function(_location, _operator, _location2) {
-        var self = this;
         if (typeof _location === 'string' || _location instanceof String){
             var m = loc_fmt.exec(_location);
             if(m===null){
@@ -453,7 +452,7 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
          */
-        this.lt = function(rhs) {return !self.ge(rhs);};
+        this.lt = function(rhs) {return !this.gt(rhs);};
         /** Is the location greater than rhs
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
@@ -575,16 +574,16 @@ var seqJS = seqJS || {};
          * @returns {boolean} true if the spans overlap
          */
         this.overlaps = function(rhs) {
-            if(_location1.lt(rhs.location1()) &&
-               _location2.gt(rhs.location1())) {
+            if(_location1.lt(rhs.left()) &&
+               _location2.gt(rhs.left())) {
                 return true;
             }
-            if(_location1.lt(rhs.location2()) &&
-               _location2.gt(rhs.location2())) {
+            if(_location1.lt(rhs.right()) &&
+               _location2.gt(rhs.right())) {
                 return true;
             }
-            if(_location1.gt(rhs.location1()) &&
-               _location2.lt(rhs.location2())) {
+            if(_location1.gt(rhs.left()) &&
+               _location2.lt(rhs.right())) {
                 return true;
             }
             return false;
@@ -942,6 +941,30 @@ var seqJS = seqJS || {};
          */
         this.qualifierKeys = function() {
             return q_keys;
+        };
+
+        /** Does the feature overlap with a second feature. 
+         * @param {seqJS.Feature|int} rhs Either the feature to compare with or
+         * the first integer position
+         * @param {int} [b] optional second integer position
+         * @returns {boolean} Whether or not the features overlap
+         */
+        this.overlaps = function(rhs, b) {
+            var rhs_spans = ((typeof rhs === 'number') ? 
+                             [new seqJS.Span(
+                                 new seqJS.Location(rhs),
+                                 new seqJS.Location(b || rhs))]
+                             : rhs.location().getSpans()),
+                this_spans = this.location().getSpans();
+
+            for(var i = 0; i < this_spans.length; i += 1){
+                for(var j = 0; j < rhs_spans.length; j += 1){
+                    if(this_spans[i].overlaps(rhs_spans[j])){
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
 
         /** Get a string representation for debugging
