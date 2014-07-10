@@ -220,7 +220,13 @@ var seqJS = seqJS || {};
          * @returns {string} sequence alphabet, one of {@link seqJS.Alphabets}
          */
         this.alphabet = function() {return _alphabet;};
-        /** Get the list of features
+        /** Get a list of features within the range [start,end], or all
+         * features if they are not given
+         * @param {int} [start] the first position
+         * @param {int} [end=start] the second position
+         * @param {boolean} [intersect=false] if true, return features which
+         * intersect with [start,end], rather than just features which are
+         * wholly contained by [start,end]
          * @returns {Array} an array of {@link seqJS.Feature} objects
          */
         this.features = function() {return _features;};
@@ -352,7 +358,15 @@ var seqJS = seqJS || {};
 
         /** Extract the sequence that the feature refers to
          * TODO: find out which features should be kept
-         * @param {seqJS.Feature} feat The feature whose sequence we want
+         * @param {seqJS.Feature} feat The feature whose underlying sequence we want to extract
+         * @param {boolean} [extract_features=false] Whether or not to include
+         * cropped features in the output {@link seqJS.Seq}. If 'feat' is a
+         * multi-span feature, then features which are present in multiple
+         * spans are kept as single features, with the spans merged using the
+         * 'order' merge operator.
+         * For example, if a seq has a feature whose location is 1..50, and you
+         * extract a feature whose location is join(10..19,30..39), the
+         * location of the resulting feature is order(1..10,11..20)
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
         this.extract = function(feat) {

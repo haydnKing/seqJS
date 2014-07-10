@@ -607,7 +607,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line341">line 341</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line347">line 347</a>
     </li></ul></dd>
     
     
@@ -698,7 +698,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line275">line 275</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line281">line 281</a>
     </li></ul></dd>
     
     
@@ -748,7 +748,7 @@ default is '' - unknown</td>
         
             
 <dt>
-    <h4 class="name" id="extract"><span class="type-signature"></span>extract<span class="signature">(feat)</span><span class="type-signature"> &rarr; {<a href="seqJS.Seq.html">seqJS.Seq</a>}</span></h4>
+    <h4 class="name" id="extract"><span class="type-signature"></span>extract<span class="signature">(feat, <span class="optional">extract_features</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.Seq.html">seqJS.Seq</a>}</span></h4>
     
     
 </dt>
@@ -779,7 +779,11 @@ TODO: find out which features should be kept
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -804,10 +808,68 @@ TODO: find out which features should be kept
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
             
             
-            <td class="description last">The feature whose sequence we want</td>
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">The feature whose underlying sequence we want to extract</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>extract_features</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">Whether or not to include
+cropped features in the output <a href="seqJS.Seq.html">seqJS.Seq</a>. If 'feat' is a
+multi-span feature, then features which are present in multiple
+spans are kept as single features, with the spans merged using the
+'order' merge operator.
+For example, if a seq has a feature whose location is 1..50, and you
+extract a feature whose location is join(10..19,30..39), the
+location of the resulting feature is order(1..10,11..20)</td>
         </tr>
 	
 	
@@ -838,7 +900,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line358">line 358</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line372">line 372</a>
     </li></ul></dd>
     
     
@@ -888,7 +950,7 @@ TODO: find out which features should be kept
         
             
 <dt>
-    <h4 class="name" id="features"><span class="type-signature"></span>features<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+    <h4 class="name" id="features"><span class="type-signature"></span>features<span class="signature">(<span class="optional">start</span>, <span class="optional">end</span>, <span class="optional">intersect</span>)</span><span class="type-signature"> &rarr; {Array}</span></h4>
     
     
 </dt>
@@ -896,7 +958,8 @@ TODO: find out which features should be kept
     
     
     <div class="description">
-        Get the list of features
+        Get a list of features within the range [start,end], or all
+features if they are not given
     </div>
     
 
@@ -904,6 +967,152 @@ TODO: find out which features should be kept
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">the first position</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    start
+                
+                </td>
+            
+            
+            <td class="description last">the second position</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>intersect</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">if true, return features which
+intersect with [start,end], rather than just features which are
+wholly contained by [start,end]</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -929,7 +1138,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line226">line 226</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line232">line 232</a>
     </li></ul></dd>
     
     
@@ -1111,7 +1320,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line230">line 230</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line236">line 236</a>
     </li></ul></dd>
     
     
@@ -1202,7 +1411,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line268">line 268</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line274">line 274</a>
     </li></ul></dd>
     
     
@@ -1293,7 +1502,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line241">line 241</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line247">line 247</a>
     </li></ul></dd>
     
     
@@ -1384,7 +1593,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line320">line 320</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line326">line 326</a>
     </li></ul></dd>
     
     
@@ -1566,7 +1775,7 @@ TODO: find out which features should be kept
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line251">line 251</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line257">line 257</a>
     </li></ul></dd>
     
     
@@ -1802,7 +2011,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line297">line 297</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line303">line 303</a>
     </li></ul></dd>
     
     
@@ -1893,7 +2102,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line262">line 262</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line268">line 268</a>
     </li></ul></dd>
     
     
@@ -1984,7 +2193,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line282">line 282</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line288">line 288</a>
     </li></ul></dd>
     
     
@@ -2053,7 +2262,7 @@ complement of the sub-sequence instead</td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Jul 02 2014 17:03:33 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jul 10 2014 13:11:00 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
