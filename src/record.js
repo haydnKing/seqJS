@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -229,7 +230,37 @@ var seqJS = seqJS || {};
          * wholly contained by [start,end]
          * @returns {Array} an array of {@link seqJS.Feature} objects
          */
-        this.features = function() {return _features;};
+        this.features = function(start, end, intersect) {
+            if(start === undefined){
+                return _features;
+            }
+            else{
+                end = end || start;
+                intersect = intersect || false;
+
+                var r = [];
+                for(var f = 0; f < _features.length; f++){
+                    if(intersect){
+                        //include features if any spans intersect
+                        console.log('overlaps(\"'+_features[f].location()+
+                                    '\", ['+start+', '+end+'])');
+                        if(_features[f].overlaps(start, end)){
+                            console.log('  true');
+                            r.push(_features[f]);
+                        }
+                    }
+                    else{
+                        //include only features which are wholly contained
+                        if(_features[f].location().start() >= start &&
+                           _features[f].location().end() <= end){
+                            r.push(_features[f]);
+                        }
+                    }
+                }
+
+                return r;
+            }
+        };
         /** Get the length unit
          * @return {string} length unit ('bp','aa','rc')
          */
@@ -814,6 +845,39 @@ var seqJS = seqJS || {};
         this.getSpans = function() {
             return loc.getSpans();
         };
+
+        /**
+         * Return the lowest point in the feature
+         * @returns {int} the starting point
+         */
+        this.start = function() {
+            var i = 0,
+                s = this.getSpans(),
+                m = s[0].left().toInt();
+            for(;i < s.length; i++){
+                if(s[i].left().toInt() < m){
+                    m = s[i].left().toInt();
+                }
+            }
+            return m;
+        };
+
+        /**
+         * Return the highest point in the feature
+         * @returns {int} the ending point
+         */
+        this.end = function() {
+            var i = 0,
+                s = this.getSpans(),
+                m = s[0].right().toInt();
+            for(;i < s.length; i++){
+                if(s[i].right().toInt() > m){
+                    m = s[i].right().toInt();
+                }
+            }
+            return m;
+        };
+
 
         /**
          * Returns the type of merge which should be performed with this

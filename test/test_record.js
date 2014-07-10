@@ -144,8 +144,8 @@ module('seqJS#seq');
         f = s.features(9,17,true);
         equal(f.length, 3, 'wrong number of features returned');
         equal(f[0].location().toString(), 'join(5..10,20..25)');
-        equal(f[0].location().toString(), 'complement(7..15)');
-        equal(f[0].location().toString(), '13..17');
+        equal(f[1].location().toString(), 'complement(7..15)');
+        equal(f[2].location().toString(), '13..17');
 
     });
 
@@ -424,6 +424,22 @@ module('seqJS#FeatureLocation');
             new seqJS.FeatureLocation(
                 'join(100..200,order(300..400,500..600))');
         });
+    });
+
+    test('start and end', function() {
+
+        var f = new seqJS.FeatureLocation('join(10..20,5..6)');
+        equal(f.start(), 4);
+        equal(f.end(), 19);
+
+        f = new seqJS.FeatureLocation('join(10..20,complement(5..6))');
+        equal(f.start(), 4);
+        equal(f.end(), 19);
+
+        f = new seqJS.FeatureLocation('order(10..20,5..6)');
+        equal(f.start(), 4);
+        equal(f.end(), 19);
+
     });
 
 module('seqJS#Feature');
