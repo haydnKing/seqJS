@@ -60,16 +60,16 @@ module('seqJS#seq');
             'DNA');
 
         var f = new seqJS.Feature('gene', '10..20');
-        equal(s.extract(f).seq(), "ATATCGATCG", '10..20');
+        equal(s.extract(f).seq(), "ATATCGATCGA", '10..20');
 
         f = new seqJS.Feature('gene', 'complement(10..20)');
-        equal(s.extract(f).seq(), "CGATCGATAT", 'complement(10..20)');
+        equal(s.extract(f).seq(), "TCGATCGATAT", 'complement(10..20)');
 
         f = new seqJS.Feature('gene', 'join(10..20,30..40)');
-        equal(s.extract(f).seq(), "ATATCGATCGTAGCTAGTCG", 'join(10..20,30..40)');
+        equal(s.extract(f).seq(), "ATATCGATCGATAGCTAGTCGA", 'join(10..20,30..40)');
 
         f = new seqJS.Feature('gene', 'join(10..20,complement(30..40))');
-        equal(s.extract(f).seq(), "ATATCGATCGCGACTAGCTA", 'join(10..20,complement(30..40))');
+        equal(s.extract(f).seq(), "ATATCGATCGATCGACTAGCTA", 'join(10..20,complement(30..40))');
 
     });
 
@@ -93,7 +93,7 @@ module('seqJS#seq');
         //Test simple feature extraction
         var f = new seqJS.Feature('gene', '10..20');
         var o = s.extract(f, true);
-        equal(o.seq(), "ATATCGATCG", '10..20');
+        equal(o.seq(), "ATATCGATCGA", '10..20');
         equal(o.features().length, 3, 'Incorrect number of features');
         equal(o.features()[0].location().toString(), '2..10');
         equal(o.features()[1].location().toString(), 'complement(1..6)');
@@ -101,7 +101,7 @@ module('seqJS#seq');
 
         f = new seqJS.Feature('gene', 'complement(10..20)');
         o = s.extract(f, true);
-        equal(o.seq(), "CGATCGATAT", 'complement(10..20)');
+        equal(o.seq(), "TCGATCGATAT", 'complement(10..20)');
         equal(o.features().length, 3, 'Incorrect number of features');
         equal(o.features()[0].location().toString(), 'complement(2..10)');
         equal(o.features()[1].location().toString(), '6..11)');
@@ -110,7 +110,7 @@ module('seqJS#seq');
         //Test multi span extraction
         f = new seqJS.Feature('gene', 'join(10..19,20..29)');
         o = s2.extract(f, true);
-        equal(o.seq(), "ATATCGATCGATATCGATCG", 'join(10..19,20..29)');
+        equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'join(10..19,20..29)');
         equal(o.features().length, 1, 'Incorrect number of features');
         equal(o.features()[0].location().toString(), 'order(1..10,11..20)');
         
