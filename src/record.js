@@ -505,7 +505,12 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
          */
-        this.lt = function(rhs) {return !this.gt(rhs);};
+        this.lt = function(rhs) {
+            if(this.operator() === '.'){
+                return _location2 < rhs.location();
+            }
+            return _location < rhs.location();
+        };
         /** Is the location greater than rhs
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
@@ -515,6 +520,20 @@ var seqJS = seqJS || {};
                 return _location > rhs.location2();
             }
             return _location > rhs.location();
+        };
+        /** Is the location less than or equal to rhs
+         * @param {seqJS.Location} rhs the location to compare with
+         * @returns {boolean} true if rhs is strictly smaller than this
+         */
+        this.lte = function(rhs) {
+            return !this.gt(rhs);
+        };
+        /** Is the location greater than or equal to rhs
+         * @param {seqJS.Location} rhs the location to compare with
+         * @returns {boolean} true if rhs is greater than this
+         */
+        this.gte = function(rhs) {
+            return !this.lt(rhs);
         };
 
         /** Get a 1-offset genbank style string representation
@@ -607,7 +626,7 @@ var seqJS = seqJS || {};
             _location1 = new seqJS.Location(_location1);
             _location2 = new seqJS.Location(_location2);
         }
-        else {
+        else if(!(_location1 instanceof seqJS.Location && _location2 instanceof seqJS.Location)){
             throw "seqJS.Span: invalid argument types";
         }
 
@@ -1046,14 +1065,11 @@ var seqJS = seqJS || {};
                              : rhs.location().getSpans()),
                 this_spans = this.location().getSpans();
 
-            for(var i = 0; i < this_spans.length; i += 1){
-                for(var j = 0; j < rhs_spans.length; j += 1){
-                    if(this_spans[i].overlaps(rhs_spans[j])){
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return rhs_spans.some(function(rhs){
+                return this_spans.some(function(lhs){
+                    return lhs.overlaps(rhs);
+                });
+            });
         };
 
         /** Get a string representation for debugging
