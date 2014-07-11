@@ -235,7 +235,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line414">line 414</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line468">line 468</a>
     </li></ul></dd>
     
     
@@ -281,7 +281,7 @@ representing locations which are between two points, e.g 100.200</td>
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(offset)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Location.html">seqJS.Location</a>}</span></h4>
     
     
 </dt>
@@ -289,7 +289,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     
     <div class="description">
-        Add the offset to the location
+        Return a new Location with an added offset
     </div>
     
 
@@ -370,7 +370,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line503">line 503</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line578">line 578</a>
     </li></ul></dd>
     
     
@@ -395,10 +395,22 @@ representing locations which are between two points, e.g 100.200</td>
     
             
 <div class="param-desc">
-    this
+    the new location
 </div>
 
 
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+
+
+	</dd>
+</dl>
 
         
     
@@ -497,7 +509,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line474">line 474</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line535">line 535</a>
     </li></ul></dd>
     
     
@@ -538,6 +550,273 @@ representing locations which are between two points, e.g 100.200</td>
 
 	</dd>
 </dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="gte"><span class="type-signature"></span>gte<span class="signature">(rhs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Is the location greater than or equal to rhs
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>rhs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the location to compare with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line552">line 552</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    true if rhs is greater than this
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="invertDatum"><span class="type-signature"></span>invertDatum<span class="signature">(length)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Return a seqJS.Location with an inverted datum - 
+the location will now be measured from the far end of the sequence
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>length</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the length of the sequence</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line601">line 601</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    this
+</div>
+
+
 
         
     
@@ -588,7 +867,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line454">line 454</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line510">line 510</a>
     </li></ul></dd>
     
     
@@ -680,7 +959,7 @@ if operator is ''
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line459">line 459</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line515">line 515</a>
     </li></ul></dd>
     
     
@@ -823,7 +1102,146 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line469">line 469</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line525">line 525</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    true if rhs is strictly smaller than this
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="lte"><span class="type-signature"></span>lte<span class="signature">(rhs)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Is the location less than or equal to rhs
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>rhs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the location to compare with</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line545">line 545</a>
     </li></ul></dd>
     
     
@@ -914,7 +1332,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line463">line 463</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line519">line 519</a>
     </li></ul></dd>
     
     
@@ -964,7 +1382,7 @@ is '.'
         
             
 <dt>
-    <h4 class="name" id="reverse"><span class="type-signature"></span>reverse<span class="signature">(length)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="subtract"><span class="type-signature"></span>subtract<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Location.html">seqJS.Location</a>}</span></h4>
     
     
 </dt>
@@ -972,135 +1390,7 @@ is '.'
     
     
     <div class="description">
-        Invert the datum point - the location will now be measured from the
-far end of the sequence
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>length</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the length of the sequence</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line530">line 530</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    this
-</div>
-
-
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="subtract"><span class="type-signature"></span>subtract<span class="signature">(offset)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Subtracts the offset from the location
+        Return a new Location with an subtracted offset
     </div>
     
 
@@ -1181,7 +1471,7 @@ far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line521">line 521</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line592">line 592</a>
     </li></ul></dd>
     
     
@@ -1206,10 +1496,22 @@ far end of the sequence
     
             
 <div class="param-desc">
-    this
+    the new location
 </div>
 
 
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+
+
+	</dd>
+</dl>
 
         
     
@@ -1261,7 +1563,7 @@ first location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line495">line 495</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line570">line 570</a>
     </li></ul></dd>
     
     
@@ -1352,7 +1654,7 @@ first location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line484">line 484</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line559">line 559</a>
     </li></ul></dd>
     
     
@@ -1417,7 +1719,7 @@ first location
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jul 10 2014 13:11:00 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 11 2014 15:10:03 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

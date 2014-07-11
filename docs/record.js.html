@@ -235,6 +235,27 @@ var seqJS = seqJS || {};
         if(seqJS.Alphabets.indexOf(_alphabet) &lt; 0){
             throw "Invalid Alphabet";
         }
+
+        //stably sort features
+        var sort_feats = function(){
+            var ifeatures = _features.map(function(v,i){return i;}),
+                sfeatures = _features.map(function(v){return v.location().start();});
+            
+            ifeatures.sort(function(a,b){
+                //difference in start position
+                var i = sfeatures[a] - sfeatures[b];
+                //if the start position is the same, compare indexes
+                if(i === 0){
+                    return a-b;
+                }
+                return i;
+            });
+
+            _features = ifeatures.map(function(v) {return _features[v];});
+        };
+        sort_feats();
+
+
         /** Get the sequence
          * @returns {string} the raw sequence
          */
@@ -256,7 +277,34 @@ var seqJS = seqJS || {};
          * wholly contained by [start,end]
          * @returns {Array} an array of {@link seqJS.Feature} objects
          */
-        this.features = function() {return _features;};
+        this.features = function(start, end, intersect) {
+            if(start === undefined){
+                return _features;
+            }
+            else{
+                end = end || start;
+                intersect = intersect || false;
+
+                var r = [];
+                for(var f = 0; f &lt; _features.length; f++){
+                    if(intersect){
+                        //include features if any spans intersect
+                        if(_features[f].overlaps(start, end)){
+                            r.push(_features[f]);
+                        }
+                    }
+                    else{
+                        //include only features which are wholly contained
+                        if(_features[f].location().start() >= start &&
+                           _features[f].location().end() &lt;= end){
+                            r.push(_features[f]);
+                        }
+                    }
+                }
+
+                return r;
+            }
+        };
         /** Get the length unit
          * @return {string} length unit ('bp','aa','rc')
          */
@@ -320,7 +368,10 @@ var seqJS = seqJS || {};
                 '\",'+this.length()+'bp,\"' + this.alphabet() + '\",'+this.topology() + ']';
         };
 
-        /** Return a substring from start to end
+        /** Return a substring from start to end.
+         * 'start' and 'end' must be of the same type.
+         * subseq works much the same as String.substring - e.g. s.subseq(5,7)
+         * returns a Seq with two bases, those at positions 5 and 6
          * @param {seqJS.Location|Number} start The position to start at
          * @param {seqJS.Location|Number} end The position to end at
          * @param {boolean} [complement=false] If true, return the reverse
@@ -328,11 +379,14 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} The sub-sequence
          */
         this.subseq = function(start, end, complement) {
-            if(start.toInt instanceof Function) {
+            if(start.toInt instanceof Function &&
+                 end.toInt instanceof Function) {
                 start = start.toInt();
-            }
-            if(end.toInt instanceof Function) {
                 end = end.toInt();
+            }
+            else if(start.toInt instanceof Function ||
+                      end.toInt instanceof Function){
+                throw('seqJS.Seq.subseq: start and end arguments must be the same type');
             }
             complement = complement || false;
             var s = new seqJS.Seq(this.seq().substring(start, end), 
@@ -396,9 +450,9 @@ var seqJS = seqJS || {};
          * location of the resulting feature is order(1..10,11..20)
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
-        this.extract = function(feat) {
+        this.extract = function(feat, ef) {
             //get the spans
-            var subfeats = [];
+            var subfeats = ef ? _features.filter(feat.overlaps, feat) : [];
             //TODO find out which features to keep
             var s = new seqJS.Seq('', 
                                   this.alphabet(),
@@ -451,7 +505,9 @@ var seqJS = seqJS || {};
             else{
                 _location = parseInt(m[3],10) - 1;
                 _operator = '.';
-                _location2= parseInt(m[4],10) - 1;
+                //Genbank is inclusize, so _location2 has one added to it
+                //location is in range [_location:_location2)
+                _location2= parseInt(m[4],10);
             }
         }
         _operator = _operator || '';
@@ -493,7 +549,12 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
          */
-        this.lt = function(rhs) {return !this.gt(rhs);};
+        this.lt = function(rhs) {
+            if(this.operator() === '.'){
+                return _location2 &lt; rhs.location();
+            }
+            return _location &lt; rhs.location();
+        };
         /** Is the location greater than rhs
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
@@ -504,13 +565,27 @@ var seqJS = seqJS || {};
             }
             return _location > rhs.location();
         };
+        /** Is the location less than or equal to rhs
+         * @param {seqJS.Location} rhs the location to compare with
+         * @returns {boolean} true if rhs is strictly smaller than this
+         */
+        this.lte = function(rhs) {
+            return !this.gt(rhs);
+        };
+        /** Is the location greater than or equal to rhs
+         * @param {seqJS.Location} rhs the location to compare with
+         * @returns {boolean} true if rhs is greater than this
+         */
+        this.gte = function(rhs) {
+            return !this.lt(rhs);
+        };
 
         /** Get a 1-offset genbank style string representation
          * @returns {string} 
          */
         this.toString = function() {
             if(_operator === '.'){
-                return (_location + 1) + '.' + (_location2 + 1);
+                return (_location + 1) + '.' + (_location2);
             }
             return _operator + (_location + 1);
         };
@@ -523,59 +598,59 @@ var seqJS = seqJS || {};
             return this.location();
         };
 
-        /** Add the offset to the location
+        /** Return a new Location with an added offset
          * @param {int} offset the amount to add
-         * @returns this
+         * @returns {seqJS.Location} the new location
          */
         this.add = function(o) {
             if (_location + o > 0){
-                _location = _location + o;
-
-                if(_operator === '.'){
-                    _location2 = _location2 + o;
-                }
+                return new seqJS.Location(_location + o, _operator,
+                            (_operator === '.' ? _location2 + o : undefined));
             }
             else {
                 throw "location cannot be negative";
             }
-            return this;
         };
 
-        /** Subtracts the offset from the location
+        /** Return a new Location with an subtracted offset
          * @param {int} offset the amount to subtract
-         * @returns this
+         * @returns {seqJS.Location} the new location
          */
         this.subtract = function(o) {
             return this.add(-o);
         };
 
-        /** Invert the datum point - the location will now be measured from the
-         * far end of the sequence
+        /** Return a seqJS.Location with an inverted datum - 
+         * the location will now be measured from the far end of the sequence
          * @param {int} length the length of the sequence
          * @returns this
          */
-        this.reverse = function(l) {
-            //invert location and operator
-            _location = l - _location - 1;
-            _operator = {'': '', '&lt;': '>', '>': '&lt;', '.': '.'}[_operator];
+        this.invertDatum = function(l) {
+            var op = {'': '', '&lt;': '>', '>': '&lt;', '.': '.'};
+            if(_operator !== '.'){
+                //invert location and operator
+                return new seqJS.Location(l - _location - 1, op[_operator]);
+
+            }
+            //else (_operator === '.')
             //if _location2 exists, we also need to swap the locations
             // such that _location &lt; _location2
-            if(_operator === '.'){
-                var t = l - _location2 - 1;
-                _location2 = _location;
-                _location = t;
-            }
-            return this;
+            return new seqJS.Location(l - _location2,
+                                      '.',
+                                      l - _location);
+            
         };
     };
 
     var span_fmt = /(\S+)\.\.(\S+)/;
-    /** Represent a span between two locations. By definition 
-     *  location1 &lt; location 2.
+    /** Represent a span between two locations. 
+     * Either both locations can be passed seperately as seqJS.Locations, or
+     * the span can be parsed from a Genbank string.
+     * By definition location1 &lt; location 2.
      *  @constructor 
      *  @param {string|seqJS.Location} _location1 the first location
-     *  @param {string|seqJS.Location} _location2 the second location
-     *  @param {boolean} complement true if the span is on the reverse strand
+     *  @param {seqJS.Location} [_location2] the second location
+     *  @param {boolean} [complement=false] true if the span is on the reverse strand
      */
     seqJS.Span = function(_location1, _location2, complement){
         var self = this;
@@ -587,13 +662,16 @@ var seqJS = seqJS || {};
                 throw "Malformed location string \'"+_location1+"\'";
             }
             _location1 = new seqJS.Location(m[1]);
-            _location2 = new seqJS.Location(m[2]);
+            //Genbank stores locations as being inclusive
+            _location2 = new seqJS.Location(m[2]).add(1);
         }
-
         //if we're given numbers then implicit exact
-        if(typeof _location1 === 'number' && typeof _location2 === 'number'){
+        else if(typeof _location1 === 'number' && typeof _location2 === 'number'){
             _location1 = new seqJS.Location(_location1);
             _location2 = new seqJS.Location(_location2);
+        }
+        else if(!(_location1 instanceof seqJS.Location && _location2 instanceof seqJS.Location)){
+            throw "seqJS.Span: invalid argument types";
         }
 
         if(_location1.gt(_location2)){
@@ -634,7 +712,7 @@ var seqJS = seqJS || {};
          * @returns {string} genbank style string (e.g. 100..200)
          */
         this.toString = function() {
-            return _location1.toString() + '..' + _location2.toString();
+            return _location1.toString() + '..' + _location2.subtract(1).toString();
         };
 
         /** Returns true if the span is on the reverse strand
@@ -650,6 +728,17 @@ var seqJS = seqJS || {};
         this.setComplement = function(value) {
             complement = value;
             return this;
+        };
+
+        /** Return a new span which is indexed from the other end of the
+         * molecule
+         * @param {Number} length The length of the sequence
+         * @returns {seqJS.Span} the new span
+         */
+        this.invertDatum = function(l){
+            return new seqJS.Span(_location2.invertDatum(l).add(1),
+                                  _location1.invertDatum(l).add(1),
+                                  !complement);
         };
 
         /** Get all spans -- in this case an array containing this
@@ -843,6 +932,39 @@ var seqJS = seqJS || {};
         };
 
         /**
+         * Return the lowest point in the feature
+         * @returns {int} the starting point
+         */
+        this.start = function() {
+            var i = 0,
+                s = this.getSpans(),
+                m = s[0].left().toInt();
+            for(;i &lt; s.length; i++){
+                if(s[i].left().toInt() &lt; m){
+                    m = s[i].left().toInt();
+                }
+            }
+            return m;
+        };
+
+        /**
+         * Return the highest point in the feature
+         * @returns {int} the ending point
+         */
+        this.end = function() {
+            var i = 0,
+                s = this.getSpans(),
+                m = s[0].right().toInt();
+            for(;i &lt; s.length; i++){
+                if(s[i].right().toInt() > m){
+                    m = s[i].right().toInt();
+                }
+            }
+            return m;
+        };
+
+
+        /**
          * Returns the type of merge which should be performed with this
          * location
          * @returns {string} 'join' or 'order'
@@ -998,14 +1120,11 @@ var seqJS = seqJS || {};
                              : rhs.location().getSpans()),
                 this_spans = this.location().getSpans();
 
-            for(var i = 0; i &lt; this_spans.length; i += 1){
-                for(var j = 0; j &lt; rhs_spans.length; j += 1){
-                    if(this_spans[i].overlaps(rhs_spans[j])){
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return rhs_spans.some(function(rhs){
+                return this_spans.some(function(lhs){
+                    return lhs.overlaps(rhs);
+                });
+            });
         };
 
         /** Get a string representation for debugging
@@ -1037,7 +1156,7 @@ var seqJS = seqJS || {};
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Jul 10 2014 13:11:00 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Jul 11 2014 15:10:03 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
