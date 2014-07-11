@@ -52,7 +52,7 @@ module('seqJS#seq');
         s = new seqJS.Seq("ATCGTCA", 'DNA');
         equal(s.reverseComplement().seq(), 'TGACGAT', 'odd length R.C.');
     });
-
+/*
     test('test get features within range', function() {
         var s = new seqJS.Seq(
             'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
@@ -76,7 +76,8 @@ module('seqJS#seq');
         equal(f[2].location().toString(), '13..17');
 
     });
-    
+*/
+/*    
 module('seqJS.Seq.extract', {
     setup: function(){
         this.s = new seqJS.Seq(
@@ -159,7 +160,7 @@ module('seqJS.Seq.extract', {
         equal(o.features()[2].location().toString(), 'order(complement(18..20),7..12)', 'Feature 3');
     });
 
-
+*/
 module('seqJS#location');
 
     test('invalid operator', function(){
@@ -334,19 +335,19 @@ module('seqJS.Span');
     test('invertDatum 5..10', function() {
         var s = new seqJS.Span('5..10');
         
-        span_eq(s.invertDatum(100), [90, ''], [96, ''], false, '90..96');
+        span_eq(s.invertDatum(100), [90, ''], [96, ''], true, '91..96');
         span_eq(s, [4], [10], false, '5..10');
     });
     test('invertDatum 4.5..10.11', function() {
         var s = new seqJS.Span('4.5..10.11');
         
-        span_eq(s.invertDatum(100), [89, '.', 91], [95, '.', 97], false, '90.91..96.97');
+        span_eq(s.invertDatum(100), [89, '.', 91], [96, '.', 98], true, '90.91..96.97');
         span_eq(s, [3, '.', 5], [10, '.', 12], false, '4.5..10.11');
     });
-    test('invertDatum', function() {
+    test('invertDatum <5..>10', function() {
         var s = new seqJS.Span('<5..>10');
         
-        span_eq(s.invertDatum(100), [90, '<'], [96, '>'], false, '<91..>96');
+        span_eq(s.invertDatum(100), [90, '<'], [96, '>'], true, '<91..>96');
         span_eq(s, [4, '<'], [10, '>'], false, '<5..>10');
     });
 

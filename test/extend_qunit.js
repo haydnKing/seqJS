@@ -4,32 +4,32 @@
  * Extensions to QUnit for testing seqJS objects
  */
 
-var location_eq = function(actual, location1, operator, location2) {
+var location_eq = function(actual, location1, operator, location2, msg) {
     operator = operator || '';
-    equal(actual.location(), location1, "First location is wrong");
+    equal(actual.location(), location1, (msg || '') + "Location1 is wrong");
     equal(typeof actual.location(), 'number', 
-          "location() should return a number");
-    equal(actual.operator(), operator, "Operator is wrong");
+          (msg || '') + "location() should return a number");
+    equal(actual.operator(), operator, (msg || '') + "Operator is wrong");
     
     if(operator !== '.'){
         equal(actual.location2(), undefined, 
-              "location2() should be undefined for operator \'"+
+              (msg || '') + "location2() should be undefined for operator \'"+
                   operator+"\'");
     }
     else {
-        equal(actual.location2(), location2, "Location2 is wrong");
+        equal(actual.location2(), location2, (msg || '') + "Location2 is wrong");
         equal(typeof actual.location2(), 'number',
-              "location2() should return a number");
+              (msg || '') + "location2() should return a number");
     }
 };
 
 var span_eq = function(actual, location1, location2, complement, string){
 
-    location_eq(actual.left(), location1[0], location1[1], location1[2]);
-    location_eq(actual.right(), location2[0], location2[1], location2[2]);
+    location_eq(actual.left(), location1[0], location1[1], location1[2], 'Left: ');
+    location_eq(actual.right(), location2[0], location2[1], location2[2], 'Right: ');
 
     equal(actual.isComplement(), complement, "Complement flag wrong");
-    equal(actual.toString(), string, "toString() is incorrect"); 
+    equal(actual.toString(), string, "span.toString() is incorrect"); 
 };
 
 var featureloc_eq = function(actual, string, merge, spanlist){

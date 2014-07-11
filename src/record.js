@@ -703,6 +703,17 @@ var seqJS = seqJS || {};
             return this;
         };
 
+        /** Return a new span which is indexed from the other end of the
+         * molecule
+         * @param {Number} length The length of the sequence
+         * @returns {seqJS.Span} the new span
+         */
+        this.invertDatum = function(l){
+            return new seqJS.Span(_location2.invertDatum(l).add(1),
+                                  _location1.invertDatum(l).add(1),
+                                  !complement);
+        };
+
         /** Get all spans -- in this case an array containing this
          * @return {Array(seqJS.Span)} an array of one
          */
