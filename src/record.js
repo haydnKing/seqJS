@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -209,6 +208,27 @@ var seqJS = seqJS || {};
         if(seqJS.Alphabets.indexOf(_alphabet) < 0){
             throw "Invalid Alphabet";
         }
+
+        //stably sort features
+        var sort_feats = function(){
+            var ifeatures = _features.map(function(v,i){return i;}),
+                sfeatures = _features.map(function(v){return v.location().start();});
+            
+            ifeatures.sort(function(a,b){
+                //difference in start position
+                var i = sfeatures[a] - sfeatures[b];
+                //if the start position is the same, compare indexes
+                if(i === 0){
+                    return a-b;
+                }
+                return i;
+            });
+
+            _features = ifeatures.map(function(v) {return _features[v];});
+        };
+        sort_feats();
+
+
         /** Get the sequence
          * @returns {string} the raw sequence
          */
@@ -242,10 +262,7 @@ var seqJS = seqJS || {};
                 for(var f = 0; f < _features.length; f++){
                     if(intersect){
                         //include features if any spans intersect
-                        console.log('overlaps(\"'+_features[f].location()+
-                                    '\", ['+start+', '+end+'])');
                         if(_features[f].overlaps(start, end)){
-                            console.log('  true');
                             r.push(_features[f]);
                         }
                     }
@@ -406,9 +423,9 @@ var seqJS = seqJS || {};
          * location of the resulting feature is order(1..10,11..20)
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
-        this.extract = function(feat) {
+        this.extract = function(feat, ef) {
             //get the spans
-            var subfeats = [];
+            var subfeats = ef ? _features.filter(feat.overlaps, feat) : [];
             //TODO find out which features to keep
             var s = new seqJS.Seq('', 
                                   this.alphabet(),
