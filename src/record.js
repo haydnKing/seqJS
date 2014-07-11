@@ -714,6 +714,25 @@ var seqJS = seqJS || {};
                                   !complement);
         };
 
+        /** Return a new span with offset added to it
+         * @param {Number} offset the offset to add
+         * @returns {SeqJS.Span} the new span
+         */
+        this.add = function(o){
+            return new seqJS.Span(_location1.add(o),
+                                  _location2.add(o),
+                                  complement);
+        };
+        /** Return a new span with offset subtracted from it
+         * @param {Number} offset the offset to subtract
+         * @returns {SeqJS.Span} the new span
+         */
+        this.subtract = function(o){
+            return new seqJS.Span(_location1.subtract(o),
+                                  _location2.subtract(o),
+                                  complement);
+        };
+
         /** Get all spans -- in this case an array containing this
          * @return {Array(seqJS.Span)} an array of one
          */

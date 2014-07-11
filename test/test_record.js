@@ -351,6 +351,12 @@ module('seqJS.Span');
         span_eq(s, [4, '<'], [10, '>'], false, '<5..>10');
     });
 
+    test('add', function() {
+        var s = new seqJS.Span('5..10');
+
+        span_eq(s.add(5), [9], [15], false, '10..15');
+        span_eq(s, [4], [10], false, '5..10');
+    });
 module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
