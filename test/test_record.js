@@ -217,7 +217,7 @@ module('seqJS#location');
     });
     test('range location from string', function(){
         var l = new seqJS.Location('6.8');
-        location_eq(l, 5, '.', 7);
+        location_eq(l, 5, '.', 8);
     });
     test('invalid location string format', function(){
         expect(1);
@@ -243,44 +243,44 @@ module('seqJS#location');
         var l;
 
         l = new seqJS.Location('10');
-        l.add(5);
-        location_eq(l, 14, '');
+        location_eq(l.add(5), 14, '');
+        location_eq(l, 9, '');
 
         l = new seqJS.Location('<10');
-        l.add(6);
-        location_eq(l, 15, '<');
+        location_eq(l.add(6), 15, '<');
+        location_eq(l, 9, '<');
 
         l = new seqJS.Location('>10');
-        l.add(6);
-        location_eq(l, 15, '>');
+        location_eq(l.add(6), 15, '>');
+        location_eq(l, 9, '>');
 
         l = new seqJS.Location('5.10');
-        l.add(6);
-        location_eq(l, 10, '.', 15);
+        location_eq(l.add(6), 10, '.', 16);
+        location_eq(l, 4, '.', 10);
 
         l = new seqJS.Location('50');
-        l.add(-40);
-        location_eq(l, 9, '');
+        location_eq(l.add(-40), 9, '');
+        location_eq(l, 49, '');
     });
 
-    test('reverse', function() {
+    test('invertDatum', function() {
         var l;
 
         l = new seqJS.Location('5');
-        l.reverse(100);
-        location_eq(l, 95, '');
+        location_eq(l.invertDatum(100), 95, '');
+        location_eq(l, 4, '');
 
         l = new seqJS.Location('<5');
-        l.reverse(100);
-        location_eq(l, 95, '>');
+        location_eq(l.invertDatum(100), 95, '>');
+        location_eq(l, 4, '<');
 
         l = new seqJS.Location('>5');
-        l.reverse(100);
-        location_eq(l, 95, '<');
+        location_eq(l.invertDatum(100), 95, '<');
+        location_eq(l, 4, '>');
 
         l = new seqJS.Location('5.10');
-        l.reverse(100);
-        location_eq(l, 90, '.', 95);
+        location_eq(l.invertDatum(100), 90, '.', 96);
+        location_eq(l, 4, '.', 10);
     });
         
 
@@ -289,22 +289,22 @@ module('seqJS.Span');
 
     test('span from string A', function(){
         var s = new seqJS.Span('100..150');
-        span_eq(s, [99, ''], [149, ''], false, '100..150');
+        span_eq(s, [99, ''], [150, ''], false, '100..150');
     });
 
     test('span from string B', function(){
         var s = new seqJS.Span('<100..>150');
-        span_eq(s, [99, '<'], [149, '>'], false, '<100..>150');
+        span_eq(s, [99, '<'], [150, '>'], false, '<100..>150');
     });
 
     test('span from string C', function(){
         var s = new seqJS.Span('100.105..150');
-        span_eq(s, [99, '.', 104], [149, ''], false, '100.105..150');
+        span_eq(s, [99, '.', 105], [150, ''], false, '100.105..150');
     });
 
     test('span from string D', function(){
         var s = new seqJS.Span('100..150.160');
-        span_eq(s, [99, ''], [149, '.', 159], false, '100..150.160');
+        span_eq(s, [99, ''], [150, '.', 161], false, '100..150.160');
     });
 
     test('locations inverted', function(){
@@ -328,7 +328,7 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('100..200');
 
         featureloc_eq(l, '100..200', '', [
-                      [[99],[199],false,'100..200']
+                      [[99],[200],false,'100..200']
         ]);
 
     });
@@ -337,7 +337,7 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('<100..200');
 
         featureloc_eq(l, '<100..200', '', [
-                      [[99, '<'],[199],false,'<100..200']
+                      [[99, '<'],[200],false,'<100..200']
         ]);
     });
 
@@ -345,7 +345,7 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('100.102..200');
 
         featureloc_eq(l, '100.102..200', '', [
-                      [[99, '.', 101],[199],false,'100.102..200']
+                      [[99, '.', 102],[200],false,'100.102..200']
         ]);
     });
 
@@ -353,7 +353,7 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
         featureloc_eq(l, 'complement(100..200)', '', [
-                      [[99],[199],true,'100..200']
+                      [[99],[200],true,'100..200']
         ]);
     });
 
@@ -361,8 +361,8 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
         featureloc_eq(l, 'join(100..200,300..400)', 'join', [
-                      [[99],[199],false,'100..200'],
-                      [[299],[399],false,'300..400']
+                      [[99],[200],false,'100..200'],
+                      [[299],[400],false,'300..400']
         ]);
     });
 
@@ -370,8 +370,8 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
         featureloc_eq(l, 'order(100..200,300..400)', 'order', [
-                      [[99],[199],false,'100..200'],
-                      [[299],[399],false,'300..400']
+                      [[99],[200],false,'100..200'],
+                      [[299],[400],false,'300..400']
         ]);
     });
 
@@ -380,8 +380,8 @@ module('seqJS#FeatureLocation');
             'complement(join(100..200,300..400))');
 
         featureloc_eq(l, 'complement(join(100..200,300..400))', 'join', [
-                      [[299],[399],true,'300..400'],
-                      [[99],[199],true,'100..200']
+                      [[299],[400],true,'300..400'],
+                      [[99],[200],true,'100..200']
         ]);
     });
 
@@ -391,8 +391,8 @@ module('seqJS#FeatureLocation');
 
         featureloc_eq(l, 
             'join(complement(300..400),complement(100..200))', 'join', [
-                      [[299],[399],true,'300..400'],
-                      [[99],[199],true,'100..200']
+                      [[299],[400],true,'300..400'],
+                      [[99],[200],true,'100..200']
         ]);
     });
 
@@ -403,9 +403,9 @@ module('seqJS#FeatureLocation');
         featureloc_eq(l, 
             'join(100..200,complement(join(500..600,300..400)))', 
             'join', [
-                      [[99],[199],false,'100..200'],
-                      [[299],[399],true,'300..400'],
-                      [[499],[599],true,'500..600']
+                      [[99],[200],false,'100..200'],
+                      [[299],[400],true,'300..400'],
+                      [[499],[600],true,'500..600']
         ]);
     });
 
@@ -430,15 +430,15 @@ module('seqJS#FeatureLocation');
 
         var f = new seqJS.FeatureLocation('join(10..20,5..6)');
         equal(f.start(), 4);
-        equal(f.end(), 19);
+        equal(f.end(), 20);
 
         f = new seqJS.FeatureLocation('join(10..20,complement(5..6))');
         equal(f.start(), 4);
-        equal(f.end(), 19);
+        equal(f.end(), 20);
 
         f = new seqJS.FeatureLocation('order(10..20,5..6)');
         equal(f.start(), 4);
-        equal(f.end(), 19);
+        equal(f.end(), 20);
 
     });
 
@@ -506,12 +506,13 @@ module('seqJS#Feature');
 
         //Test feature
         ok(a.overlaps(b), '100..200 should overlap with 150..250');
-        ok(!a.overlaps(c), '100..200 shouldi not overlap with join(1..99,201..300)');
+        ok(!a.overlaps(c), '100..200 should not overlap with join(1..99,201..300)');
         ok(b.overlaps(c), '150..250 should overlap with join(1..99,201..300)');
 
         //test numbers
-        ok(a.overlaps(149,249), '100..200 should overlap with 149,249');
-        ok(!a.overlaps(200,249), '100..200 should not overlap with 200,249');
+        ok(a.overlaps(149,250), '100..200 should overlap with 149,250');
+        ok(!a.overlaps(200,250), '100..200 should not overlap with 200,250');
+        ok(!c.overlaps(99,200), '99,200 should not overlap with join(1..99,201..300)');
 
     });
              

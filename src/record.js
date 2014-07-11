@@ -324,7 +324,10 @@ var seqJS = seqJS || {};
                 '\",'+this.length()+'bp,\"' + this.alphabet() + '\",'+this.topology() + ']';
         };
 
-        /** Return a substring from start to end
+        /** Return a substring from start to end.
+         * 'start' and 'end' must be of the same type.
+         * subseq works much the same as String.substring - e.g. s.subseq(5,7)
+         * returns a Seq with two bases, those at positions 5 and 6
          * @param {seqJS.Location|Number} start The position to start at
          * @param {seqJS.Location|Number} end The position to end at
          * @param {boolean} [complement=false] If true, return the reverse
@@ -332,11 +335,14 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} The sub-sequence
          */
         this.subseq = function(start, end, complement) {
-            if(start.toInt instanceof Function) {
+            if(start.toInt instanceof Function &&
+                 end.toInt instanceof Function) {
                 start = start.toInt();
-            }
-            if(end.toInt instanceof Function) {
                 end = end.toInt();
+            }
+            else if(start.toInt instanceof Function ||
+                      end.toInt instanceof Function){
+                throw('seqJS.Seq.subseq: start and end arguments must be the same type');
             }
             complement = complement || false;
             var s = new seqJS.Seq(this.seq().substring(start, end), 
@@ -455,7 +461,9 @@ var seqJS = seqJS || {};
             else{
                 _location = parseInt(m[3],10) - 1;
                 _operator = '.';
-                _location2= parseInt(m[4],10) - 1;
+                //Genbank is inclusize, so _location2 has one added to it
+                //location is in range [_location:_location2)
+                _location2= parseInt(m[4],10);
             }
         }
         _operator = _operator || '';
@@ -514,7 +522,7 @@ var seqJS = seqJS || {};
          */
         this.toString = function() {
             if(_operator === '.'){
-                return (_location + 1) + '.' + (_location2 + 1);
+                return (_location + 1) + '.' + (_location2);
             }
             return _operator + (_location + 1);
         };
@@ -527,59 +535,59 @@ var seqJS = seqJS || {};
             return this.location();
         };
 
-        /** Add the offset to the location
+        /** Return a new Location with an added offset
          * @param {int} offset the amount to add
-         * @returns this
+         * @returns {seqJS.Location} the new location
          */
         this.add = function(o) {
             if (_location + o > 0){
-                _location = _location + o;
-
-                if(_operator === '.'){
-                    _location2 = _location2 + o;
-                }
+                return new seqJS.Location(_location + o, _operator,
+                            (_operator === '.' ? _location2 + o : undefined));
             }
             else {
                 throw "location cannot be negative";
             }
-            return this;
         };
 
-        /** Subtracts the offset from the location
+        /** Return a new Location with an subtracted offset
          * @param {int} offset the amount to subtract
-         * @returns this
+         * @returns {seqJS.Location} the new location
          */
         this.subtract = function(o) {
             return this.add(-o);
         };
 
-        /** Invert the datum point - the location will now be measured from the
-         * far end of the sequence
+        /** Return a seqJS.Location with an inverted datum - 
+         * the location will now be measured from the far end of the sequence
          * @param {int} length the length of the sequence
          * @returns this
          */
-        this.reverse = function(l) {
-            //invert location and operator
-            _location = l - _location - 1;
-            _operator = {'': '', '<': '>', '>': '<', '.': '.'}[_operator];
+        this.invertDatum = function(l) {
+            var op = {'': '', '<': '>', '>': '<', '.': '.'};
+            if(_operator !== '.'){
+                //invert location and operator
+                return new seqJS.Location(l - _location - 1, op[_operator]);
+
+            }
+            //else (_operator === '.')
             //if _location2 exists, we also need to swap the locations
             // such that _location < _location2
-            if(_operator === '.'){
-                var t = l - _location2 - 1;
-                _location2 = _location;
-                _location = t;
-            }
-            return this;
+            return new seqJS.Location(l - _location2,
+                                      '.',
+                                      l - _location);
+            
         };
     };
 
     var span_fmt = /(\S+)\.\.(\S+)/;
-    /** Represent a span between two locations. By definition 
-     *  location1 < location 2.
+    /** Represent a span between two locations. 
+     * Either both locations can be passed seperately as seqJS.Locations, or
+     * the span can be parsed from a Genbank string.
+     * By definition location1 < location 2.
      *  @constructor 
      *  @param {string|seqJS.Location} _location1 the first location
-     *  @param {string|seqJS.Location} _location2 the second location
-     *  @param {boolean} complement true if the span is on the reverse strand
+     *  @param {seqJS.Location} [_location2] the second location
+     *  @param {boolean} [complement=false] true if the span is on the reverse strand
      */
     seqJS.Span = function(_location1, _location2, complement){
         var self = this;
@@ -591,13 +599,16 @@ var seqJS = seqJS || {};
                 throw "Malformed location string \'"+_location1+"\'";
             }
             _location1 = new seqJS.Location(m[1]);
-            _location2 = new seqJS.Location(m[2]);
+            //Genbank stores locations as being inclusive
+            _location2 = new seqJS.Location(m[2]).add(1);
         }
-
         //if we're given numbers then implicit exact
-        if(typeof _location1 === 'number' && typeof _location2 === 'number'){
+        else if(typeof _location1 === 'number' && typeof _location2 === 'number'){
             _location1 = new seqJS.Location(_location1);
             _location2 = new seqJS.Location(_location2);
+        }
+        else {
+            throw "seqJS.Span: invalid argument types";
         }
 
         if(_location1.gt(_location2)){
@@ -638,7 +649,7 @@ var seqJS = seqJS || {};
          * @returns {string} genbank style string (e.g. 100..200)
          */
         this.toString = function() {
-            return _location1.toString() + '..' + _location2.toString();
+            return _location1.toString() + '..' + _location2.subtract(1).toString();
         };
 
         /** Returns true if the span is on the reverse strand
