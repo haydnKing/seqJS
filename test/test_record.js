@@ -331,6 +331,24 @@ module('seqJS.Span');
         });
     });
 
+    test('invertDatum 5..10', function() {
+        var s = new seqJS.Span('5..10');
+        
+        span_eq(s.invertDatum(100), [90, ''], [96, ''], false, '90..96');
+        span_eq(s, [4], [10], false, '5..10');
+    });
+    test('invertDatum 4.5..10.11', function() {
+        var s = new seqJS.Span('4.5..10.11');
+        
+        span_eq(s.invertDatum(100), [89, '.', 91], [95, '.', 97], false, '90.91..96.97');
+        span_eq(s, [3, '.', 5], [10, '.', 12], false, '4.5..10.11');
+    });
+    test('invertDatum', function() {
+        var s = new seqJS.Span('<5..>10');
+        
+        span_eq(s.invertDatum(100), [90, '<'], [96, '>'], false, '<91..>96');
+        span_eq(s, [4, '<'], [10, '>'], false, '<5..>10');
+    });
 
 module('seqJS#FeatureLocation');
 
