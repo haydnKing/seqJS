@@ -477,6 +477,43 @@ module('seqJS#FeatureLocation');
 
     });
 
+module('seqJS.FeatureLocation.crop', {
+    setup: function() {
+        this.f = new seqJS.FeatureLocation('join(10..19,50..59,complement(30..39))');
+    }
+});
+
+    test('25 - 45', function(){
+        featureloc_eq(this.f.crop(25,45),
+                      'complement(5..14)',
+                      '',
+                      [[[4],[14],true,'5..14']]);
+    });
+
+    test('33 - 38', function(){
+        featureloc_eq(this.f.crop(33,38),
+                      'complement(1..5)',
+                      '',
+                      [[[0],[5],true,'1..5']]);
+    });
+
+    test('14 - 37', function(){
+        featureloc_eq(this.f.crop(14,37),
+                      'order(1..5,complement(16..23))',
+                      'order',
+                      [
+                          [[0],[5],false,'1..5'],
+                          [[15],[23],true,'16..23']
+                      ]);
+    });
+
+    test('33 - 38', function(){
+        featureloc_eq(this.f.crop(33,38),
+                      'complement(1..5)',
+                      '',
+                      [[[0],[5],true,'1..5']]);
+    });
+
 module('seqJS#Feature');
 
     test('type and location', function(){

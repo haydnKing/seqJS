@@ -519,34 +519,36 @@ var seqJS = seqJS || {};
         this.operator = function() {return _operator;};
 
         /** Is the location less than rhs
-         * @param {seqJS.Location} rhs the location to compare with
+         * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
          */
         this.lt = function(rhs) {
-            if(this.operator() === '.'){
-                return _location2 < rhs.location();
+            if(typeof(rhs) !== 'number') {
+                rhs = rhs.location();
             }
-            return _location < rhs.location();
+            return (this.operator() === '.') ?
+                _location2 < rhs :
+                _location < rhs;
         };
         /** Is the location greater than rhs
-         * @param {seqJS.Location} rhs the location to compare with
+         * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
          */
         this.gt = function(rhs) {
-            if(rhs.operator() === '.'){
-                return _location > rhs.location2();
+            if(typeof(rhs) !== 'number'){
+                rhs = (rhs.operator === '.') ? rhs.location2() : rhs.location();
             }
-            return _location > rhs.location();
+            return _location > rhs;
         };
         /** Is the location less than or equal to rhs
-         * @param {seqJS.Location} rhs the location to compare with
+         * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
          */
         this.lte = function(rhs) {
             return !this.gt(rhs);
         };
         /** Is the location greater than or equal to rhs
-         * @param {seqJS.Location} rhs the location to compare with
+         * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
          */
         this.gte = function(rhs) {
@@ -613,6 +615,11 @@ var seqJS = seqJS || {};
                                       l - _location);
             
         };
+
+        /** return a cropped location such that it is in the range [start,end)
+         * @param {Number} start the start of the rage
+         * @param {Number} end past the end location
+         * @returns {seqJS.Span} the new span
     };
 
     var span_fmt = /(\S+)\.\.(\S+)/;
@@ -716,7 +723,7 @@ var seqJS = seqJS || {};
 
         /** Return a new span with offset added to it
          * @param {Number} offset the offset to add
-         * @returns {SeqJS.Span} the new span
+         * @returns {seqJS.Span} the new span
          */
         this.add = function(o){
             return new seqJS.Span(_location1.add(o),
@@ -725,12 +732,24 @@ var seqJS = seqJS || {};
         };
         /** Return a new span with offset subtracted from it
          * @param {Number} offset the offset to subtract
-         * @returns {SeqJS.Span} the new span
+         * @returns {seqJS.Span} the new span
          */
         this.subtract = function(o){
             return new seqJS.Span(_location1.subtract(o),
                                   _location2.subtract(o),
                                   complement);
+        };
+
+        /** Return a new span, cropped to [start,end). If the span doesn't
+         * overlap with this range then return undefined
+         * @param {Number} start The start of the range to crop to
+         * @param {Number} end The start of the range to crop to
+         * @returns {seqJS.Span|undefined} The new Span
+         */
+        this.crop = function(start, end) {
+            if(this.left().gt(end) || this.right().lt(end)){
+                return undefined;
+            }
         };
 
         /** Get all spans -- in this case an array containing this
