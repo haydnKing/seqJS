@@ -53,76 +53,6 @@ module('seqJS#seq');
         equal(s.reverseComplement().seq(), 'TGACGAT', 'odd length R.C.');
     });
 
-    test('extract feature sequence', function() {
-
-        var s = new seqJS.Seq(
-            'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
-            'DNA');
-
-        var f = new seqJS.Feature('gene', '10..20');
-        equal(s.extract(f).seq(), "ATATCGATCGA", '10..20');
-
-        f = new seqJS.Feature('gene', 'complement(10..20)');
-        equal(s.extract(f).seq(), "TCGATCGATAT", 'complement(10..20)');
-
-        f = new seqJS.Feature('gene', 'join(10..20,30..40)');
-        equal(s.extract(f).seq(), "ATATCGATCGATAGCTAGTCGA", 'join(10..20,30..40)');
-
-        f = new seqJS.Feature('gene', 'join(10..20,complement(30..40))');
-        equal(s.extract(f).seq(), "ATATCGATCGATCGACTAGCTA", 'join(10..20,complement(30..40))');
-
-    });
-
-    test('extract feature sequence with features', function() {
-
-        var s = new seqJS.Seq(
-            'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
-            'DNA',
-            [
-                new seqJS.Feature('one', '11..19'),
-                new seqJS.Feature('two', 'complement(5..15)'),
-                new seqJS.Feature('three', '15..25')
-            ]);
-        var s2 = new seqJS.Seq(
-            'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
-            'DNA',
-            [
-                new seqJS.Feature('one', '1..46')
-            ]);
-
-        //Test simple feature extraction
-        var f = new seqJS.Feature('gene', '10..20');
-        var o = s.extract(f, true);
-        equal(o.seq(), "ATATCGATCGA", '10..20');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             '2..10|complement(1..6)|6..10',
-             'incorrect features returned');
-
-        f = new seqJS.Feature('gene', 'complement(10..20)');
-        o = s.extract(f, true);
-        equal(o.seq(), "TCGATCGATAT", 'complement(10..20)');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'complement(1..6)|complement(2..10)|6..11)',
-             'incorrect features returned');
-
-        //Test multi span extraction
-        f = new seqJS.Feature('gene', 'join(10..19,20..29)');
-        o = s2.extract(f, true);
-        equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'join(10..19,20..29)');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'order(1..10,11..20)',
-             'incorrect features returned');
-        
-        //Test complex feature extraction
-        f = new seqJS.Feature('gene', 'join(2..7,20..30,complement(12..17))');
-        o = s.extract(f, true);
-        equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 
-              'join(2..7,20..30,complement(12..17))');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             '18..23|order(4..6,complement(20..23))|order(complement(18..20),7..12)',
-             'incorrect features returned');
-    });
-
     test('test get features within range', function() {
         var s = new seqJS.Seq(
             'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
@@ -196,36 +126,35 @@ module('seqJS.Seq.extract', {
         var o = this.s.extract(f, true);
         equal(o.seq(), "ATATCGATCGA", 'Incorrect sequence');
         equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), 'complement(1..6)', 'Feature 1');
-        equal(o.features()[1].location().toString(), '2..10', 'Feature 2');
-        equal(o.features()[2].location().toString(), '6..11', 'Feature 3');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             '2..10|complement(1..6)|6..10',
+             'incorrect features returned');
     });
     test('extract complement(10..20)  with features', function() {
         var f = new seqJS.Feature('gene', 'complement(10..20)');
         var o = this.s.extract(f, true);
         equal(o.seq(), "TCGATCGATAT", 'Incorrect sequence');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), 'complement(2..10)', 'Feature 1');
-        equal(o.features()[1].location().toString(), '6..11)', 'Feature 2');
-        equal(o.features()[2].location().toString(), 'complement(1..6)', 'Feature 3');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             'complement(1..6)|complement(2..10)|6..11)',
+             'incorrect features returned');
     });
     test('extract join(10..19,20..29) with features', function() {
         //Test multi span extraction
         var f = new seqJS.Feature('gene', 'join(10..19,20..29)');
         var o = this.s2.extract(f, true);
         equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'Incorrect sequence');
-        equal(o.features().length, 1, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), 'order(1..10,11..20)', 'Feature 1');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             'order(1..10,11..20)',
+             'incorrect features returned');
     });
     test('extract join(2..7,20..30,complement(12..17)) with features', function() {       
         //Test complex feature extraction
         var f = new seqJS.Feature('gene', 'join(2..7,20..30,complement(12..17))');
         var o = this.s.extract(f, true);
         equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 'Incorrect sequence');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), '18..23', 'Feature 1');
-        equal(o.features()[1].location().toString(), 'order(4..6,complement(20..23))', 'Feature 2');
-        equal(o.features()[2].location().toString(), 'order(complement(18..20),7..12)', 'Feature 3');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             '18..23|order(4..6,complement(20..23))|order(complement(18..20),7..12)',
+             'incorrect features returned');
     });
 
 
