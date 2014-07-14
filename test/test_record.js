@@ -94,35 +94,33 @@ module('seqJS#seq');
         var f = new seqJS.Feature('gene', '10..20');
         var o = s.extract(f, true);
         equal(o.seq(), "ATATCGATCGA", '10..20');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), '2..10');
-        equal(o.features()[1].location().toString(), 'complement(1..6)');
-        equal(o.features()[2].location().toString(), '6..10');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             '2..10|complement(1..6)|6..10',
+             'incorrect features returned');
 
         f = new seqJS.Feature('gene', 'complement(10..20)');
         o = s.extract(f, true);
         equal(o.seq(), "TCGATCGATAT", 'complement(10..20)');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), 'complement(2..10)');
-        equal(o.features()[1].location().toString(), '6..11)');
-        equal(o.features()[2].location().toString(), 'complement(1..6)');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             'complement(1..6)|complement(2..10)|6..11)',
+             'incorrect features returned');
 
         //Test multi span extraction
         f = new seqJS.Feature('gene', 'join(10..19,20..29)');
         o = s2.extract(f, true);
         equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'join(10..19,20..29)');
-        equal(o.features().length, 1, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), 'order(1..10,11..20)');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             'order(1..10,11..20)',
+             'incorrect features returned');
         
         //Test complex feature extraction
         f = new seqJS.Feature('gene', 'join(2..7,20..30,complement(12..17))');
         o = s.extract(f, true);
         equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 
               'join(2..7,20..30,complement(12..17))');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features()[0].location().toString(), '18..23');
-        equal(o.features()[1].location().toString(), 'order(4..6,complement(20..23))');
-        equal(o.features()[2].location().toString(), 'order(complement(18..20),7..12)');
+        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
+             '18..23|order(4..6,complement(20..23))|order(complement(18..20),7..12)',
+             'incorrect features returned');
     });
 
     test('test get features within range', function() {
@@ -137,15 +135,14 @@ module('seqJS#seq');
 
         //test subset
         var f = s.features(9,17);
-        equal(f.length, 1, 'contained features: wrong number of features returned');
-        equal(f[0].location().toString(), '13..17');
+        equal(f.map(function(x){return x.location().toString();}).join('|'), '13..17', 
+             'Contained: returned features do not match');
 
         //test intersection
         f = s.features(9,17,true);
-        equal(f.length, 3, 'intersected features: wrong number of features returned');
-        equal(f[0].location().toString(), 'join(5..10,20..25)');
-        equal(f[1].location().toString(), 'complement(7..15)');
-        equal(f[2].location().toString(), '13..17');
+        equal(f.map(function(x){return x.location().toString();}).join('|'), 
+              'join(5..10,20..25)|complement(7..15)|13..17', 
+             'Intersection: Returned features do not match expectations');
 
     });
 
