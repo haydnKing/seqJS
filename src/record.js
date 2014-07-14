@@ -675,19 +675,12 @@ var seqJS = seqJS || {};
          * @returns {boolean} true if the spans overlap
          */
         this.overlaps = function(rhs) {
-            if(_location1.lt(rhs.left()) &&
-               _location2.gt(rhs.left())) {
-                return true;
+            //check if we don't overlap
+            if(_location1.gte(rhs.right()) ||
+               _location2.lte(rhs.left()) ){
+                return false;
             }
-            if(_location1.lt(rhs.right()) &&
-               _location2.gt(rhs.right())) {
-                return true;
-            }
-            if(_location1.gt(rhs.left()) &&
-               _location2.lt(rhs.right())) {
-                return true;
-            }
-            return false;
+            return true;
         };    
 
         /** Get a genbank style string representation
@@ -1132,6 +1125,7 @@ var seqJS = seqJS || {};
                                  new seqJS.Location(b || rhs))]
                              : rhs.location().getSpans()),
                 this_spans = this.location().getSpans();
+
 
             return rhs_spans.some(function(rhs){
                 return this_spans.some(function(lhs){
