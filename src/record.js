@@ -242,10 +242,7 @@ var seqJS = seqJS || {};
                 for(var f = 0; f < _features.length; f++){
                     if(intersect){
                         //include features if any spans intersect
-                        console.log('overlaps(\"'+_features[f].location()+
-                                    '\", ['+start+', '+end+'])');
                         if(_features[f].overlaps(start, end)){
-                            console.log('  true');
                             r.push(_features[f]);
                         }
                     }
@@ -649,19 +646,12 @@ var seqJS = seqJS || {};
          * @returns {boolean} true if the spans overlap
          */
         this.overlaps = function(rhs) {
-            if(_location1.lt(rhs.left()) &&
-               _location2.gt(rhs.left())) {
-                return true;
+            //check if we don't overlap
+            if(_location1.gte(rhs.right()) ||
+               _location2.lte(rhs.left()) ){
+                return false;
             }
-            if(_location1.lt(rhs.right()) &&
-               _location2.gt(rhs.right())) {
-                return true;
-            }
-            if(_location1.gt(rhs.left()) &&
-               _location2.lt(rhs.right())) {
-                return true;
-            }
-            return false;
+            return true;
         };    
 
         /** Get a genbank style string representation
@@ -1065,11 +1055,19 @@ var seqJS = seqJS || {};
                              : rhs.location().getSpans()),
                 this_spans = this.location().getSpans();
 
-            return rhs_spans.some(function(rhs){
+            console.log('\n\tFeature.overlaps('+rhs+','+b+')\n\t\tthis_spans:');
+            this_spans.forEach(function(s) {console.log('\t\t\t'+s);});
+            console.log('\t\trhs.spans:');
+            rhs_spans.forEach(function(s) {console.log('\t\t\t'+s);});
+
+            var ret = rhs_spans.some(function(rhs){
                 return this_spans.some(function(lhs){
                     return lhs.overlaps(rhs);
                 });
             });
+
+            console.log('\treturn '+ret);
+            return ret;
         };
 
         /** Get a string representation for debugging

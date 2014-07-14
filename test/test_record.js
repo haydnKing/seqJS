@@ -137,12 +137,12 @@ module('seqJS#seq');
 
         //test subset
         var f = s.features(9,17);
-        equal(f.length, 1, 'wrong number of features returned');
+        equal(f.length, 1, 'contained features: wrong number of features returned');
         equal(f[0].location().toString(), '13..17');
 
         //test intersection
         f = s.features(9,17,true);
-        equal(f.length, 3, 'wrong number of features returned');
+        equal(f.length, 3, 'intersected features: wrong number of features returned');
         equal(f[0].location().toString(), 'join(5..10,20..25)');
         equal(f[1].location().toString(), 'complement(7..15)');
         equal(f[2].location().toString(), '13..17');
