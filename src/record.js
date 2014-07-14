@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -1055,19 +1054,12 @@ var seqJS = seqJS || {};
                              : rhs.location().getSpans()),
                 this_spans = this.location().getSpans();
 
-            console.log('\n\tFeature.overlaps('+rhs+','+b+')\n\t\tthis_spans:');
-            this_spans.forEach(function(s) {console.log('\t\t\t'+s);});
-            console.log('\t\trhs.spans:');
-            rhs_spans.forEach(function(s) {console.log('\t\t\t'+s);});
 
-            var ret = rhs_spans.some(function(rhs){
+            return rhs_spans.some(function(rhs){
                 return this_spans.some(function(lhs){
                     return lhs.overlaps(rhs);
                 });
             });
-
-            console.log('\treturn '+ret);
-            return ret;
         };
 
         /** Get a string representation for debugging
