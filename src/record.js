@@ -620,6 +620,8 @@ var seqJS = seqJS || {};
          * @param {Number} start the start of the rage
          * @param {Number} end past the end location
          * @returns {seqJS.Span} the new span
+         */
+        this.crop = function(){};
     };
 
     var span_fmt = /(\S+)\.\.(\S+)/;
