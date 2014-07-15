@@ -889,6 +889,14 @@ var seqJS = seqJS || {};
             return '';
         };
 
+        /** Test if any of my sub-spans overlap
+         * @param {seqJS.Span} rhs the span to test with
+         * @returns {boolean} true if overlap
+         */
+        this.overlaps = function(rhs){
+            return items.some(function(i){return i.overlaps(rhs);});
+        };
+
         /** Test if the object is a span
          * @returns {boolean} false
          */
@@ -905,22 +913,22 @@ var seqJS = seqJS || {};
      * @param {seqJS.FeatureLocation} location the location of the feature
      */
     seqJS.FeatureLocation = function(location){
-        var loc;
+        var _sl;
         try{
-            loc = new seqJS.SpanList(location);
+            _sl = new seqJS.SpanList(location);
         }
         catch(e){
             throw e + " while parsing location string \'"+location+"\'";
         }
         //set complement flags on Spans
-        loc.setComplement();
+        _sl.setComplement();
 
         /**
          * Get a string representation of the location
          * @returns {string} String representation
          */
         this.toString = function(){
-            return loc.toString();
+            return _sl.toString();
         };
 
         /**
@@ -928,7 +936,24 @@ var seqJS = seqJS || {};
          * @returns {Array.<seqJS.Span>} An array of spans
          */
         this.getSpans = function() {
-            return loc.getSpans();
+            return _sl.getSpans();
+        };
+
+        /** Does this location overlap with a span or range of locations?
+         * @param {seqJS.FeatureLocation|Number} rhs the span or integer start
+         * point
+         * @param {Number} [b=rhs] integer end point
+         * @returns {boolean} true if there is overlap
+         */
+        this.overlaps = function(rhs, b){
+            var sl;
+            if(typeof(rhs) === 'number'){
+                sl = [new seqJS.Span(rhs, b || (rhs+1))];
+            }
+            else {
+                sl = rhs.getSpans();
+            }
+            return sl.some(function(i){return _sl.overlaps(i);});
         };
 
         /**
@@ -970,7 +995,7 @@ var seqJS = seqJS || {};
          * @returns {string} 'join' or 'order'
          */
         this.getMergeOperator = function() {
-            return loc.getMergeOperator();
+            return _sl.getMergeOperator();
         };
     };
     
@@ -1113,19 +1138,10 @@ var seqJS = seqJS || {};
          * @returns {boolean} Whether or not the features overlap
          */
         this.overlaps = function(rhs, b) {
-            var rhs_spans = ((typeof rhs === 'number') ? 
-                             [new seqJS.Span(
-                                 new seqJS.Location(rhs),
-                                 new seqJS.Location(b || rhs))]
-                             : rhs.location().getSpans()),
-                this_spans = this.location().getSpans();
-
-
-            return rhs_spans.some(function(rhs){
-                return this_spans.some(function(lhs){
-                    return lhs.overlaps(rhs);
-                });
-            });
+            if(typeof(rhs.location) === 'function'){
+                return _location.overlaps(rhs.location());
+            }
+            return _location.overlaps(rhs,b);
         };
 
         /** Get a string representation for debugging
