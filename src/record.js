@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -621,7 +622,9 @@ var seqJS = seqJS || {};
          * @param {Number} end past the end location
          * @returns {seqJS.Span} the new span
          */
-        this.crop = function(){};
+        this.crop = function(){
+            console.log('location.crop: STUB');
+        };
     };
 
     var span_fmt = /(\S+)\.\.(\S+)/;
@@ -741,10 +744,8 @@ var seqJS = seqJS || {};
          * @param {Number} end The start of the range to crop to
          * @returns {seqJS.Span|undefined} The new Span
          */
-        this.crop = function(start, end) {
-            if(this.left().gt(end) || this.right().lt(end)){
-                return undefined;
-            }
+        this.crop = function(/*start, end*/) {
+            console.log('span.crop: STUB');
         };
 
         /** Get all spans -- in this case an array containing this
@@ -902,6 +903,14 @@ var seqJS = seqJS || {};
          */
         this.isSpan = function() {return false;};
 
+        /** Return a new SpanList which has been cropped to [start,end)
+         * @param {Number} start the start of the range to crop to
+         * @param {Number} end the end of the range to crop to
+         * @returns {seqJS.SpanList} the new spanlist
+         */
+        this.crop = function() {
+            console.log('SpanList.crop: STUB');
+        };
     };
 
 
@@ -996,6 +1005,15 @@ var seqJS = seqJS || {};
          */
         this.getMergeOperator = function() {
             return _sl.getMergeOperator();
+        };
+
+        /** Return a new FeatureLocation which has been cropped to [start,end)
+         * @param {Number} start the start of the range to crop to
+         * @param {Number} end the end of the range to crop to
+         * @returns {seqJS.FeatureLocation} the new spanlist
+         */
+        this.crop = function(/*start, end*/) {
+            console.log('FeatureLocation.crop: STUB');
         };
     };
     
