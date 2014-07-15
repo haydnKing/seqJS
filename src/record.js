@@ -760,12 +760,6 @@ var seqJS = seqJS || {};
         this.isSpan = function() {return true;};
     };
 
-    /*
-     * LocationOperator:
-     *  store a Span or several spans and an operator which affects those spans
-     *  such as join(...), order(...) or complement()
-     */
-
     var operator_fmt = /^(complement|join|order)\((.+)\)$/;
     /*
      * tokenize:
@@ -794,14 +788,14 @@ var seqJS = seqJS || {};
         return ret;
     };
 
-    /** Stores an operator like 'complement', 'join' or 'order' and the span(s)
-     * on which they operate
+    /** Store one or several {@link seqJS.Span}s and an operator such as 
+     * 'complement', 'join' or 'order' to define how the spans should be merged
      * @constructor
      * @param {string} location the location string to parse
      * @param {string} [prev_op] the previous operator, used to catch errors
      * where joins and complements are both used
      */
-    seqJS.LocationOperator = function(location, prev_op){
+    seqJS.SpanList = function(location, prev_op){
         var items = [], operator = '';
 
         var m = operator_fmt.exec(location);
@@ -809,7 +803,7 @@ var seqJS = seqJS || {};
             operator = m[1];
             switch(operator){
                 case 'complement':
-                    items.push(new seqJS.LocationOperator(m[2].trim()));
+                    items.push(new seqJS.SpanList(m[2].trim()));
                     break;
                 case 'join':
                 case 'order':
@@ -819,7 +813,7 @@ var seqJS = seqJS || {};
                     }
                     var s_items = tokenize(m[2]);
                     for(var i = 0; i < s_items.length; i++){
-                        items.push(new seqJS.LocationOperator(s_items[i], operator));
+                        items.push(new seqJS.SpanList(s_items[i], operator));
                     }
             }
         }
@@ -841,7 +835,7 @@ var seqJS = seqJS || {};
             return s[0];
         };
         
-        /** Called by an outer FeatureOperator to set whether this should be
+        /** Called by an outer SpanList to set whether this should be
          * a complement or not
          * @param {boolean} value Whether or not spans should be on the reverse
          * strand
@@ -906,14 +900,14 @@ var seqJS = seqJS || {};
 
     /**
      * FeatureLocation
-     *  Store base LocationOperator and procide access to the underlying data
+     *  Store base SpanList and procide access to the underlying data
      * @constructor
      * @param {seqJS.FeatureLocation} location the location of the feature
      */
     seqJS.FeatureLocation = function(location){
         var loc;
         try{
-            loc = new seqJS.LocationOperator(location);
+            loc = new seqJS.SpanList(location);
         }
         catch(e){
             throw e + " while parsing location string \'"+location+"\'";
