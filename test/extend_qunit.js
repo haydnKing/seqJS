@@ -32,11 +32,9 @@ var span_eq = function(actual, location1, location2, complement, string){
     equal(actual.toString(), string, "span.toString() is incorrect"); 
 };
 
-var featureloc_eq = function(actual, string, merge, spanlist){
+var featureloc_eq = function(actual, string, spanlist){
 
     equal(actual.toString(), string, "toString() is wrong");
-
-    equal(actual.getMergeOperator(), merge, "getMergeOperator() is wrong");
 
     var s = actual.getSpans(), j;
     equal(s.length, spanlist.length, "Wrong number of spans returned");

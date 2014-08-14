@@ -855,40 +855,71 @@ var seqJS = seqJS || {};
         return ret;
     };
 
-    /** Store one or several {@link seqJS.Span}s and an operator such as 
-     * 'complement', 'join' or 'order' to define how the spans should be merged
+    /** An operator stores two things
+     * 1) a string defining an operation 
+     * 2) a list of {@link seqJS.Span} objects which are acted on by the
+     * operator
+     * Valid operations are:
+     *  - 'complement': Acts on a single Span
+     *  - 'join': Merges one or more Spans by 'join'ing them
+     *  - 'order': Merges one or more Spans by 'order'ing them
+     *  - '': no-op, zero or one Spans
      * @constructor
-     * @param {string} location the location string to parse
-     * @param {string} [prev_op] the previous operator, used to catch errors
-     * where joins and complements are both used
+     * @param {string|Array.<seqJS.Span>} location the location string to
+     * parse, or an array of Span to be contained. In the latter case, the
+     * second argument is required
+     * @param {string} [operation] The operation to be carried out. If this is
+     * given then argument 1 must be an Array of Spans
      */
-    seqJS.SpanOperator = function(location, prev_op){
-        var items = [], operator = '';
+    seqJS.SpanOperator = function(location, operator){
+        var items = [];
 
-        var m = operator_fmt.exec(location);
-        if(m){
-            operator = m[1];
-            switch(operator){
-                case 'complement':
-                    items.push(new seqJS.SpanOperator(m[2].trim()));
-                    break;
-                case 'join':
-                case 'order':
-                    //check whether we're duplicating
-                    if(prev_op !== undefined && operator !== prev_op){
-                        throw "Location lines cannot mix join(...) and order(...)";
-                    }
-                    var s_items = tokenize(m[2]);
-                    for(var i = 0; i < s_items.length; i++){
-                        items.push(new seqJS.SpanOperator(s_items[i], operator));
-                    }
+        //If we're given a string to parse
+        if(typeof(location) === 'string' || location instanceof String){
+            var m = operator_fmt.exec(location);
+            if(m){
+                operator = m[1];
+                switch(operator){
+                    case 'complement':
+                        items.push(new seqJS.SpanOperator(m[2].trim()));
+                        break;
+                    case 'join':
+                    case 'order':
+                        var s_items = tokenize(m[2]);
+                        for(var i = 0; i < s_items.length; i++){
+                            items.push(new seqJS.SpanOperator(s_items[i]));
+                        }
+                }
+            }
+            else {
+                operator = '';
+                //if location string is empty, there are no spans yet
+                if(location){
+                    items.push(new seqJS.SpanOperator([new seqJS.Span(location)], ''));
+                }
             }
         }
-        else {
-            //if location string is empty, there are no spans yet
-            if(location){
-                items.push(new seqJS.Span(location));
+        //else, we're given an Array and an operator
+        else{
+            if(operator === undefined){
+                throw("seqJS.SpanOperator: Required argument 'operator' missing");
             }
+            items = location;
+        }
+
+        //Check that what we have makes sense
+        switch(operator){
+            case 'complement':
+            case '':
+                if(items.length > 1){
+                    throw("seqJS.SpanOperator: operator '"+operator+"' accepts only one Span, not "+items.length);
+                }
+                break;
+            case 'join':
+            case 'order':
+                break;
+            default:
+                throw("seqJS.SpanOperator: unknown operation '"+operator+"'");
         }
 
         /** Convert to a genbank style string
@@ -959,27 +990,6 @@ var seqJS = seqJS || {};
             return operator;
         };
 
-        /** Get the operation used to merge spans
-         * @returns {string} 'join' or 'order'
-         */
-        this.getMergeOperator = function() {
-            var op;
-            if(prev_op) {
-                return prev_op;
-            }
-            else {
-                for(var i = 0; i < items.length; i++){
-                    if(!items[i].isSpan()){
-                        op = items[i].getMergeOperator();
-                        if(op){
-                            return op;
-                        }
-                    }
-                }
-            }
-            return '';
-        };
-
         /** Test if any of my sub-spans overlap
          * @param {seqJS.Span} rhs the span to test with
          * @returns {boolean} true if overlap
@@ -1001,16 +1011,14 @@ var seqJS = seqJS || {};
          * @returns {seqJS.SpanOperator} the new spanlist
          */
         this.crop = function(left, right, complement) {
-            var i, s,
-                ret = new seqJS.SpanOperator('', prev_op);
-            ret.operator(operator);
+            var i, s, ret = [];
             for(i=0; i < items.length; i++){
                 s = items[i].crop(left, right, complement);
                 if(s){
                     ret.push(s);
                 }
             }
-            return ret;
+            return new seqJS.SpanOperator(ret, operator);
         };
     };
 
@@ -1102,16 +1110,6 @@ var seqJS = seqJS || {};
                 }
             }
             return m;
-        };
-
-
-        /**
-         * Returns the type of merge which should be performed with this
-         * location
-         * @returns {string} 'join' or 'order'
-         */
-        this.getMergeOperator = function() {
-            return _sl.getMergeOperator();
         };
 
         /** Return a new FeatureLocation which has been cropped to [start,end)

@@ -359,7 +359,7 @@ module('seqJS#FeatureLocation');
     test('parse A..B', function(){
         var l = new seqJS.FeatureLocation('100..200');
 
-        featureloc_eq(l, '100..200', '', [
+        featureloc_eq(l, '100..200', [
                       [[99],[200],false,'100..200']
         ]);
 
@@ -368,7 +368,7 @@ module('seqJS#FeatureLocation');
     test('parse <A..B', function(){
         var l = new seqJS.FeatureLocation('<100..200');
 
-        featureloc_eq(l, '<100..200', '', [
+        featureloc_eq(l, '<100..200', [
                       [[99, '<'],[200],false,'<100..200']
         ]);
     });
@@ -376,7 +376,7 @@ module('seqJS#FeatureLocation');
     test('parse A.B..C', function(){
         var l = new seqJS.FeatureLocation('100.102..200');
 
-        featureloc_eq(l, '100.102..200', '', [
+        featureloc_eq(l, '100.102..200', [
                       [[99, '.', 102],[200],false,'100.102..200']
         ]);
     });
@@ -384,7 +384,7 @@ module('seqJS#FeatureLocation');
     test('parse complement(A..B)', function(){
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
-        featureloc_eq(l, 'complement(100..200)', '', [
+        featureloc_eq(l, 'complement(100..200)', [
                       [[99],[200],true,'100..200']
         ]);
     });
@@ -392,7 +392,7 @@ module('seqJS#FeatureLocation');
     test('parse join(A..B,C..D)', function(){
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
-        featureloc_eq(l, 'join(100..200,300..400)', 'join', [
+        featureloc_eq(l, 'join(100..200,300..400)', [
                       [[99],[200],false,'100..200'],
                       [[299],[400],false,'300..400']
         ]);
@@ -401,7 +401,7 @@ module('seqJS#FeatureLocation');
     test('parse order(A..B,C..D)', function(){
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
-        featureloc_eq(l, 'order(100..200,300..400)', 'order', [
+        featureloc_eq(l, 'order(100..200,300..400)', [
                       [[99],[200],false,'100..200'],
                       [[299],[400],false,'300..400']
         ]);
@@ -411,7 +411,7 @@ module('seqJS#FeatureLocation');
         var l = new seqJS.FeatureLocation(
             'complement(join(100..200,300..400))');
 
-        featureloc_eq(l, 'complement(join(100..200,300..400))', 'join', [
+        featureloc_eq(l, 'complement(join(100..200,300..400))', [
                       [[299],[400],true,'300..400'],
                       [[99],[200],true,'100..200']
         ]);
@@ -422,7 +422,7 @@ module('seqJS#FeatureLocation');
             'join(complement(300..400),complement(100..200))');
 
         featureloc_eq(l, 
-            'join(complement(300..400),complement(100..200))', 'join', [
+            'join(complement(300..400),complement(100..200))', [
                       [[299],[400],true,'300..400'],
                       [[99],[200],true,'100..200']
         ]);
@@ -434,7 +434,7 @@ module('seqJS#FeatureLocation');
 
         featureloc_eq(l, 
             'join(100..200,complement(join(500..600,300..400)))', 
-            'join', [
+            [
                       [[99],[200],false,'100..200'],
                       [[299],[400],true,'300..400'],
                       [[499],[600],true,'500..600']
@@ -483,21 +483,18 @@ module('seqJS.FeatureLocation.crop', {
     test('25 - 45', function(){
         featureloc_eq(this.f.crop(25,45),
                       'complement(5..14)',
-                      '',
                       [[[4],[14],true,'5..14']]);
     });
 
     test('33 - 38', function(){
         featureloc_eq(this.f.crop(33,38),
                       'complement(1..5)',
-                      '',
                       [[[0],[5],true,'1..5']]);
     });
 
     test('14 - 37', function(){
         featureloc_eq(this.f.crop(14,37),
                       'order(1..5,complement(16..23))',
-                      'order',
                       [
                           [[0],[5],false,'1..5'],
                           [[15],[23],true,'16..23']
@@ -507,7 +504,6 @@ module('seqJS.FeatureLocation.crop', {
     test('33 - 38', function(){
         featureloc_eq(this.f.crop(33,38),
                       'complement(1..5)',
-                      '',
                       [[[0],[5],true,'1..5']]);
     });
 
