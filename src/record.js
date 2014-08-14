@@ -1,4 +1,4 @@
-/* global console:true */
+/** global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -346,8 +346,8 @@ var seqJS = seqJS || {};
          * 'start' and 'end' must be of the same type.
          * subseq works much the same as String.substring - e.g. s.subseq(5,7)
          * returns a Seq with two bases, those at positions 5 and 6
-         * @param {seqJS.Location|Number} start The position to start at
-         * @param {seqJS.Location|Number} end The position to end at
+         * @param {seqJS.Location|int} start The position to start at
+         * @param {seqJS.Location|int} end The position to end at
          * @param {boolean} [complement=false] If true, return the reverse
          * complement of the sub-sequence instead
          * @returns {seqJS.Seq} The sub-sequence
@@ -629,12 +629,47 @@ var seqJS = seqJS || {};
         };
 
         /** return a cropped location such that it is in the range [start,end)
-         * @param {Number} start the start of the rage
-         * @param {Number} end past the end location
-         * @returns {seqJS.Span} the new span
+         * @param {seqJS.Location|int} left the start of the range
+         * @param {seqJS.Location|int} right past the end location
+         * @returns {seqJS.Location} the new location
          */
-        this.crop = function(){
-            console.log('location.crop: STUB');
+        this.crop = function(left, right){
+            var _l, _o, _l2;
+            //convert input to integers
+            if(typeof(left) !== 'number'){
+                left = left.toInt();
+            }
+            if(typeof(right) !== 'number'){
+                right = right.toInt();
+            }
+            if(left > right){
+                throw("seqJS.Location.crop("+left+", "+right+"): right cannot be smaller than left");
+            }
+
+            var c = function(x){
+                if(x < left){return 0;}
+                if(x > right){return right - left;}
+                return x-left;
+            };
+
+            _l = c(_location);
+            _o = _operator;
+            if(_location2){
+                _l2 = c(_l2);
+            }
+            if(_o === '<' && _location < left){
+                _o = '';
+            }
+            else if(_o === '>' && _location > right){
+                _o = '';
+            }
+
+            if(_l === _l2){
+                _o = '';
+                _l2 = undefined;
+            }
+
+            return new seqJS.Location(_l, _o, _l2);
         };
     };
 
@@ -751,12 +786,32 @@ var seqJS = seqJS || {};
 
         /** Return a new span, cropped to [start,end). If the span doesn't
          * overlap with this range then return undefined
-         * @param {Number} start The start of the range to crop to
-         * @param {Number} end The start of the range to crop to
+         * @param {seqJS.Location|int} left The start of the range to crop to
+         * @param {seqJS.Location|int} right The start of the range to crop to
+         * @param {boolean} [complement=false] whether to complement the
+         * reuslting span or not 
          * @returns {seqJS.Span|undefined} The new Span
          */
-        this.crop = function(/*start, end*/) {
-            console.log('span.crop: STUB');
+        this.crop = function(left, right, c) {
+            if(left.toInt instanceof Function){
+                left = left.toInt();
+            }
+            if(right.toInt instanceof Function){
+                right = right.toInt();
+            }
+            if(left > right){
+                throw("seqJS.Span.crop("+right+","+left+"): right must be greater than left");
+            }
+
+            complement = complement || false;
+            // if there's no overlap, return null
+            if( _location1.gte(right) || _location2.lte(left) ){
+                return null;
+            }
+
+            return new seqJS.Span(_location1.crop(left,right),
+                                  _location2.crop(left,right),
+                                  (c) ? !complement : complement);
         };
 
         /** Get all spans -- in this case an array containing this
@@ -830,7 +885,10 @@ var seqJS = seqJS || {};
             }
         }
         else {
-            items.push(new seqJS.Span(location));
+            //if location string is empty, there are no spans yet
+            if(location){
+                items.push(new seqJS.Span(location));
+            }
         }
 
         /** Convert to a genbank style string
@@ -845,6 +903,15 @@ var seqJS = seqJS || {};
                 return operator + '(' + s.join(',') + ')';
             }
             return s[0];
+        };
+
+        /** Add a new span to the list
+         * @param {seqJS.Span|seqJS.SpanList} span the span (or list) to add
+         * @returns {seqJS.SpanList} this
+         */
+        this.push = function(span){
+            items.push(span);
+            return this;
         };
         
         /** Called by an outer SpanList to set whether this should be
@@ -878,6 +945,18 @@ var seqJS = seqJS || {};
                 }
             }
             return spans;
+        };
+
+        /** Get or set the operator
+         * @param {string} [op] the new operator
+         * @returns {string|seqJS.SpanList} the operator or this
+         */
+        this.operator = function(op){
+            if(op){
+                operator = op;
+                return this;
+            }
+            return operator;
         };
 
         /** Get the operation used to merge spans
@@ -915,12 +994,23 @@ var seqJS = seqJS || {};
         this.isSpan = function() {return false;};
 
         /** Return a new SpanList which has been cropped to [start,end)
-         * @param {Number} start the start of the range to crop to
-         * @param {Number} end the end of the range to crop to
+         * @param {seqJS.Location|int} left the start of the range to crop to
+         * @param {seqJS.Location|int} right the end of the range to crop to
+         * @param {boolean} [complement=false] whether to complement the returned
+         * SpanList
          * @returns {seqJS.SpanList} the new spanlist
          */
-        this.crop = function() {
-            console.log('SpanList.crop: STUB');
+        this.crop = function(left, right, complement) {
+            var i, s,
+                ret = new seqJS.SpanList('', prev_op);
+            ret.operator(operator);
+            for(i=0; i < items.length; i++){
+                s = items[i].crop(left, right, complement);
+                if(s){
+                    ret.push(s);
+                }
+            }
+            return ret;
         };
     };
 
@@ -928,18 +1018,24 @@ var seqJS = seqJS || {};
 
     /**
      * FeatureLocation
-     *  Store base SpanList and procide access to the underlying data
+     *  Store base SpanList and provide access to the underlying data
      * @constructor
-     * @param {seqJS.FeatureLocation} location the location of the feature
+     * @param {string|seqJS.FeatureLocation} location the location of the feature
      */
     seqJS.FeatureLocation = function(location){
         var _sl;
-        try{
-            _sl = new seqJS.SpanList(location);
+        if(typeof location === 'string' || location instanceof String){
+            try{
+                _sl = new seqJS.SpanList(location);
+            }
+            catch(e){
+                throw e + " while parsing location string \'"+location+"\'";
+            }
         }
-        catch(e){
-            throw e + " while parsing location string \'"+location+"\'";
+        else{
+            _sl = location;
         }
+
         //set complement flags on Spans
         _sl.setComplement();
 
@@ -1019,12 +1115,14 @@ var seqJS = seqJS || {};
         };
 
         /** Return a new FeatureLocation which has been cropped to [start,end)
-         * @param {Number} start the start of the range to crop to
-         * @param {Number} end the end of the range to crop to
+         * @param {seqJS.Location|int} left the start of the range to crop to
+         * @param {seqJS.Location|int} right the end of the range to crop to
+         * @param {boolean} [complement=false] whether or not to complement the
+         * returned FeatureLocation
          * @returns {seqJS.FeatureLocation} the new spanlist
          */
-        this.crop = function(/*start, end*/) {
-            console.log('FeatureLocation.crop: STUB');
+        this.crop = function(left, right, complement) {
+            return new seqJS.FeatureLocation(_sl.crop(left, right, complement));
         };
     };
     
@@ -1177,12 +1275,15 @@ var seqJS = seqJS || {};
          * this one
          * @param {seqJS.Location|int} left The position to start cropping
          * @param {seqJS.Location|int} right The position to end cropping
-         * @param {bool} complement Whether or not to complement the Feature
+         * @param {bool} [complement=false] Whether or not to complement the Feature
          * @returns {seqJS.Feature} The cropped Feature
          */
-        this.crop = function(/*left, right, complement*/){
-            console.log("Feature.crop(...): STUB");
-            return this;
+        this.crop = function(left, right, complement){
+            //duplicate type and qualifiers, crop location
+            var ret = new seqJS.Feature(this.type(), 
+                                        _location.crop(left,right,complement));
+            copy_qualifiers(ret);
+            return ret;
         };
 
         /** Get a string representation for debugging
@@ -1194,6 +1295,14 @@ var seqJS = seqJS || {};
         };
 
         init();
+
+        var copy_qualifiers = function(rhs){
+            var i, k;
+            for(i=0; i < q_keys.length; i++){
+                k = q_keys[i];
+                rhs.qualifier(k, qualifiers[k]);
+            }
+        };
     };
 
 
