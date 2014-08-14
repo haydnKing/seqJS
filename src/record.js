@@ -425,25 +425,33 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
         this.extract = function(feat, ef) {
-            //If we want features, choose them and extract
-            var subfeats = [];
-            if(ef){
-                subfeats = _features.filter(feat.overlaps, feat);
-            }
-            //get the spans
-            var s = new seqJS.Seq('', 
-                                  this.alphabet(),
-                                  subfeats,
-                                  'linear',
-                                  this.lengthUnit(),
-                                  this.strandType(),
-                                  this.residueType()), 
-                span, 
+            var s, i, j, _s,
+                subfeats = [], 
+                i_span, i_feat,
                 spans = feat.location().getSpans();
+
+            //If we want features, choose them and extract them
+            if(ef){
+                _s = _features.filter(feat.overlaps, feat);
+                for(i=0; i < spans.length; i++){
+                    i_span = spans[i];
+                    for(j=0; j < _s.length; j++){
+                        i_feat = _s[j];
+                        subfeats.push(feat.crop(i_span.left(), i_span.right(), i_span.isComplement()));
+                    }
+                }
+            }
+            s = new seqJS.Seq('', 
+                              this.alphabet(),
+                              subfeats,
+                              'linear',
+                              this.lengthUnit(),
+                              this.strandType(),
+                              this.residueType());
             
-            for(var i = 0; i < spans.length; i++){
-                span = spans[i];
-                s.append(this.subseq(span.left(), span.right(), span.isComplement())); 
+            for(i = 0; i < spans.length; i++){
+                i_span = spans[i];
+                s.append(this.subseq(i_span.left(), i_span.right(), i_span.isComplement())); 
             }
 
             return s;
@@ -1163,6 +1171,18 @@ var seqJS = seqJS || {};
                 return _location.overlaps(rhs.location());
             }
             return _location.overlaps(rhs,b);
+        };
+
+        /** Return a new {@link seqJS.Feature} which is a cropped version of
+         * this one
+         * @param {seqJS.Location|int} left The position to start cropping
+         * @param {seqJS.Location|int} right The position to end cropping
+         * @param {bool} complement Whether or not to complement the Feature
+         * @returns {seqJS.Feature} The cropped Feature
+         */
+        this.crop = function(/*left, right, complement*/){
+            console.log("Feature.crop(...): STUB");
+            return this;
         };
 
         /** Get a string representation for debugging
