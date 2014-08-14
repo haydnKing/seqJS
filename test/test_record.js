@@ -127,7 +127,7 @@ module('seqJS.Seq.extract', {
         equal(o.seq(), "ATATCGATCGA", 'Incorrect sequence');
         equal(o.features().length, 3, 'Incorrect number of features');
         equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             '2..10|complement(1..6)|6..10',
+             'complement(1..6)|2..10|6..10',
              'incorrect features returned');
     });
     test('extract complement(10..20)  with features', function() {
@@ -153,7 +153,7 @@ module('seqJS.Seq.extract', {
         var o = this.s.extract(f, true);
         equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 'Incorrect sequence');
         equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             '18..23|order(4..6,complement(20..23))|order(complement(18..20),7..12)',
+             'order(4..6,complement(20..23))|order(complement(18..20),7..12)|18..23',
              'incorrect features returned');
     });
 
