@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: SpanList</title>
+    <title>JSDoc: Class: SpanOperator</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: SpanList</h1>
+    <h1 class="page-title">Class: SpanOperator</h1>
     
     
 
@@ -29,7 +29,7 @@
     <h2>
         <span class="ancestors"><a href="seqJS.html">seqJS</a>.</span>
     
-    SpanList
+    SpanOperator
     </h2>
     
 </header>  
@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="SpanList"><span class="type-signature"></span>new SpanList<span class="signature">(location, <span class="optional">prev_op</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="SpanOperator"><span class="type-signature"></span>new SpanOperator<span class="signature">(location, <span class="optional">prev_op</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -175,7 +175,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line810">line 810</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line865">line 865</a>
     </li></ul></dd>
     
     
@@ -221,7 +221,7 @@ where joins and complements are both used</td>
         <dl>
             
 <dt>
-    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(start, end)</span><span class="type-signature"> &rarr; {<a href="seqJS.SpanList.html">seqJS.SpanList</a>}</span></h4>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a>}</span></h4>
     
     
 </dt>
@@ -229,7 +229,7 @@ where joins and complements are both used</td>
     
     
     <div class="description">
-        Return a new SpanList which has been cropped to [start,end)
+        Return a new SpanOperator which has been cropped to [start,end)
     </div>
     
 
@@ -251,7 +251,11 @@ where joins and complements are both used</td>
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -263,20 +267,35 @@ where joins and complements are both used</td>
 	
         <tr>
             
-                <td class="name"><code>start</code></td>
+                <td class="name"><code>left</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">the start of the range to crop to</td>
@@ -286,23 +305,78 @@ where joins and complements are both used</td>
 	
         <tr>
             
-                <td class="name"><code>end</code></td>
+                <td class="name"><code>right</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">the end of the range to crop to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>complement</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">whether to complement the returned
+SpanOperator</td>
         </tr>
 	
 	
@@ -333,7 +407,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line922">line 922</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1003">line 1003</a>
     </li></ul></dd>
     
     
@@ -369,7 +443,7 @@ where joins and complements are both used</td>
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="seqJS.SpanList.html">seqJS.SpanList</a></span>
+<span class="param-type"><a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a></span>
 
 
 	</dd>
@@ -424,7 +498,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line886">line 886</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line965">line 965</a>
     </li></ul></dd>
     
     
@@ -515,7 +589,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line868">line 868</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line935">line 935</a>
     </li></ul></dd>
     
     
@@ -602,7 +676,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line915">line 915</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line994">line 994</a>
     </li></ul></dd>
     
     
@@ -639,6 +713,160 @@ where joins and complements are both used</td>
 	<dd>
 		
 <span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="operator"><span class="type-signature"></span>operator<span class="signature">(<span class="optional">op</span>)</span><span class="type-signature"> &rarr; {string|<a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get or set the operator
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>op</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+            
+            <td class="description last">the new operator</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line954">line 954</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the operator or this
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">string</span>
+|
+
+<span class="param-type"><a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a></span>
 
 
 	</dd>
@@ -741,7 +969,7 @@ where joins and complements are both used</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line908">line 908</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line987">line 987</a>
     </li></ul></dd>
     
     
@@ -791,6 +1019,148 @@ where joins and complements are both used</td>
         
             
 <dt>
+    <h4 class="name" id="push"><span class="type-signature"></span>push<span class="signature">(span)</span><span class="type-signature"> &rarr; {<a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Add a new span to the list
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>span</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="seqJS.Span.html">seqJS.Span</a></span>
+|
+
+<span class="param-type"><a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the span (or list) to add</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line912">line 912</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    this
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="seqJS.SpanOperator.html">seqJS.SpanOperator</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="setComplement"><span class="type-signature"></span>setComplement<span class="signature">(value)</span><span class="type-signature"></span></h4>
     
     
@@ -799,7 +1169,7 @@ where joins and complements are both used</td>
     
     
     <div class="description">
-        Called by an outer SpanList to set whether this should be
+        Called by an outer SpanOperator to set whether this should be
 a complement or not
     </div>
     
@@ -882,7 +1252,7 @@ strand</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line855">line 855</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line922">line 922</a>
     </li></ul></dd>
     
     
@@ -951,7 +1321,7 @@ strand</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line839">line 839</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line897">line 897</a>
     </li></ul></dd>
     
     
@@ -1014,13 +1384,13 @@ strand</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanList.html">SpanList</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanOperator.html">SpanOperator</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 10:33:30 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 16:48:10 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
