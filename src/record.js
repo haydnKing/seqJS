@@ -862,7 +862,7 @@ var seqJS = seqJS || {};
      * @param {string} [prev_op] the previous operator, used to catch errors
      * where joins and complements are both used
      */
-    seqJS.SpanList = function(location, prev_op){
+    seqJS.SpanOperator = function(location, prev_op){
         var items = [], operator = '';
 
         var m = operator_fmt.exec(location);
@@ -870,7 +870,7 @@ var seqJS = seqJS || {};
             operator = m[1];
             switch(operator){
                 case 'complement':
-                    items.push(new seqJS.SpanList(m[2].trim()));
+                    items.push(new seqJS.SpanOperator(m[2].trim()));
                     break;
                 case 'join':
                 case 'order':
@@ -880,7 +880,7 @@ var seqJS = seqJS || {};
                     }
                     var s_items = tokenize(m[2]);
                     for(var i = 0; i < s_items.length; i++){
-                        items.push(new seqJS.SpanList(s_items[i], operator));
+                        items.push(new seqJS.SpanOperator(s_items[i], operator));
                     }
             }
         }
@@ -906,15 +906,15 @@ var seqJS = seqJS || {};
         };
 
         /** Add a new span to the list
-         * @param {seqJS.Span|seqJS.SpanList} span the span (or list) to add
-         * @returns {seqJS.SpanList} this
+         * @param {seqJS.Span|seqJS.SpanOperator} span the span (or list) to add
+         * @returns {seqJS.SpanOperator} this
          */
         this.push = function(span){
             items.push(span);
             return this;
         };
         
-        /** Called by an outer SpanList to set whether this should be
+        /** Called by an outer SpanOperator to set whether this should be
          * a complement or not
          * @param {boolean} value Whether or not spans should be on the reverse
          * strand
@@ -949,7 +949,7 @@ var seqJS = seqJS || {};
 
         /** Get or set the operator
          * @param {string} [op] the new operator
-         * @returns {string|seqJS.SpanList} the operator or this
+         * @returns {string|seqJS.SpanOperator} the operator or this
          */
         this.operator = function(op){
             if(op){
@@ -993,16 +993,16 @@ var seqJS = seqJS || {};
          */
         this.isSpan = function() {return false;};
 
-        /** Return a new SpanList which has been cropped to [start,end)
+        /** Return a new SpanOperator which has been cropped to [start,end)
          * @param {seqJS.Location|int} left the start of the range to crop to
          * @param {seqJS.Location|int} right the end of the range to crop to
          * @param {boolean} [complement=false] whether to complement the returned
-         * SpanList
-         * @returns {seqJS.SpanList} the new spanlist
+         * SpanOperator
+         * @returns {seqJS.SpanOperator} the new spanlist
          */
         this.crop = function(left, right, complement) {
             var i, s,
-                ret = new seqJS.SpanList('', prev_op);
+                ret = new seqJS.SpanOperator('', prev_op);
             ret.operator(operator);
             for(i=0; i < items.length; i++){
                 s = items[i].crop(left, right, complement);
@@ -1018,7 +1018,7 @@ var seqJS = seqJS || {};
 
     /**
      * FeatureLocation
-     *  Store base SpanList and provide access to the underlying data
+     *  Store base SpanOperator and provide access to the underlying data
      * @constructor
      * @param {string|seqJS.FeatureLocation} location the location of the feature
      */
@@ -1026,7 +1026,7 @@ var seqJS = seqJS || {};
         var _sl;
         if(typeof location === 'string' || location instanceof String){
             try{
-                _sl = new seqJS.SpanList(location);
+                _sl = new seqJS.SpanOperator(location);
             }
             catch(e){
                 throw e + " while parsing location string \'"+location+"\'";

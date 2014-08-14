@@ -50,7 +50,7 @@
     
     <div class="description">
         FeatureLocation
- Store base SpanList and procide access to the underlying data
+ Store base SpanOperator and provide access to the underlying data
     </div>
     
 
@@ -90,6 +90,9 @@
             <td class="type">
             
                 
+<span class="param-type">string</span>
+|
+
 <span class="param-type"><a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a></span>
 
 
@@ -131,7 +134,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line935">line 935</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1025">line 1025</a>
     </li></ul></dd>
     
     
@@ -177,7 +180,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(start, end)</span><span class="type-signature"> &rarr; {<a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a>}</span></h4>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a>}</span></h4>
     
     
 </dt>
@@ -207,7 +210,11 @@
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -219,20 +226,35 @@
 	
         <tr>
             
-                <td class="name"><code>start</code></td>
+                <td class="name"><code>left</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">the start of the range to crop to</td>
@@ -242,23 +264,78 @@
 	
         <tr>
             
-                <td class="name"><code>end</code></td>
+                <td class="name"><code>right</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">the end of the range to crop to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>complement</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">whether or not to complement the
+returned FeatureLocation</td>
         </tr>
 	
 	
@@ -289,7 +366,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1026">line 1026</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1124">line 1124</a>
     </li></ul></dd>
     
     
@@ -380,7 +457,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line999">line 999</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1095">line 1095</a>
     </li></ul></dd>
     
     
@@ -472,7 +549,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1017">line 1017</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1113">line 1113</a>
     </li></ul></dd>
     
     
@@ -563,7 +640,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line958">line 958</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1054">line 1054</a>
     </li></ul></dd>
     
     
@@ -761,7 +838,7 @@ point</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line968">line 968</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1064">line 1064</a>
     </li></ul></dd>
     
     
@@ -852,7 +929,7 @@ point</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line983">line 983</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1079">line 1079</a>
     </li></ul></dd>
     
     
@@ -943,7 +1020,7 @@ point</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line950">line 950</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1046">line 1046</a>
     </li></ul></dd>
     
     
@@ -1006,13 +1083,13 @@ point</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanList.html">SpanList</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanOperator.html">SpanOperator</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 10:33:30 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 16:43:59 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

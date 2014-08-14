@@ -228,7 +228,7 @@ By definition location1 < location 2.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line651">line 651</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line686">line 686</a>
     </li></ul></dd>
     
     
@@ -363,7 +363,7 @@ By definition location1 < location 2.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line737">line 737</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line772">line 772</a>
     </li></ul></dd>
     
     
@@ -413,7 +413,7 @@ By definition location1 < location 2.
         
             
 <dt>
-    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(start, end)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>|undefined}</span></h4>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>|undefined}</span></h4>
     
     
 </dt>
@@ -444,7 +444,11 @@ overlap with this range then return undefined
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -456,20 +460,35 @@ overlap with this range then return undefined
 	
         <tr>
             
-                <td class="name"><code>start</code></td>
+                <td class="name"><code>left</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">The start of the range to crop to</td>
@@ -479,23 +498,78 @@ overlap with this range then return undefined
 	
         <tr>
             
-                <td class="name"><code>end</code></td>
+                <td class="name"><code>right</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+|
+
+<span class="param-type">int</span>
 
 
             
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">The start of the range to crop to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>complement</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+            
+            <td class="description last">whether to complement the
+reuslting span or not</td>
         </tr>
 	
 	
@@ -526,7 +600,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line758">line 758</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line795">line 795</a>
     </li></ul></dd>
     
     
@@ -620,7 +694,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line765">line 765</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line820">line 820</a>
     </li></ul></dd>
     
     
@@ -760,7 +834,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line727">line 727</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line762">line 762</a>
     </li></ul></dd>
     
     
@@ -851,7 +925,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line710">line 710</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line745">line 745</a>
     </li></ul></dd>
     
     
@@ -942,7 +1016,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line772">line 772</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line827">line 827</a>
     </li></ul></dd>
     
     
@@ -1033,7 +1107,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line681">line 681</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line716">line 716</a>
     </li></ul></dd>
     
     
@@ -1172,7 +1246,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line691">line 691</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line726">line 726</a>
     </li></ul></dd>
     
     
@@ -1263,7 +1337,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line685">line 685</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line720">line 720</a>
     </li></ul></dd>
     
     
@@ -1402,7 +1476,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line717">line 717</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line752">line 752</a>
     </li></ul></dd>
     
     
@@ -1541,7 +1615,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line746">line 746</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line781">line 781</a>
     </li></ul></dd>
     
     
@@ -1632,7 +1706,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line703">line 703</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line738">line 738</a>
     </li></ul></dd>
     
     
@@ -1695,13 +1769,13 @@ molecule
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanList.html">SpanList</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="seqJS.Feature.html">Feature</a></li><li><a href="seqJS.FeatureLocation.html">FeatureLocation</a></li><li><a href="seqJS.Location.html">Location</a></li><li><a href="seqJS.Parser.html">Parser</a></li><li><a href="seqJS.Record.html">Record</a></li><li><a href="seqJS.Seq.html">Seq</a></li><li><a href="seqJS.Span.html">Span</a></li><li><a href="seqJS.SpanOperator.html">SpanOperator</a></li></ul><h3>Namespaces</h3><ul><li><a href="seqJS.html">seqJS</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 10:33:30 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 16:43:59 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
