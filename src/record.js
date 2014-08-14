@@ -425,9 +425,12 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} A new sequence representing that of the feature
          */
         this.extract = function(feat, ef) {
+            //If we want features, choose them and extract
+            var subfeats = [];
+            if(ef){
+                subfeats = _features.filter(feat.overlaps, feat);
+            }
             //get the spans
-            var subfeats = ef ? _features.filter(feat.overlaps, feat) : [];
-            //TODO find out which features to keep
             var s = new seqJS.Seq('', 
                                   this.alphabet(),
                                   subfeats,
