@@ -131,7 +131,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line907">line 907</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line927">line 927</a>
     </li></ul></dd>
     
     
@@ -177,6 +177,168 @@
         <dl>
             
 <dt>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(start, end)</span><span class="type-signature"> &rarr; {<a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Return a new FeatureLocation which has been cropped to [start,end)
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>start</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the start of the range to crop to</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>end</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the end of the range to crop to</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1018">line 1018</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the new spanlist
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"> &rarr; {int}</span></h4>
     
     
@@ -218,7 +380,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line954">line 954</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line991">line 991</a>
     </li></ul></dd>
     
     
@@ -310,7 +472,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line972">line 972</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1009">line 1009</a>
     </li></ul></dd>
     
     
@@ -401,7 +563,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line930">line 930</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line950">line 950</a>
     </li></ul></dd>
     
     
@@ -438,6 +600,204 @@ location
 	<dd>
 		
 <span class="param-type">Array.&lt;<a href="seqJS.Span.html">seqJS.Span</a>></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="overlaps"><span class="type-signature"></span>overlaps<span class="signature">(rhs, <span class="optional">b</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Does this location overlap with a span or range of locations?
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>rhs</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a></span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">the span or integer start
+point</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    rhs
+                
+                </td>
+            
+            
+            <td class="description last">integer end point</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line960">line 960</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    true if there is overlap
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
 
 
 	</dd>
@@ -492,7 +852,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line938">line 938</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line975">line 975</a>
     </li></ul></dd>
     
     
@@ -583,7 +943,7 @@ location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line922">line 922</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line942">line 942</a>
     </li></ul></dd>
     
     
@@ -652,7 +1012,7 @@ location
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Tue Jul 15 2014 10:58:43 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Aug 14 2014 09:52:09 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
