@@ -1,4 +1,4 @@
-/** global console:true */
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -432,12 +432,13 @@ var seqJS = seqJS || {};
 
             //If we want features, choose them and extract them
             if(ef){
+                console.log('#######################\nextract('+feat+')');
                 _s = _features.filter(feat.overlaps, feat);
                 for(i=0; i < spans.length; i++){
                     i_span = spans[i];
                     for(j=0; j < _s.length; j++){
                         i_feat = _s[j];
-                        subfeats.push(feat.crop(i_span.left(), i_span.right(), i_span.isComplement()));
+                        subfeats.push(i_feat.crop(i_span.left(), i_span.right(), i_span.isComplement()));
                     }
                 }
             }
@@ -793,6 +794,7 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Span|undefined} The new Span
          */
         this.crop = function(left, right, c) {
+            console.log('\t\tSpan("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+c+')');
             if(left.toInt instanceof Function){
                 left = left.toInt();
             }
@@ -803,15 +805,18 @@ var seqJS = seqJS || {};
                 throw("seqJS.Span.crop("+right+","+left+"): right must be greater than left");
             }
 
-            complement = complement || false;
+            c = c || false;
             // if there's no overlap, return null
             if( _location1.gte(right) || _location2.lte(left) ){
+                console.log('\t\treturn null');
                 return null;
             }
 
-            return new seqJS.Span(_location1.crop(left,right),
+            var sp = new seqJS.Span(_location1.crop(left,right),
                                   _location2.crop(left,right),
                                   (c) ? !complement : complement);
+            console.log('\t\treturn '+sp);
+            return sp;
         };
 
         /** Get all spans -- in this case an array containing this
@@ -857,7 +862,7 @@ var seqJS = seqJS || {};
 
     /** An operator stores two things
      * 1) a string defining an operation 
-     * 2) a list of {@link seqJS.Span} objects which are acted on by the
+     * 2) a list of {@link seqJS.SpanOperator} objects or a single {@link @seqJS.Span} which are acted on by the
      * operator
      * Valid operations are:
      *  - 'complement': Acts on a single Span
@@ -1008,17 +1013,53 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location|int} right the end of the range to crop to
          * @param {boolean} [complement=false] whether to complement the returned
          * SpanOperator
-         * @returns {seqJS.SpanOperator} the new spanlist
+         * @returns {seqJS.SpanOperator} the new spanlist, or null if there is
+         * no overlap
          */
         this.crop = function(left, right, complement) {
+            console.log('\tSpanOperator("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
             var i, s, ret = [];
             for(i=0; i < items.length; i++){
+                if(complement){
+                    if(operator === ''){
+                        operator = 'complement';
+                        complement = false;
+                    }
+                    else if(operator === 'complement'){
+                        operator = '';
+                        complement = false;
+                    }
+                }
+
                 s = items[i].crop(left, right, complement);
-                if(s){
+                if(s){ 
                     ret.push(s);
                 }
             }
-            return new seqJS.SpanOperator(ret, operator);
+            if(ret.length === 0){
+                console.log('\treturn null');
+                return null;
+            }
+            var so;
+            if(ret.length === 1 && operator !== 'complement'){
+                so = new seqJS.SpanOperator(ret, '');
+                console.log('\treturn '+so);
+                return so;
+            }   
+            so = new seqJS.SpanOperator(ret, operator);
+            console.log('\treturn '+so);
+            return so;
+        };
+
+        /** Remove items which are null
+         * @returns {seqJS.SpanOperator} this
+         */
+        this.prune = function(){
+            //remove nulls
+            items = items.filter(function(x){if(x){return true;}return false;});
+            if(operator === 'join' || operator === 'order'){
+                items.forEach(function(x){x.prune();});
+            }
         };
     };
 
@@ -1034,10 +1075,15 @@ var seqJS = seqJS || {};
         var _sl;
         if(typeof location === 'string' || location instanceof String){
             try{
+                //test for mixed merge operations
+                if(location.indexOf('order') >= 0 && location.indexOf('join') >= 0){
+                    throw("Mixing merge operators is not valid");
+                }
+                //parse location
                 _sl = new seqJS.SpanOperator(location);
             }
             catch(e){
-                throw e + " while parsing location string \'"+location+"\'";
+                throw(e + " while parsing location string \'"+location+"\'");
             }
         }
         else{
@@ -1120,7 +1166,12 @@ var seqJS = seqJS || {};
          * @returns {seqJS.FeatureLocation} the new spanlist
          */
         this.crop = function(left, right, complement) {
-            return new seqJS.FeatureLocation(_sl.crop(left, right, complement));
+            console.log('FeatureLocation("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
+            var so = _sl.crop(left, right, complement);
+            so.prune();
+            var f = new seqJS.FeatureLocation(so);
+            console.log('return '+f);
+            return f;
         };
     };
     

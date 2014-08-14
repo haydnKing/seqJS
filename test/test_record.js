@@ -127,7 +127,7 @@ module('seqJS.Seq.extract', {
         equal(o.seq(), "ATATCGATCGA", 'Incorrect sequence');
         equal(o.features().length, 3, 'Incorrect number of features');
         equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'complement(1..6)|2..10|6..10',
+             'complement(1..6)|2..10|6..11',
              'incorrect features returned');
     });
     test('extract complement(10..20)  with features', function() {
