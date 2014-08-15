@@ -65,13 +65,13 @@ module('seqJS#seq');
 
         //test subset
         var f = s.features(9,17);
-        equal(f.map(function(x){return x.location().toString();}).join('|'), '13..17', 
+        equal(feats2string(f), 'two=13..17', 
              'Contained: returned features do not match');
 
         //test intersection
         f = s.features(9,17,true);
-        equal(f.map(function(x){return x.location().toString();}).join('|'), 
-              'join(5..10,20..25)|complement(7..15)|13..17', 
+        equal(feats2string(f), 
+              'one=join(5..10,20..25)|three=complement(7..15)|two=13..17', 
              'Intersection: Returned features do not match expectations');
 
     });
@@ -94,6 +94,10 @@ module('seqJS.Seq.extract', {
             ]);
     }
 });
+
+var feats2string = function(feats){
+    return feats.map(function(x){return x.type() + '=' + x.location().toString();}).join('|');
+};
 
     test('extract 10..20 no features', function() {
         var f = new seqJS.Feature('gene', '10..20');
@@ -126,16 +130,16 @@ module('seqJS.Seq.extract', {
         var o = this.s.extract(f, true);
         equal(o.seq(), "ATATCGATCGA", 'Incorrect sequence');
         equal(o.features().length, 3, 'Incorrect number of features');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'complement(1..6)|2..10|6..11',
+        equal(feats2string(o.features()),
+             'two=complement(1..6)|one=2..10|three=6..11',
              'incorrect features returned');
     });
     test('extract complement(10..20)  with features', function() {
         var f = new seqJS.Feature('gene', 'complement(10..20)');
         var o = this.s.extract(f, true);
         equal(o.seq(), "TCGATCGATAT", 'Incorrect sequence');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'complement(1..6)|complement(2..10)|6..11)',
+        equal(feats2string(o.features()),
+             'three=complement(1..6)|one=complement(2..10)|two=6..11',
              'incorrect features returned');
     });
     test('extract join(10..19,20..29) with features', function() {
@@ -143,8 +147,8 @@ module('seqJS.Seq.extract', {
         var f = new seqJS.Feature('gene', 'join(10..19,20..29)');
         var o = this.s2.extract(f, true);
         equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'Incorrect sequence');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'order(1..10,11..20)',
+        equal(feats2string(o.features()),
+             'one=order(1..10,11..20)',
              'incorrect features returned');
     });
     test('extract join(2..7,20..30,complement(12..17)) with features', function() {       
@@ -152,8 +156,8 @@ module('seqJS.Seq.extract', {
         var f = new seqJS.Feature('gene', 'join(2..7,20..30,complement(12..17))');
         var o = this.s.extract(f, true);
         equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 'Incorrect sequence');
-        equal(o.features().map(function(x){return x.location().toString();}).join('|'),
-             'order(4..6,complement(20..23))|order(complement(18..20),7..12)|18..23',
+        equal(feats2string(o.features()),
+             'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)',
              'incorrect features returned');
     });
 
@@ -334,6 +338,12 @@ module('seqJS.Span');
         
         span_eq(s.invertDatum(100), [90, ''], [96, ''], true, '91..96');
         span_eq(s, [4], [10], false, '5..10');
+    });
+    test('invertDatum(11) 6..11', function() {
+        var s = new seqJS.Span('6..11');
+        
+        span_eq(s.invertDatum(11), [1, ''], [6, ''], true, '1..6');
+        span_eq(s, [6], [11], false, '6..11');
     });
     test('invertDatum 4.5..10.11', function() {
         var s = new seqJS.Span('4.5..10.11');

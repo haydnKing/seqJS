@@ -614,19 +614,23 @@ var seqJS = seqJS || {};
          * @returns this
          */
         this.invertDatum = function(l) {
+            console.log('>\t'+this+'.invertDatum('+l+')');
+            var s;
             var op = {'': '', '<': '>', '>': '<', '.': '.'};
             if(_operator !== '.'){
                 //invert location and operator
-                return new seqJS.Location(l - _location - 1, op[_operator]);
-
+                s = new seqJS.Location(l - _location - 1, op[_operator]);
+                console.log('>\tA'+s);
+                return s;
             }
             //else (_operator === '.')
             //if _location2 exists, we also need to swap the locations
             // such that _location < _location2
-            return new seqJS.Location(l - _location2,
+            s = new seqJS.Location(l - _location2,
                                       '.',
                                       l - _location);
-            
+            console.log('>\tB'+s);
+            return s;
         };
 
         /** return a cropped location such that it is in the range [start,end)
@@ -761,9 +765,12 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Span} the new span
          */
         this.invertDatum = function(l){
-            return new seqJS.Span(_location2.invertDatum(l).add(1),
+            console.log('>"'+this+'".invertDatum('+(l)+')');
+            var s = new seqJS.Span(_location2.invertDatum(l).add(1),
                                   _location1.invertDatum(l).add(1),
                                   !complement);
+            console.log('>'+s);
+            return s;
         };
 
         /** Return a new span with offset added to it
@@ -1020,18 +1027,14 @@ var seqJS = seqJS || {};
             console.log('\tSpanOperator("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
             var i, s, ret = [];
             for(i=0; i < items.length; i++){
-                if(complement){
-                    if(operator === ''){
-                        operator = 'complement';
-                        complement = false;
-                    }
-                    else if(operator === 'complement'){
-                        operator = '';
-                        complement = false;
-                    }
+                if(complement && (operator==='' || operator==='complement')){
+                    operator = (operator==='') ? 'complement' : '';
+                    s = items[i].crop(left, right, false);
+                    s = s.invertDatum(right-left);
                 }
-
-                s = items[i].crop(left, right, complement);
+                else{
+                    s = items[i].crop(left, right, complement);
+                }
                 if(s){ 
                     ret.push(s);
                 }
@@ -1060,6 +1063,14 @@ var seqJS = seqJS || {};
             if(operator === 'join' || operator === 'order'){
                 items.forEach(function(x){x.prune();});
             }
+        };
+
+        /** Return a new spanoperator with an inverted datum
+         * @returns {seqJS.SpanOperator} the new span operator
+         */
+        this.invertDatum = function(l){
+            var _items = items.map(function(x){return x.invertDatum(l);});
+            return new seqJS.SpanOperator(_items, operator);
         };
     };
 
@@ -1163,7 +1174,7 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location|int} right the end of the range to crop to
          * @param {boolean} [complement=false] whether or not to complement the
          * returned FeatureLocation
-         * @returns {seqJS.FeatureLocation} the new spanlist
+         * @returns {seqJS.FeatureLocation} the new feature location
          */
         this.crop = function(left, right, complement) {
             console.log('FeatureLocation("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
