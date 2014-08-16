@@ -302,6 +302,7 @@ module('seqJS.Location.crop');
         test(l.toString() + '.crop('+start+', '+end+')', function() {
             var original = l.toString();
             equal(l.crop(start,end).toString(), str, "crop with integers");
+            equal(l.toString(), original, "Original location changed");
             equal(l.crop(new seqJS.Location(start),
                                new seqJS.Location(end)).toString(),
                         str, "crop with seqJS.Locations");
@@ -409,6 +410,7 @@ module('seqJS.Span.crop');
             equal(span.crop(start,end).toString(), 
                   expected_string, 
                   "crop with integers");
+            equal(span.toString(), original, "Span changed by crop calls");
 
             equal(span.crop(new seqJS.Location(start),
                             new seqJS.Location(end)).toString(), 
@@ -450,6 +452,7 @@ module('seqJS.SpanOperator.crop');
                                crop_complement)), 
                                expected_string,
                                "crop with integers");
+                 equal(so.toString(-1), original, "crop changed original");
                  equal(to_str(so.crop(new seqJS.Location(crop_start), 
                                new seqJS.Location(crop_end), 
                                crop_complement)), 
@@ -459,7 +462,20 @@ module('seqJS.SpanOperator.crop');
         });
     };
 
+    /*
+     * SpanOperator with one span
+     */
+
     test_spanoperator_crop('', [[[20], [30]]], 10, 40, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop('', [[[20], [30]]], 10, 25, false, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
+    test_spanoperator_crop('', [[[20], [30]]], 25, 40, false, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
+
+    test_spanoperator_crop('', [[[20], [30]]], 10, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop('', [[[20], [30]]], 10, 25, true, "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
+    test_spanoperator_crop('', [[[20], [30]]], 25, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(15))])");
+    test_spanoperator_crop('complement', [[[20], [30]]], 10, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop('complement', [[[20], [30]]], 10, 25, true, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
+    test_spanoperator_crop('complement', [[[20], [30]]], 25, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
 
 
 module('seqJS#FeatureLocation');

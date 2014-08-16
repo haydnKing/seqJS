@@ -626,6 +626,9 @@ var seqJS = seqJS || {};
          * @returns this
          */
         this.invertDatum = function(l) {
+            if(isNaN(l)){
+                throw('seqJS.Location.invertDatum called with NaN');
+            }
             var op = {'': '', '<': '>', '>': '<', '.': '.'};
             if(_operator !== '.'){
                 //invert location and operator
@@ -781,6 +784,9 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Span} the new span
          */
         this.invertDatum = function(l){
+            if(isNaN(l)){
+                throw('seqJS.Span.invertDatum called with NaN');
+            }
             return new seqJS.Span(_location2.subtract(1).invertDatum(l),
                                   _location1.invertDatum(l).add(1),
                                   !complement);
@@ -960,13 +966,13 @@ var seqJS = seqJS || {};
          */
         this.toString = function(indent) {
             indent = indent || 0;
-            var ret = new Array(indent + 1).join('\t');
-            ret = ret + 'SpanOperator(\''+operator+'\', length=' + items.length + 
-                ', [' + items.map(function(x){return x.toString(indent+1);}).join(',\n') + 
-                new Array(indent+1).join('\t') + '])';
 
+            var ret = new Array(indent + 1).join('\t') + 'SpanOperator(\'' + 
+                operator + '\', length=' + items.length + ', [\n' + 
+                items.map(function(x){return x.toString(indent+1);}).join(', \n') + 
+                '\n' + new Array(indent+1).join('\t') + '])';
             if(indent < 0){
-                return ret.replace('\n',' ').replace('\t', '');
+                return ret.replace(/\n/g, '').replace(/\t/g, '');
             }
             return ret;
         };
@@ -1047,28 +1053,39 @@ var seqJS = seqJS || {};
          * no overlap
          */
         this.crop = function(left, right, complement) {
-            console.log('SpanOperator.crop('+left+', '+right+', '+complement+')');
-            var i, s, ret = [];
-            for(i=0; i < items.length; i++){
-                if(complement && (operator==='' || operator==='complement')){
-                    operator = (operator==='') ? 'complement' : '';
-                    s = items[i].crop(left, right, false);
-                    s = s.invertDatum(right-left);
-                }
-                else{
-                    s = items[i].crop(left, right, complement);
-                }
-                if(s){ 
-                    ret.push(s);
-                }
+            console.log('CROP_SPANOPERATOR('+left+', '+right+', '+complement+')');
+            console.log(this.toString(1));
+
+            //Convert to integers
+            if(right.toInt instanceof Function){
+                right = right.toInt();
             }
-            if(ret.length === 0){
+            if(left.toInt instanceof Function){
+                left = left.toInt();
+            }
+            //crop each item and remove nulls
+            var _operator = operator,
+                _items = items.map(function(x){return x.crop(left, right);})
+                              .filter(function(x){return x !== null;});
+
+            //return null if no overlap
+            if(_items.length === 0){
+                console.log('RETURN null');
                 return null;
             }
-            if(ret.length === 1 && operator !== 'complement'){
-                return new seqJS.SpanOperator(ret, '');
-            }   
-            return new seqJS.SpanOperator(ret, operator);
+
+            //handle complement
+            if(complement){
+                _items = _items.map(function(x){return x.invertDatum(right-left);});
+                if(_operator==='' || _operator==='complement'){
+                    return new seqJS.SpanOperator(_items, 
+                                              (_operator==='') ? 
+                                                  'complement' : '');
+                }
+                return new seqJS.SpanOperator([new seqJS.SpanOperator(_items, _operator)],
+                                              'complement');
+            }
+            return new seqJS.SpanOperator(_items, operator);
         };
 
         /** Remove items which are null
@@ -1086,6 +1103,9 @@ var seqJS = seqJS || {};
          * @returns {seqJS.SpanOperator} the new span operator
          */
         this.invertDatum = function(l){
+            if(isNaN(l)){
+                throw('seqJS.SpanOperator.invertDatum called with NaN');
+            }
             var _items = items.map(function(x){return x.invertDatum(l);});
             return new seqJS.SpanOperator(_items, operator);
         };
