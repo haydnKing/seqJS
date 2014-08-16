@@ -396,36 +396,46 @@ module('seqJS.Span');
         span_eq(s, 'Span(Location(4):Location(10))', false);
     });
 
-/*
+
 module('seqJS.Span.crop');
-    var test_span_crop = function(span, start, end, complement, expected_string){
-        var original = span.toString();
+    var test_span_crop = function(span_left, span_right, start, end, complement, expected_string){
+        var span = new seqJS.Span(new seqJS.Location(span_left[0], span_left[1], span_left[2]),
+                                  new seqJS.Location(span_right[0], span_right[1], span_right[2]));
 
-        equal(span.crop(start,end,complement), expected_string, 
-              "crop with integers");
+        test(span.toString() + '.crop('+start+', '+end+', '+complement+')',
+             function(){
+            var original = span.toString();
 
-        equal(span.crop(new seqJS.Location(start),new seqJS.Location(end),complement), expected_string, 
-              "crop with Locations");
+            equal(span.crop(start,end,complement).toString(), 
+                  expected_string, 
+                  "crop with integers");
 
-        equal(span.toString(), original, "Span changed by crop calls");
+            equal(span.crop(new seqJS.Location(start),
+                            new seqJS.Location(end),
+                            complement).toString(), 
+                  expected_string, 
+                  "crop with Locations");
+
+            equal(span.toString(), original, "Span changed by crop calls");
+        });
     };
 
-    test('Span(20:30).crop(10, 40, false)', function(){
-        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
-                                      new SeqJS.Location(30)),
-                       10, 40, false, 'Span(10:20)');
-    });
-    test('Span(20:30).crop(25, 40, false)', function(){
-        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
-                                      new SeqJS.Location(30)),
-                       25, 40, false, 'Span(:20)');
-    });
-    test('Span(20:30).crop(10, 40, false)', function(){
-        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
-                                      new SeqJS.Location(30)),
-                       10, 40, false, 'Span(10:20)');
-    });
-*/
+        test_span_crop([20],[30], 10, 40, false, 'Span(Location(10):Location(20))');
+        test_span_crop([20],[30], 25, 40, false, 'Span(Location(0):Location(5))');
+        test_span_crop([20],[30], 10, 25, false, 'Span(Location(10):Location(15))');
+
+        test_span_crop([20, '<'],[30, '>'], 10, 40, false, 'Span(Location(<10):Location(>20))');
+        test_span_crop([20, '<'],[30, '>'], 25, 40, false, 'Span(Location(0):Location(>5))');
+        test_span_crop([20, '<'],[30, '>'], 10, 25, false, 'Span(Location(<10):Location(15))');
+
+        test_span_crop([20],[30], 10, 40, true, 'Span(Location(10):Location(20))');
+        test_span_crop([20],[30], 25, 40, true, 'Span(Location(10):Location(15))');
+        test_span_crop([20],[30], 10, 25, true, 'Span(Location(0):Location(5))');
+
+        test_span_crop([20, '<'],[30, '>'], 10, 40, true, 'Span(Location(<10):Location(>20))');
+        test_span_crop([20, '<'],[30, '>'], 25, 40, true, 'Span(Location(<10):Location(15))');
+        test_span_crop([20, '<'],[30, '>'], 10, 25, true, 'Span(Location(0):Location(>5))');
+
 
 module('seqJS#FeatureLocation');
 
