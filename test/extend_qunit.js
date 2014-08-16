@@ -23,25 +23,15 @@ var location_eq = function(actual, location1, operator, location2, msg) {
     }
 };
 
-var span_eq = function(actual, location1, location2, complement, string){
+var span_eq = function(actual, string, complement){
 
-    location_eq(actual.left(), location1[0], location1[1], location1[2], 'Left: ');
-    location_eq(actual.right(), location2[0], location2[1], location2[2], 'Right: ');
+    equal(actual.toString(), string, "String incorrect");
 
     equal(actual.isComplement(), complement, "Complement flag wrong");
-    equal(actual.toGenbankString(), string, "span.toGenbankString() is incorrect"); 
 };
 
-var featureloc_eq = function(actual, string, spanlist){
-
+var featureloc_eq = function(actual, string){
     equal(actual.toGenbankString(), string, "toGenbankString() is wrong");
-
-    var s = actual.getSpans(), j;
-    equal(s.length, spanlist.length, "Wrong number of spans returned");
-    for(var i = 0; i < spanlist.length; i++){
-        j = spanlist[i];
-        span_eq(s[i], j[0], j[1], j[2], j[3]);
-    }
 };
 
 var feature_eq = function(actual, type, location_string, qualifiers, feat_name){

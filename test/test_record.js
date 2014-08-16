@@ -75,7 +75,7 @@ module('seqJS#seq');
              'Intersection: Returned features do not match expectations');
 
     });
-    
+  /*  
 module('seqJS.Seq.extract', {
     setup: function(){
         this.s = new seqJS.Seq(
@@ -94,11 +94,11 @@ module('seqJS.Seq.extract', {
             ]);
     }
 });
-
+*/
 var feats2string = function(feats){
     return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
 };
-
+/*
     test('extract 10..20 no features', function() {
         var f = new seqJS.Feature('gene', '10..20');
         var s = this.s.extract(f);
@@ -160,7 +160,7 @@ var feats2string = function(feats){
              'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)',
              'incorrect features returned');
     });
-
+*/
 
 module('seqJS#location');
 
@@ -301,22 +301,22 @@ module('seqJS.Span');
 
     test('span from string A', function(){
         var s = new seqJS.Span('100..150');
-        span_eq(s, [99, ''], [150, ''], false, '100..150');
+        span_eq(s, 'Span(Location(99):Location(150))', false);
     });
 
     test('span from string B', function(){
         var s = new seqJS.Span('<100..>150');
-        span_eq(s, [99, '<'], [150, '>'], false, '<100..>150');
+        span_eq(s, 'Span(Location(<99):Location(>150))', false);
     });
 
     test('span from string C', function(){
         var s = new seqJS.Span('100.105..150');
-        span_eq(s, [99, '.', 105], [150, ''], false, '100.105..150');
+        span_eq(s, 'Span(Location(99.105):Location(150))', false);
     });
 
     test('span from string D', function(){
         var s = new seqJS.Span('100..150.160');
-        span_eq(s, [99, ''], [150, '.', 161], false, '100..150.160');
+        span_eq(s, 'Span(Location(99):Location(150.161))', false);
     });
 
     test('locations inverted', function(){
@@ -336,95 +336,78 @@ module('seqJS.Span');
     test('invertDatum 5..10', function() {
         var s = new seqJS.Span('5..10');
         
-        span_eq(s.invertDatum(100), [90, ''], [96, ''], true, '91..96');
-        span_eq(s, [4], [10], false, '5..10');
+        span_eq(s.invertDatum(100), 'Span(Location(90):Location(96))', true);
+        span_eq(s, 'Span(Location(4):Location(10))', false);
     });
     test('invertDatum(11) 6..11', function() {
         var s = new seqJS.Span('6..11');
         
-        span_eq(s.invertDatum(11), [1, ''], [6, ''], true, '1..6');
-        span_eq(s, [6], [11], false, '6..11');
+        span_eq(s.invertDatum(11), 'Span(Location(0):Location(6))', true);
+        span_eq(s, 'Span(Location(5):Location(11))', false);
     });
     test('invertDatum 4.5..10.11', function() {
         var s = new seqJS.Span('4.5..10.11');
         
-        span_eq(s.invertDatum(100), [89, '.', 91], [96, '.', 98], true, '90.91..96.97');
-        span_eq(s, [3, '.', 5], [10, '.', 12], false, '4.5..10.11');
+        span_eq(s.invertDatum(100), 'Span(Location(89.91):Location(96.98))', true);
+        span_eq(s, 'Span(Location(3.5):Location(10.12))', false);
     });
     test('invertDatum <5..>10', function() {
         var s = new seqJS.Span('<5..>10');
         
-        span_eq(s.invertDatum(100), [90, '<'], [96, '>'], true, '<91..>96');
-        span_eq(s, [4, '<'], [10, '>'], false, '<5..>10');
+        span_eq(s.invertDatum(100), 'Span(Location(<90):Location(>96))', true);
+        span_eq(s, 'Span(Location(<4):Location(>10))', false);
     });
 
     test('add', function() {
         var s = new seqJS.Span('5..10');
 
-        span_eq(s.add(5), [9], [15], false, '10..15');
-        span_eq(s, [4], [10], false, '5..10');
+        span_eq(s.add(5), 'Span(Location(9):Location(15))', false);
+        span_eq(s, 'Span(Location(4):Location(10))', false);
     });
 module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
         var l = new seqJS.FeatureLocation('100..200');
 
-        featureloc_eq(l, '100..200', [
-                      [[99],[200],false,'100..200']
-        ]);
+        featureloc_eq(l, '100..200');
 
     });
 
     test('parse <A..B', function(){
         var l = new seqJS.FeatureLocation('<100..200');
 
-        featureloc_eq(l, '<100..200', [
-                      [[99, '<'],[200],false,'<100..200']
-        ]);
+        featureloc_eq(l, '<100..200');
     });
 
     test('parse A.B..C', function(){
         var l = new seqJS.FeatureLocation('100.102..200');
 
-        featureloc_eq(l, '100.102..200', [
-                      [[99, '.', 102],[200],false,'100.102..200']
-        ]);
+        featureloc_eq(l, '100.102..200');
     });
 
     test('parse complement(A..B)', function(){
         var l = new seqJS.FeatureLocation('complement(100..200)');
 
-        featureloc_eq(l, 'complement(100..200)', [
-                      [[99],[200],true,'100..200']
-        ]);
+        featureloc_eq(l, 'complement(100..200)');
     });
 
     test('parse join(A..B,C..D)', function(){
         var l = new seqJS.FeatureLocation('join(100..200,300..400)');
 
-        featureloc_eq(l, 'join(100..200,300..400)', [
-                      [[99],[200],false,'100..200'],
-                      [[299],[400],false,'300..400']
-        ]);
+        featureloc_eq(l, 'join(100..200,300..400)');
     });
 
     test('parse order(A..B,C..D)', function(){
         var l = new seqJS.FeatureLocation('order(100..200,300..400)');
 
-        featureloc_eq(l, 'order(100..200,300..400)', [
-                      [[99],[200],false,'100..200'],
-                      [[299],[400],false,'300..400']
-        ]);
+        featureloc_eq(l, 'order(100..200,300..400)');
     });
 
     test('parse complement(join(A..B,C..D))', function(){
         var l = new seqJS.FeatureLocation(
             'complement(join(100..200,300..400))');
 
-        featureloc_eq(l, 'complement(join(100..200,300..400))', [
-                      [[299],[400],true,'300..400'],
-                      [[99],[200],true,'100..200']
-        ]);
+        featureloc_eq(l, 'complement(join(100..200,300..400))');
     });
 
     test('parse join(complement(C..D),complement(A..B))', function(){
@@ -432,10 +415,7 @@ module('seqJS#FeatureLocation');
             'join(complement(300..400),complement(100..200))');
 
         featureloc_eq(l, 
-            'join(complement(300..400),complement(100..200))', [
-                      [[299],[400],true,'300..400'],
-                      [[99],[200],true,'100..200']
-        ]);
+            'join(complement(300..400),complement(100..200))');
     });
 
     test('parse join(A..B,complement(join(E..F,C..D)))', function(){
@@ -443,12 +423,7 @@ module('seqJS#FeatureLocation');
             'join(100..200,complement(join(500..600,300..400)))');
 
         featureloc_eq(l, 
-            'join(100..200,complement(join(500..600,300..400)))', 
-            [
-                      [[99],[200],false,'100..200'],
-                      [[299],[400],true,'300..400'],
-                      [[499],[600],true,'500..600']
-        ]);
+            'join(100..200,complement(join(500..600,300..400)))');
     });
 
     test('fail complement(B..A)', function(){
@@ -484,6 +459,7 @@ module('seqJS#FeatureLocation');
 
     });
 
+    /*
 module('seqJS.FeatureLocation.crop', {
     setup: function() {
         this.f = new seqJS.FeatureLocation('join(10..19,50..59,complement(30..39))');
@@ -492,31 +468,24 @@ module('seqJS.FeatureLocation.crop', {
 
     test('25 - 45', function(){
         featureloc_eq(this.f.crop(25,45),
-                      'complement(5..14)',
-                      [[[4],[14],true,'5..14']]);
+                      'complement(5..14)');
     });
 
     test('33 - 38', function(){
         featureloc_eq(this.f.crop(33,38),
-                      'complement(1..5)',
-                      [[[0],[5],true,'1..5']]);
+                      'complement(1..5)');
     });
 
     test('14 - 37', function(){
         featureloc_eq(this.f.crop(14,37),
-                      'order(1..5,complement(16..23))',
-                      [
-                          [[0],[5],false,'1..5'],
-                          [[15],[23],true,'16..23']
-                      ]);
+                      'order(1..5,complement(16..23))');
     });
 
     test('33 - 38', function(){
         featureloc_eq(this.f.crop(33,38),
-                      'complement(1..5)',
-                      [[[0],[5],true,'1..5']]);
+                      'complement(1..5)');
     });
-
+*/
 module('seqJS#Feature');
 
     test('type and location', function(){

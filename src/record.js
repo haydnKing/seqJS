@@ -1,4 +1,4 @@
-/* global console:true */
+/** global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -432,7 +432,6 @@ var seqJS = seqJS || {};
 
             //If we want features, choose them and extract them
             if(ef){
-                console.log('#######################\nextract('+feat+')');
                 _s = _features.filter(feat.overlaps, feat);
                 for(i=0; i < spans.length; i++){
                     i_span = spans[i];
@@ -578,6 +577,19 @@ var seqJS = seqJS || {};
             return _operator + (_location + 1);
         };
 
+        /** Get a 0-string representation of the Location for debugging
+         * @param {int} [indent=0] How much to indent the string
+         * @returns {string}
+         */
+        this.toString = function(indent) {
+            indent = indent || 0;
+            var ret = new Array(indent + 1).join('\t');
+            return ret + 'Location(' + ((_operator === '.') ? 
+                            _location + '.' + _location2 :
+                            _operator + _location) + ')';
+        };
+
+
         /** Convert the location to an integer. By default just return the
          * first location
          * @returns {int} location as integer
@@ -614,23 +626,17 @@ var seqJS = seqJS || {};
          * @returns this
          */
         this.invertDatum = function(l) {
-            console.log('>\t'+this+'.invertDatum('+l+')');
-            var s;
             var op = {'': '', '<': '>', '>': '<', '.': '.'};
             if(_operator !== '.'){
                 //invert location and operator
-                s = new seqJS.Location(l - _location - 1, op[_operator]);
-                console.log('>\tA'+s);
-                return s;
+                return new seqJS.Location(l - _location - 1, op[_operator]);
             }
             //else (_operator === '.')
             //if _location2 exists, we also need to swap the locations
             // such that _location < _location2
-            s = new seqJS.Location(l - _location2,
+            return new seqJS.Location(l - _location2,
                                       '.',
                                       l - _location);
-            console.log('>\tB'+s);
-            return s;
         };
 
         /** return a cropped location such that it is in the range [start,end)
@@ -744,6 +750,16 @@ var seqJS = seqJS || {};
             return _location1.toGenbankString() + '..' + _location2.subtract(1).toGenbankString();
         };
 
+        /** Get a 0-string representation of the Span for debugging
+         * @param {int} [indent=0] How much to indent the string
+         * @returns {string}
+         */
+        this.toString = function(indent) {
+            indent = indent || 0;
+            var ret = new Array(indent + 1).join('\t');
+            return ret + 'Span('+ _location1 + ':'+_location2+')'; 
+        };
+
         /** Returns true if the span is on the reverse strand
          * @returns {boolean} true if we're on the reverse strand
          */
@@ -765,12 +781,9 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Span} the new span
          */
         this.invertDatum = function(l){
-            console.log('>"'+this+'".invertDatum('+(l)+')');
-            var s = new seqJS.Span(_location2.invertDatum(l).add(1),
+            return new seqJS.Span(_location2.subtract(1).invertDatum(l),
                                   _location1.invertDatum(l).add(1),
                                   !complement);
-            console.log('>'+s);
-            return s;
         };
 
         /** Return a new span with offset added to it
@@ -801,7 +814,6 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Span|undefined} The new Span
          */
         this.crop = function(left, right, c) {
-            console.log('\t\tSpan("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+c+')');
             if(left.toInt instanceof Function){
                 left = left.toInt();
             }
@@ -815,15 +827,12 @@ var seqJS = seqJS || {};
             c = c || false;
             // if there's no overlap, return null
             if( _location1.gte(right) || _location2.lte(left) ){
-                console.log('\t\treturn null');
                 return null;
             }
 
-            var sp = new seqJS.Span(_location1.crop(left,right),
+            return new seqJS.Span(_location1.crop(left,right),
                                   _location2.crop(left,right),
                                   (c) ? !complement : complement);
-            console.log('\t\treturn '+sp);
-            return sp;
         };
 
         /** Get all spans -- in this case an array containing this
@@ -948,6 +957,23 @@ var seqJS = seqJS || {};
             return s[0];
         };
 
+        /** Get a 0-string representation of the SpanOperator for debugging
+         * @param {int} [indent=0] How much to indent the string
+         * @returns {string}
+         */
+        this.toString = function(indent) {
+            indent = indent || 0;
+            var ret = new Array(indent + 1).join('\t');
+            ret = ret + 'SpanOperator(\''+operator+'\',[length = ' + items.length+ ']';
+            if(items.length === 0){
+                return ret + ')';
+            }
+            for(var i = 0; i < items.length; i++){
+                ret += '\n' + items[i].toString(indent+1);
+            }
+            return ret + '\n' + new Array(indent + 1).join('\t') + ')';
+        };
+
         /** Add a new span to the list
          * @param {seqJS.Span|seqJS.SpanOperator} span the span (or list) to add
          * @returns {seqJS.SpanOperator} this
@@ -1024,7 +1050,6 @@ var seqJS = seqJS || {};
          * no overlap
          */
         this.crop = function(left, right, complement) {
-            console.log('\tSpanOperator("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
             var i, s, ret = [];
             for(i=0; i < items.length; i++){
                 if(complement && (operator==='' || operator==='complement')){
@@ -1040,18 +1065,12 @@ var seqJS = seqJS || {};
                 }
             }
             if(ret.length === 0){
-                console.log('\treturn null');
                 return null;
             }
-            var so;
             if(ret.length === 1 && operator !== 'complement'){
-                so = new seqJS.SpanOperator(ret, '');
-                console.log('\treturn '+so);
-                return so;
+                return new seqJS.SpanOperator(ret, '');
             }   
-            so = new seqJS.SpanOperator(ret, operator);
-            console.log('\treturn '+so);
-            return so;
+            return new seqJS.SpanOperator(ret, operator);
         };
 
         /** Remove items which are null
@@ -1110,6 +1129,17 @@ var seqJS = seqJS || {};
          */
         this.toGenbankString = function(){
             return _sl.toGenbankString();
+        };
+
+        /** Get a 0-string representation of the FeatureLocation for debugging
+         * @param {int} [indent=0] How much to indent the string
+         * @returns {string}
+         */
+        this.toString = function(indent) {
+            indent = indent || 0;
+            var ret = new Array(indent + 1).join('\t') + 'FeatureLocation(\n';
+            ret += _sl.toString(indent + 1);
+            return ret + '\n' + new Array(indent + 1).join('\t') + ')';
         };
 
         /**
@@ -1177,12 +1207,9 @@ var seqJS = seqJS || {};
          * @returns {seqJS.FeatureLocation} the new feature location
          */
         this.crop = function(left, right, complement) {
-            console.log('FeatureLocation("'+this+'").crop('+left.toInt()+', '+right.toInt()+', '+complement+')');
             var so = _sl.crop(left, right, complement);
             so.prune();
-            var f = new seqJS.FeatureLocation(so);
-            console.log('return '+f);
-            return f;
+            return new seqJS.FeatureLocation(so);
         };
     };
     
