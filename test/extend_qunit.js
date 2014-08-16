@@ -29,12 +29,12 @@ var span_eq = function(actual, location1, location2, complement, string){
     location_eq(actual.right(), location2[0], location2[1], location2[2], 'Right: ');
 
     equal(actual.isComplement(), complement, "Complement flag wrong");
-    equal(actual.toString(), string, "span.toString() is incorrect"); 
+    equal(actual.toGenbankString(), string, "span.toGenbankString() is incorrect"); 
 };
 
 var featureloc_eq = function(actual, string, spanlist){
 
-    equal(actual.toString(), string, "toString() is wrong");
+    equal(actual.toGenbankString(), string, "toGenbankString() is wrong");
 
     var s = actual.getSpans(), j;
     equal(s.length, spanlist.length, "Wrong number of spans returned");
@@ -56,7 +56,7 @@ var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
     ok(actual instanceof seqJS.Feature, m("Didn't get a seqJS.Feature"));
 
     equal(actual.type(), type, m("feature type is wrong"));
-    equal(actual.location().toString(), location_string,
+    equal(actual.location().toGenbankString(), location_string,
           m('location is wrong'));
     ok(actual.location() instanceof seqJS.FeatureLocation,
        m('feature.location() should be from FeatureLocation, not \"' + 

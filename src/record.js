@@ -571,7 +571,7 @@ var seqJS = seqJS || {};
         /** Get a 1-offset genbank style string representation
          * @returns {string} 
          */
-        this.toString = function() {
+        this.toGenbankString = function() {
             if(_operator === '.'){
                 return (_location + 1) + '.' + (_location2);
             }
@@ -737,11 +737,11 @@ var seqJS = seqJS || {};
             return true;
         };    
 
-        /** Get a genbank style string representation
+        /** Get a genbank style string representation of the span
          * @returns {string} genbank style string (e.g. 100..200)
          */
-        this.toString = function() {
-            return _location1.toString() + '..' + _location2.subtract(1).toString();
+        this.toGenbankString = function() {
+            return _location1.toGenbankString() + '..' + _location2.subtract(1).toGenbankString();
         };
 
         /** Returns true if the span is on the reverse strand
@@ -937,10 +937,10 @@ var seqJS = seqJS || {};
         /** Convert to a genbank style string
          * @returns {string} string representation
          */
-        this.toString = function() {
+        this.toGenbankString = function() {
             var s = [];
             for(var i = 0; i < items.length; i++){
-                s.push(items[i].toString());
+                s.push(items[i].toGenbankString());
             }
             if(operator){
                 return operator + '(' + s.join(',') + ')';
@@ -1105,11 +1105,11 @@ var seqJS = seqJS || {};
         _sl.setComplement();
 
         /**
-         * Get a string representation of the location
+         * Get a Genbank style string representation of the location
          * @returns {string} String representation
          */
-        this.toString = function(){
-            return _sl.toString();
+        this.toGenbankString = function(){
+            return _sl.toGenbankString();
         };
 
         /**

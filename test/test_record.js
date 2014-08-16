@@ -96,7 +96,7 @@ module('seqJS.Seq.extract', {
 });
 
 var feats2string = function(feats){
-    return feats.map(function(x){return x.type() + '=' + x.location().toString();}).join('|');
+    return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
 };
 
     test('extract 10..20 no features', function() {

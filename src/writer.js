@@ -166,7 +166,7 @@ var seqJS = seqJS || {};
         var write_feature = function(f){
             var i,q,v,qk = f.qualifierKeys(),
                 ret = '     ' + pad_r(f.type(),15) + ' ' + 
-                f.location().toString() + '\n';
+                f.location().toGenbankString() + '\n';
 
             for(i in qk){
                 v = f.qualifier(qk[i]);
