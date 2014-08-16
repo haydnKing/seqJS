@@ -809,11 +809,9 @@ var seqJS = seqJS || {};
          * overlap with this range then return undefined
          * @param {seqJS.Location|int} left The start of the range to crop to
          * @param {seqJS.Location|int} right The start of the range to crop to
-         * @param {boolean} [complement=false] whether to complement the
-         * reuslting span or not 
          * @returns {seqJS.Span|undefined} The new Span
          */
-        this.crop = function(left, right, c) {
+        this.crop = function(left, right) {
             if(left.toInt instanceof Function){
                 left = left.toInt();
             }
@@ -824,7 +822,6 @@ var seqJS = seqJS || {};
                 throw("seqJS.Span.crop("+right+","+left+"): right must be greater than left");
             }
 
-            c = c || false;
             // if there's no overlap, return null
             if( _location1.gte(right) || _location2.lte(left) ){
                 return null;
@@ -832,7 +829,7 @@ var seqJS = seqJS || {};
 
             return new seqJS.Span(_location1.crop(left,right),
                                   _location2.crop(left,right),
-                                  (c) ? !complement : complement);
+                                  complement);
         };
 
         /** Get all spans -- in this case an array containing this
