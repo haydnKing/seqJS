@@ -427,6 +427,35 @@ module('seqJS.Span.crop');
         test_span_crop([20, '<'],[30, '>'], 25, 40, 'Span(Location(0):Location(>5))');
         test_span_crop([20, '<'],[30, '>'], 10, 25, 'Span(Location(<10):Location(15))');
 
+
+module('seqJS.SpanOperator.crop');
+    var test_spanoperator_crop = function(op, spans, crop_start, crop_end, crop_complement, expected_string){
+        var so = new seqJS.SpanOperator(spans.map(function(x){
+            return new seqJS.Span(new seqJS.Location(x[0][0], x[0][1], x[0][2]),
+                                  new seqJS.Location(x[1][0], x[1][1], x[1][2]));
+            }), op);
+
+        var s = so.toString().replace('\n', '').replace('\t', '');
+        test(s+'.crop(' + crop_start + ', ' + crop_end + ', ' + crop_complement + ')',
+             function() {
+                 var original = so.toString();
+                 equal(so.crop(crop_start, 
+                               crop_end, 
+                               crop_complement).toString(), 
+                               expected_string,
+                               "crop with integers");
+                 equal(so.crop(new seqJS.Location(crop_start), 
+                               new seqJS.Location(crop_end), 
+                               crop_complement).toString(), 
+                               expected_string,
+                               "crop with seqJS.Locations");
+                 equal(so.toString(), original, "crop changed original");
+        });
+    };
+
+    test_spanoperator_crop('', [[[20], [30]]], 10, 20, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+
+
 module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
@@ -522,33 +551,7 @@ module('seqJS#FeatureLocation');
 
     });
 
-/*    
-module('seqJS.FeatureLocation.crop', {
-    setup: function() {
-        this.f = new seqJS.FeatureLocation('join(10..19,50..59,complement(30..39))');
-    }
-});
 
-    test('25 - 45', function(){
-        featureloc_eq(this.f.crop(25,45),
-                      'complement(5..14)');
-    });
-
-    test('33 - 38', function(){
-        featureloc_eq(this.f.crop(33,38),
-                      'complement(1..5)');
-    });
-
-    test('14 - 37', function(){
-        featureloc_eq(this.f.crop(14,37),
-                      'order(1..5,complement(16..23))');
-    });
-
-    test('33 - 38', function(){
-        featureloc_eq(this.f.crop(33,38),
-                      'complement(1..5)');
-    });
-*/
 module('seqJS#Feature');
 
     test('type and location', function(){
