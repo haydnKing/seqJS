@@ -666,7 +666,7 @@ var seqJS = seqJS || {};
             _l = c(_location);
             _o = _operator;
             if(_location2){
-                _l2 = c(_l2);
+                _l2 = c(_location2);
             }
             if(_o === '<' && _location < left){
                 _o = '';

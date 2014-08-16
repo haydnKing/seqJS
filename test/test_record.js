@@ -339,7 +339,7 @@ module('seqJS.Location.crop');
         test_crop(new seqJS.Location(20, '.', 30), 10, 35, 'Location(10.20)');
     });
     test('Location(20.30).crop(25, 45)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 25, 45, 'Location(5.10)');
+        test_crop(new seqJS.Location(20, '.', 30), 25, 45, 'Location(0.5)');
     });
     test('Location(20.30).crop(10, 25)', function(){
         test_crop(new seqJS.Location(20, '.', 30), 10, 25, 'Location(10.15)');
