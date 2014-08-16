@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -1053,9 +1052,6 @@ var seqJS = seqJS || {};
          * no overlap
          */
         this.crop = function(left, right, complement) {
-            console.log('CROP_SPANOPERATOR('+left+', '+right+', '+complement+')');
-            console.log(this.toString(1));
-
             //Convert to integers
             if(right.toInt instanceof Function){
                 right = right.toInt();
@@ -1070,13 +1066,16 @@ var seqJS = seqJS || {};
 
             //return null if no overlap
             if(_items.length === 0){
-                console.log('RETURN null');
                 return null;
+            }
+            //There's no point in 'join' or 'order' if there's only one item
+            if(_items.length === 1 && _operator !== 'complement'){
+                _operator = '';
             }
 
             //handle complement
             if(complement){
-                _items = _items.map(function(x){return x.invertDatum(right-left);});
+                _items = _items.map(function(x){return x.invertDatum(right-left);}).reverse();
                 if(_operator==='' || _operator==='complement'){
                     return new seqJS.SpanOperator(_items, 
                                               (_operator==='') ? 
@@ -1085,7 +1084,7 @@ var seqJS = seqJS || {};
                 return new seqJS.SpanOperator([new seqJS.SpanOperator(_items, _operator)],
                                               'complement');
             }
-            return new seqJS.SpanOperator(_items, operator);
+            return new seqJS.SpanOperator(_items, _operator);
         };
 
         /** Remove items which are null

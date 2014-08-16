@@ -477,6 +477,38 @@ module('seqJS.SpanOperator.crop');
     test_spanoperator_crop('complement', [[[20], [30]]], 10, 25, true, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
     test_spanoperator_crop('complement', [[[20], [30]]], 25, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
 
+    /*
+     * SpanOperator.crop with multiple Spans
+     */
+    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 25, 45, false, 
+                           "SpanOperator('join', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])");
+    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 25, 45, false, 
+                           "SpanOperator('order', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])");
+    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 25, 45, true, 
+                           "SpanOperator('complement', length=1, [SpanOperator('join', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])])");
+    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 25, 45, true, 
+                           "SpanOperator('complement', length=1, [SpanOperator('order', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])])");
+
+    /*
+     * SpanOperator.crop test dropouts
+     */
+    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 35, 45, false, 
+                           "SpanOperator('', length=1, [Span(Location(5):Location(10))])");
+
+    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 35, 45, false, 
+                           "SpanOperator('', length=1, [Span(Location(5):Location(10))])");
+
+    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 35, 45, true, 
+                           "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
+
+    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 35, 45, true, 
+                           "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
+
+    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 30, 40, true, 
+                           "null");
+
+    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 30, 40, true, 
+                           "null");
 
 module('seqJS#FeatureLocation');
 
