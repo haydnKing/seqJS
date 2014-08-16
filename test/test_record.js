@@ -296,60 +296,36 @@ module('seqJS#location');
     });
         
 module('seqJS.Location.crop');
-    var test_crop = function(l, start, end, str){
-        var original = l.toString();
-        equal(l.crop(start,end).toString(), str, "crop with integers");
-        equal(l.crop(new seqJS.Location(start),
-                           new seqJS.Location(end)).toString(),
-                    str, "crop with seqJS.Locations");
-        equal(l.toString(), original, "Original location changed");
+    var test_location_crop = function(loc, start, end, str){
+        var l = new seqJS.Location(loc[0], loc[1], loc[2]);
+
+        test(l.toString() + '.crop('+start+', '+end+')', function() {
+            var original = l.toString();
+            equal(l.crop(start,end).toString(), str, "crop with integers");
+            equal(l.crop(new seqJS.Location(start),
+                               new seqJS.Location(end)).toString(),
+                        str, "crop with seqJS.Locations");
+            equal(l.toString(), original, "Original location changed");
+        });
     };
 
-    test('Location(20).crop(10, 25)', function(){
-        test_crop(new seqJS.Location(20), 10, 25, 'Location(10)');
-    });
-    test('Location(20).crop(30, 45)', function(){
-        test_crop(new seqJS.Location(20), 30, 45, 'Location(0)');
-    });
-    test('Location(20).crop(10, 15)', function(){
-        test_crop(new seqJS.Location(20), 10, 15, 'Location(5)');
-    });
+        test_location_crop([20], 10, 25, 'Location(10)');
+        test_location_crop([20], 30, 45, 'Location(0)');
+        test_location_crop([20], 10, 15, 'Location(5)');
 
-    test('Location(<20).crop(10, 25)', function(){
-        test_crop(new seqJS.Location(20, '<'), 10, 25, 'Location(<10)');
-    });
-    test('Location(<20).crop(30, 45)', function(){
-        test_crop(new seqJS.Location(20, '<'), 30, 45, 'Location(0)');
-    });
-    test('Location(<20).crop(10, 15)', function(){
-        test_crop(new seqJS.Location(20, '<'), 10, 15, 'Location(<5)');
-    });
+        test_location_crop([20, '<'], 10, 25, 'Location(<10)');
+        test_location_crop([20, '<'], 30, 45, 'Location(0)');
+        test_location_crop([20, '<'], 10, 15, 'Location(<5)');
 
-    test('Location(>20).crop(10, 25)', function(){
-        test_crop(new seqJS.Location(20, '>'), 10, 25, 'Location(>10)');
-    });
-    test('Location(>20).crop(30, 45)', function(){
-        test_crop(new seqJS.Location(20, '>'), 30, 45, 'Location(>0)');
-    });
-    test('Location(>20).crop(10, 15)', function(){
-        test_crop(new seqJS.Location(20, '>'), 10, 15, 'Location(5)');
-    });
+        test_location_crop([20, '>'], 10, 25, 'Location(>10)');
+        test_location_crop([20, '>'], 30, 45, 'Location(>0)');
+        test_location_crop([20, '>'], 10, 15, 'Location(5)');
 
-    test('Location(20.30).crop(10, 35)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 10, 35, 'Location(10.20)');
-    });
-    test('Location(20.30).crop(25, 45)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 25, 45, 'Location(0.5)');
-    });
-    test('Location(20.30).crop(10, 25)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 10, 25, 'Location(10.15)');
-    });
-    test('Location(20.30).crop(35, 45)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 35, 45, 'Location(0)');
-    });
-    test('Location(20.30).crop(10, 15)', function(){
-        test_crop(new seqJS.Location(20, '.', 30), 10, 15, 'Location(5)');
-    });
+        test_location_crop([20, '.', 30], 10, 35, 'Location(10.20)');
+        test_location_crop([20, '.', 30], 25, 45, 'Location(0.5)');
+        test_location_crop([20, '.', 30], 10, 25, 'Location(10.15)');
+        test_location_crop([20, '.', 30], 35, 45, 'Location(0)');
+        test_location_crop([20, '.', 30], 10, 15, 'Location(5)');
 
 
 module('seqJS.Span');
@@ -419,6 +395,38 @@ module('seqJS.Span');
         span_eq(s.add(5), 'Span(Location(9):Location(15))', false);
         span_eq(s, 'Span(Location(4):Location(10))', false);
     });
+
+/*
+module('seqJS.Span.crop');
+    var test_span_crop = function(span, start, end, complement, expected_string){
+        var original = span.toString();
+
+        equal(span.crop(start,end,complement), expected_string, 
+              "crop with integers");
+
+        equal(span.crop(new seqJS.Location(start),new seqJS.Location(end),complement), expected_string, 
+              "crop with Locations");
+
+        equal(span.toString(), original, "Span changed by crop calls");
+    };
+
+    test('Span(20:30).crop(10, 40, false)', function(){
+        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
+                                      new SeqJS.Location(30)),
+                       10, 40, false, 'Span(10:20)');
+    });
+    test('Span(20:30).crop(25, 40, false)', function(){
+        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
+                                      new SeqJS.Location(30)),
+                       25, 40, false, 'Span(:20)');
+    });
+    test('Span(20:30).crop(10, 40, false)', function(){
+        test_span_crop(new seqJS.Span(new SeqJS.Location(20),
+                                      new SeqJS.Location(30)),
+                       10, 40, false, 'Span(10:20)');
+    });
+*/
+
 module('seqJS#FeatureLocation');
 
     test('parse A..B', function(){
