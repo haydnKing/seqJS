@@ -295,6 +295,61 @@ module('seqJS#location');
         location_eq(l, 4, '.', 10);
     });
         
+module('seqJS.Location.crop');
+    var test_crop = function(l, start, end, str){
+        var original = l.toString();
+        equal(l.crop(start,end).toString(), str, "crop with integers");
+        equal(l.crop(new seqJS.Location(start),
+                           new seqJS.Location(end)).toString(),
+                    str, "crop with seqJS.Locations");
+        equal(l.toString(), original, "Original location changed");
+    };
+
+    test('Location(20).crop(10, 25)', function(){
+        test_crop(new seqJS.Location(20), 10, 25, 'Location(10)');
+    });
+    test('Location(20).crop(30, 45)', function(){
+        test_crop(new seqJS.Location(20), 30, 45, 'Location(0)');
+    });
+    test('Location(20).crop(10, 15)', function(){
+        test_crop(new seqJS.Location(20), 10, 15, 'Location(5)');
+    });
+
+    test('Location(<20).crop(10, 25)', function(){
+        test_crop(new seqJS.Location(20, '<'), 10, 25, 'Location(<10)');
+    });
+    test('Location(<20).crop(30, 45)', function(){
+        test_crop(new seqJS.Location(20, '<'), 30, 45, 'Location(0)');
+    });
+    test('Location(<20).crop(10, 15)', function(){
+        test_crop(new seqJS.Location(20, '<'), 10, 15, 'Location(<5)');
+    });
+
+    test('Location(>20).crop(10, 25)', function(){
+        test_crop(new seqJS.Location(20, '>'), 10, 25, 'Location(>10)');
+    });
+    test('Location(>20).crop(30, 45)', function(){
+        test_crop(new seqJS.Location(20, '>'), 30, 45, 'Location(>0)');
+    });
+    test('Location(>20).crop(10, 15)', function(){
+        test_crop(new seqJS.Location(20, '>'), 10, 15, 'Location(5)');
+    });
+
+    test('Location(20.30).crop(10, 35)', function(){
+        test_crop(new seqJS.Location(20, '.', 30), 10, 35, 'Location(10.20)');
+    });
+    test('Location(20.30).crop(25, 45)', function(){
+        test_crop(new seqJS.Location(20, '.', 30), 25, 45, 'Location(5.10)');
+    });
+    test('Location(20.30).crop(10, 25)', function(){
+        test_crop(new seqJS.Location(20, '.', 30), 10, 25, 'Location(10.15)');
+    });
+    test('Location(20.30).crop(35, 45)', function(){
+        test_crop(new seqJS.Location(20, '.', 30), 35, 45, 'Location(0)');
+    });
+    test('Location(20.30).crop(10, 15)', function(){
+        test_crop(new seqJS.Location(20, '.', 30), 10, 15, 'Location(5)');
+    });
 
 
 module('seqJS.Span');
@@ -459,7 +514,7 @@ module('seqJS#FeatureLocation');
 
     });
 
-    /*
+/*    
 module('seqJS.FeatureLocation.crop', {
     setup: function() {
         this.f = new seqJS.FeatureLocation('join(10..19,50..59,complement(30..39))');
