@@ -435,25 +435,31 @@ module('seqJS.SpanOperator.crop');
                                   new seqJS.Location(x[1][0], x[1][1], x[1][2]));
             }), op);
 
-        var s = so.toString().replace('\n', '').replace('\t', '');
-        test(s+'.crop(' + crop_start + ', ' + crop_end + ', ' + crop_complement + ')',
+        var to_str = function(a){
+            if(a){
+                return a.toString(-1);
+            }
+            return 'null';
+        };
+
+        test(so.toString(-1)+'.crop(' + crop_start + ', ' + crop_end + ', ' + crop_complement + ')',
              function() {
-                 var original = so.toString();
-                 equal(so.crop(crop_start, 
+                 var original = so.toString(-1);
+                 equal(to_str(so.crop(crop_start, 
                                crop_end, 
-                               crop_complement).toString(), 
+                               crop_complement)), 
                                expected_string,
                                "crop with integers");
-                 equal(so.crop(new seqJS.Location(crop_start), 
+                 equal(to_str(so.crop(new seqJS.Location(crop_start), 
                                new seqJS.Location(crop_end), 
-                               crop_complement).toString(), 
+                               crop_complement)), 
                                expected_string,
                                "crop with seqJS.Locations");
-                 equal(so.toString(), original, "crop changed original");
+                 equal(so.toString(-1), original, "crop changed original");
         });
     };
 
-    test_spanoperator_crop('', [[[20], [30]]], 10, 20, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop('', [[[20], [30]]], 10, 40, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
 
 
 module('seqJS#FeatureLocation');

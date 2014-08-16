@@ -1,4 +1,4 @@
-/** global console:true */
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -961,14 +961,14 @@ var seqJS = seqJS || {};
         this.toString = function(indent) {
             indent = indent || 0;
             var ret = new Array(indent + 1).join('\t');
-            ret = ret + 'SpanOperator(\''+operator+'\',[length = ' + items.length+ ']';
-            if(items.length === 0){
-                return ret + ')';
+            ret = ret + 'SpanOperator(\''+operator+'\', length=' + items.length + 
+                ', [' + items.map(function(x){return x.toString(indent+1);}).join(',\n') + 
+                new Array(indent+1).join('\t') + '])';
+
+            if(indent < 0){
+                return ret.replace('\n',' ').replace('\t', '');
             }
-            for(var i = 0; i < items.length; i++){
-                ret += '\n' + items[i].toString(indent+1);
-            }
-            return ret + '\n' + new Array(indent + 1).join('\t') + ')';
+            return ret;
         };
 
         /** Add a new span to the list
@@ -1047,6 +1047,7 @@ var seqJS = seqJS || {};
          * no overlap
          */
         this.crop = function(left, right, complement) {
+            console.log('SpanOperator.crop('+left+', '+right+', '+complement+')');
             var i, s, ret = [];
             for(i=0; i < items.length; i++){
                 if(complement && (operator==='' || operator==='complement')){
