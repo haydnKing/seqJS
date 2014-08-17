@@ -1238,7 +1238,7 @@ var seqJS = seqJS || {};
                 return new seqJS.FeatureLocation(_items[0]);
             }
             if(_items.length > 1){
-                return {toString: function(){return "More than one spanOperator";}};
+                return {toString: function(){return "NOT_IMPLEMENTED: more than one spanOperator";}};
             }
         };
     };
