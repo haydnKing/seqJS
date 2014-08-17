@@ -635,10 +635,65 @@ module('seqJS.FeatureLocation.crop');
         });
     };
 
+    /*
+     * One on One
+     *  Contained
+     */
+
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['', [ [[10], [40]] ] ],
                               "FeatureLocation(SpanOperator('', length=1, [Span(Location(10):Location(20))]))");
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['', [ [[10], [40]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(10):Location(20))]))");
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['complement', [ [[10], [40]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(10):Location(20))]))");
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['complement', [ [[10], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(10):Location(20))]))");
 
+    /*
+     * One on One
+     *  Cropped
+     */
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['', [ [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(5))]))");
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['', [ [[10], [25]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(10):Location(15))]))");
+
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['complement', [ [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(10):Location(15))]))");
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['complement', [ [[10], [25]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(0):Location(5))]))");
+
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['complement', [ [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(10):Location(15))]))");
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['complement', [ [[10], [25]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(5))]))");
+
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['', [ [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(0):Location(5))]))");
+    test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
+                              ['', [ [[10], [25]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(10):Location(15))]))");
+
+    test_featurelocation_crop(['', [ [[20], [40]] ] ], 
+                              ['', [ [[25], [35]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(10))]))");
+    test_featurelocation_crop(['complement', [ [[20], [40]] ] ], 
+                              ['', [ [[25], [35]] ] ],
+                              "FeatureLocation(SpanOperator('complement', length=1, [Span(Location(0):Location(10))]))");
+    test_featurelocation_crop(['complement', [ [[20], [40]] ] ], 
+                              ['complement', [ [[25], [35]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(10))]))");
 
 module('seqJS#Feature');
 
