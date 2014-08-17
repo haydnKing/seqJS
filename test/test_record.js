@@ -23,6 +23,14 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
+
+var to_str = function(a){
+    if(a){
+        return a.toString(-1);
+    }
+    return 'null';
+};
+
 module('seqJS#seq');
 
     test('setting and get data', function(){
@@ -437,13 +445,6 @@ module('seqJS.SpanOperator.crop');
                                   new seqJS.Location(x[1][0], x[1][1], x[1][2]));
             }), op);
 
-        var to_str = function(a){
-            if(a){
-                return a.toString(-1);
-            }
-            return 'null';
-        };
-
         test(so.toString(-1)+'.crop(' + crop_start + ', ' + crop_end + ', ' + crop_complement + ')',
              function() {
                  var original = so.toString(-1);
@@ -630,8 +631,8 @@ module('seqJS.FeatureLocation.crop');
         test(lhs.toString(-1) + '.crop('+rhs.toString(-1)+')', function(){
             var original = lhs.toString(-1);
 
-            equal(lhs.crop(rhs).toString(-1), expected_string, "crop returned incorrectly");
-            equal(lhs.toString(-1), original, "crop changed FeatureLocation");
+            equal(to_str(lhs.crop(rhs)), expected_string, "crop returned incorrectly");
+            equal(to_str(lhs), original, "crop changed FeatureLocation");
         });
     };
 
@@ -694,6 +695,22 @@ module('seqJS.FeatureLocation.crop');
     test_featurelocation_crop(['complement', [ [[20], [40]] ] ], 
                               ['complement', [ [[25], [35]] ] ],
                               "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(10))]))");
+
+    /*
+     * Dropout
+     */
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['', [ [[35], [40]] ] ],
+                              "null");
+    test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
+                              ['', [ [[35], [40]] ] ],
+                              "null");
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['join', [ [[10], [20]], [[35], [40]] ] ],
+                              "null");
+    test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
+                              ['', [ [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(5))]))");
 
 module('seqJS#Feature');
 
