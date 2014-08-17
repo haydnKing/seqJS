@@ -711,6 +711,12 @@ module('seqJS.FeatureLocation.crop');
     test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
                               ['', [ [[25], [40]] ] ],
                               "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(5))]))");
+    test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
+                              ['join', [ [[10], [20]], [[35], [40]] ] ],
+                              "null");
+    test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
+                              ['join', [ [[10], [20]], [[25], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(0):Location(5))]))");
 
 module('seqJS#Feature');
 
