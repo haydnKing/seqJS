@@ -180,7 +180,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a>}</span></h4>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(rhs)</span><span class="type-signature"> &rarr; {<a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a>}</span></h4>
     
     
 </dt>
@@ -188,7 +188,7 @@
     
     
     <div class="description">
-        Return a new FeatureLocation which has been cropped to [start,end)
+        Return a new FeatureLocation which has been cropped to rhs
     </div>
     
 
@@ -210,11 +210,7 @@
 		<th>Type</th>
 		
 		
-		<th>Argument</th>
 		
-		
-		
-		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -226,116 +222,23 @@
 	
         <tr>
             
-                <td class="name"><code>left</code></td>
+                <td class="name"><code>rhs</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
-|
-
-<span class="param-type">int</span>
+<span class="param-type"><a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a></span>
 
 
             
             </td>
             
             
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
             
             
             
-                <td class="default">
-                
-                </td>
-            
-            
-            <td class="description last">the start of the range to crop to</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>right</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
-|
-
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-                <td class="default">
-                
-                </td>
-            
-            
-            <td class="description last">the end of the range to crop to</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>complement</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-            
-            <td class="description last">whether or not to complement the
-returned FeatureLocation</td>
+            <td class="description last">The FeatureLocation to crop to</td>
         </tr>
 	
 	
@@ -366,7 +269,7 @@ returned FeatureLocation</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1226">line 1226</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1227">line 1227</a>
     </li></ul></dd>
     
     
@@ -457,7 +360,7 @@ returned FeatureLocation</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1207">line 1207</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1211">line 1211</a>
     </li></ul></dd>
     
     
@@ -548,7 +451,7 @@ returned FeatureLocation</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1166">line 1166</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1170">line 1170</a>
     </li></ul></dd>
     
     
@@ -746,7 +649,7 @@ point</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1176">line 1176</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1180">line 1180</a>
     </li></ul></dd>
     
     
@@ -837,7 +740,7 @@ point</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1191">line 1191</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1195">line 1195</a>
     </li></ul></dd>
     
     
@@ -1152,7 +1055,7 @@ point</td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Aug 16 2014 19:03:39 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sun Aug 17 2014 12:59:43 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

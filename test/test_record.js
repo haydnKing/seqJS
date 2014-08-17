@@ -605,6 +605,40 @@ module('seqJS#FeatureLocation');
 
     });
 
+module('seqJS.FeatureLocation.crop');
+
+    var parse_spanoperator_array = function(rhs){
+        //If we have a SpanOperator
+        if(typeof rhs[0] === 'string' || rhs[0] instanceof String){
+            return new seqJS.SpanOperator(parse_spanoperator_array(rhs[1]),
+                                          rhs[0]);
+        }
+        //otherwise, we have a list of spans
+        var ret = rhs.map(function(span){
+            return new seqJS.Span(new seqJS.Location(span[0][0], span[0][1], span[0][2]),
+                                  new seqJS.Location(span[1][0], span[1][1], span[1][2]));
+        });
+        return ret;
+    };
+
+
+    var test_featurelocation_crop = function(lhsa, rhsa, expected_string){
+
+        var lhs = new seqJS.FeatureLocation(parse_spanoperator_array(lhsa)),
+            rhs = new seqJS.FeatureLocation(parse_spanoperator_array(rhsa));
+
+        test(lhs.toString(-1) + '.crop('+rhs.toString(-1)+')', function(){
+            var original = lhs.toString(-1);
+
+            equal(lhs.crop(rhs).toString(-1), expected_string, "crop returned incorrectly");
+            equal(lhs.toString(-1), original, "crop changed FeatureLocation");
+        });
+    };
+
+    test_featurelocation_crop(['', [ [[20], [30]] ] ], 
+                              ['', [ [[10], [40]] ] ],
+                              "FeatureLocation(SpanOperator('', length=1, [Span(Location(10):Location(20))]))");
+
 
 module('seqJS#Feature');
 
