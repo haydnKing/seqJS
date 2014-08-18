@@ -884,8 +884,7 @@ var seqJS = seqJS || {};
      * operator
      * Valid operations are:
      *  - 'complement': Acts on a single Span
-     *  - 'join': Merges one or more Spans by 'join'ing them
-     *  - 'order': Merges one or more Spans by 'order'ing them
+     *  - 'merge': Join a list of spans
      *  - '': no-op, zero or one Spans
      * @constructor
      * @param {string|Array.<seqJS.Span>} location the location string to
@@ -908,6 +907,8 @@ var seqJS = seqJS || {};
                         break;
                     case 'join':
                     case 'order':
+                    case 'merge':
+                        operator = 'merge';
                         var s_items = tokenize(m[2]);
                         for(var i = 0; i < s_items.length; i++){
                             items.push(new seqJS.SpanOperator(s_items[i]));
@@ -940,6 +941,9 @@ var seqJS = seqJS || {};
                 break;
             case 'join':
             case 'order':
+                operator = 'merge';
+                break;
+            case 'merge':
                 break;
             default:
                 throw("seqJS.SpanOperator: unknown operation '"+operator+"'");
@@ -1068,7 +1072,7 @@ var seqJS = seqJS || {};
             if(_items.length === 0){
                 return null;
             }
-            //There's no point in 'join' or 'order' if there's only one item
+            //There's no point in 'merge' if there's only one item
             if(_items.length === 1 && _operator !== 'complement'){
                 _operator = '';
             }
@@ -1093,7 +1097,7 @@ var seqJS = seqJS || {};
         this.prune = function(){
             //remove nulls
             items = items.filter(function(x){if(x){return true;}return false;});
-            if(operator === 'join' || operator === 'order'){
+            if(operator === 'merge'){
                 items.forEach(function(x){x.prune();});
             }
         };
@@ -1118,12 +1122,15 @@ var seqJS = seqJS || {};
      * @constructor
      * @param {string|seqJS.FeatureLocation} location the location of the feature
      */
-    seqJS.FeatureLocation = function(location){
+    seqJS.FeatureLocation = function(location, merge_op){
         var _sl;
         if(typeof location === 'string' || location instanceof String){
             try{
                 //test for mixed merge operations
-                if(location.indexOf('order') >= 0 && location.indexOf('join') >= 0){
+                var o = location.indexOf('order') >= 0,
+                    j = location.indexOf('join') >= 0;
+                merge_op = o ? 'order': 'join';
+                if(o && j){
                     throw("Mixing merge operators is not valid");
                 }
                 //parse location
@@ -1135,6 +1142,10 @@ var seqJS = seqJS || {};
         }
         else{
             _sl = location;
+            merge_op = merge_op || 'join';
+            if(merge_op !== 'join' && merge_op !== 'order'){
+                throw("merge_op must be \'join\' or \'order\', not \'"+merge_op+"\'");
+            }
         }
 
         //set complement flags on Spans
@@ -1145,7 +1156,7 @@ var seqJS = seqJS || {};
          * @returns {string} String representation
          */
         this.toGenbankString = function(){
-            return _sl.toGenbankString();
+            return _sl.toGenbankString().replace(/merge/g, merge_op);
         };
 
         /** Get a 0-string representation of the FeatureLocation for debugging
@@ -1157,6 +1168,7 @@ var seqJS = seqJS || {};
             var ret = new Array(indent + 1).join('\t') + 'FeatureLocation(\n' +
                     _sl.toString(indent + 1) + 
                     '\n' + new Array(indent + 1).join('\t') + ')';
+            ret = ret.replace(/merge/g, merge_op);
             if(indent < 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
             }
