@@ -1,3 +1,4 @@
+/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -1159,6 +1160,13 @@ var seqJS = seqJS || {};
             return _sl.toGenbankString().replace(/merge/g, merge_op);
         };
 
+        /** Get the merge operator, 'join' or 'order'
+         * @returns {string}
+         */
+        this.getMergeOperator = function(){
+            return merge_op;
+        };
+
         /** Get a 0-string representation of the FeatureLocation for debugging
          * @param {int} [indent=0] How much to indent the string
          * @returns {string}
@@ -1232,6 +1240,12 @@ var seqJS = seqJS || {};
             return m;
         };
 
+var to_str = function(x){
+    if(x===null){
+        return "null";
+    }
+    return x.toString(-1);
+};
         /** Return a new FeatureLocation which has been cropped to rhs
          * @param {seqJS.FeatureLocation} rhs The FeatureLocation to crop to
          * @returns {seqJS.FeatureLocation} the new feature location
@@ -1239,6 +1253,8 @@ var seqJS = seqJS || {};
         this.crop = function(rhs) {
             //for each span in rhs
             var _items = rhs.getSpans().map(function(span){
+                console.log(_sl + '.crop('+span.left()+', '+span.right()+', '+span.isComplement()+')' +
+                 '\n\t-> '+to_str(_sl.crop(span.left(), span.right(), span.isComplement())));
                 //return a cropped SpanOperator
                 return _sl.crop(span.left(), span.right(), span.isComplement());
             }).filter(function(x) {return x!==null;});
@@ -1250,7 +1266,9 @@ var seqJS = seqJS || {};
                 return new seqJS.FeatureLocation(_items[0]);
             }
             if(_items.length > 1){
-                return {toString: function(){return "NOT_IMPLEMENTED: more than one spanOperator";}};
+                return new seqJS.FeatureLocation(new seqJS.SpanOperator(
+                    _items, 'merge'),
+                    rhs.getMergeOperator());
             }
         };
     };

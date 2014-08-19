@@ -439,11 +439,20 @@ module('seqJS.Span.crop');
 
 
 module('seqJS.SpanOperator.crop');
-    var test_spanoperator_crop = function(op, spans, crop_start, crop_end, crop_complement, expected_string){
-        var so = new seqJS.SpanOperator(spans.map(function(x){
-            return new seqJS.Span(new seqJS.Location(x[0][0], x[0][1], x[0][2]),
-                                  new seqJS.Location(x[1][0], x[1][1], x[1][2]));
-            }), op);
+
+    var parse_spanoperator_array = function(rhs){
+        //If we have a SpanOperator - ['string', [ list_of_other_things ]]
+        if(typeof rhs[0] === 'string' || rhs[0] instanceof String){
+            return new seqJS.SpanOperator(rhs[1].map(function(x){return parse_spanoperator_array(x);}),
+                                          rhs[0]);
+        }
+        //otherwise, we have a span - [[a,b,c], [d,e,f]]
+        return new seqJS.Span(new seqJS.Location(rhs[0][0], rhs[0][1], rhs[0][2]),
+                              new seqJS.Location(rhs[1][0], rhs[1][1], rhs[1][2]));
+    };
+
+    var test_spanoperator_crop = function(spans, crop_start, crop_end, crop_complement, expected_string){
+        var so = parse_spanoperator_array(spans);
 
         test(so.toString(-1)+'.crop(' + crop_start + ', ' + crop_end + ', ' + crop_complement + ')',
              function() {
@@ -467,49 +476,55 @@ module('seqJS.SpanOperator.crop');
      * SpanOperator with one span
      */
 
-    test_spanoperator_crop('', [[[20], [30]]], 10, 40, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
-    test_spanoperator_crop('', [[[20], [30]]], 10, 25, false, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
-    test_spanoperator_crop('', [[[20], [30]]], 25, 40, false, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
-
-    test_spanoperator_crop('', [[[20], [30]]], 10, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(20))])");
-    test_spanoperator_crop('', [[[20], [30]]], 10, 25, true, "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
-    test_spanoperator_crop('', [[[20], [30]]], 25, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(15))])");
-    test_spanoperator_crop('complement', [[[20], [30]]], 10, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
-    test_spanoperator_crop('complement', [[[20], [30]]], 10, 25, true, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
-    test_spanoperator_crop('complement', [[[20], [30]]], 25, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
+    test_spanoperator_crop(['', [[[20], [30]]]], 10, 40, false, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop(['', [[[20], [30]]]], 10, 25, false, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
+    test_spanoperator_crop(['', [[[20], [30]]]], 25, 40, false, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
+                                              
+    test_spanoperator_crop(['', [[[20], [30]]]], 10, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop(['', [[[20], [30]]]], 10, 25, true, "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
+    test_spanoperator_crop(['', [[[20], [30]]]], 25, 40, true, "SpanOperator('complement', length=1, [Span(Location(10):Location(15))])");
+    test_spanoperator_crop(['complement', [[[20], [30]]]], 10, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(20))])");
+    test_spanoperator_crop(['complement', [[[20], [30]]]], 10, 25, true, "SpanOperator('', length=1, [Span(Location(0):Location(5))])");
+    test_spanoperator_crop(['complement', [[[20], [30]]]], 25, 40, true, "SpanOperator('', length=1, [Span(Location(10):Location(15))])");
 
     /*
      * SpanOperator.crop with multiple Spans
      */
-    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 25, 45, false, 
+    test_spanoperator_crop(['join', [[[20],[30]], [[40], [50]]]], 25, 45, false, 
                            "SpanOperator('merge', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])");
-    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 25, 45, false, 
+    test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 25, 45, false, 
                            "SpanOperator('merge', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])");
-    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 25, 45, true, 
+    test_spanoperator_crop(['join', [[[20],[30]], [[40], [50]]]], 25, 45, true, 
                            "SpanOperator('complement', length=1, [SpanOperator('merge', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])])");
-    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 25, 45, true, 
+    test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 25, 45, true, 
                            "SpanOperator('complement', length=1, [SpanOperator('merge', length=2, [Span(Location(0):Location(5)), Span(Location(15):Location(20))])])");
 
     /*
      * SpanOperator.crop test dropouts
      */
-    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 35, 45, false, 
+    test_spanoperator_crop(['join', [[[20],[30]], [[40], [50]]]], 35, 45, false, 
                            "SpanOperator('', length=1, [Span(Location(5):Location(10))])");
 
-    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 35, 45, false, 
+    test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 35, 45, false, 
                            "SpanOperator('', length=1, [Span(Location(5):Location(10))])");
 
-    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 35, 45, true, 
+    test_spanoperator_crop(['join', [[[20],[30]], [[40], [50]]]], 35, 45, true, 
                            "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
 
-    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 35, 45, true, 
+    test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 35, 45, true, 
                            "SpanOperator('complement', length=1, [Span(Location(0):Location(5))])");
 
-    test_spanoperator_crop( 'join', [[[20],[30]], [[40], [50]]], 30, 40, true, 
+    test_spanoperator_crop(['join', [[[20],[30]], [[40], [50]]]], 30, 40, true, 
                            "null");
 
-    test_spanoperator_crop('order', [[[20],[30]], [[40], [50]]], 30, 40, true, 
+    test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 30, 40, true, 
                            "null");
+
+    /*
+     * Test dropout and tidyup
+     */
+    test_spanoperator_crop(['merge', [ ['', [[[10],[20]]]], ['', [[[40], [50]]]]]], 10, 20, false,
+                           "SpanOperator('', length=1, [Span(Location(0):Location(10))])");
 
 module('seqJS#FeatureLocation');
 
@@ -607,17 +622,6 @@ module('seqJS#FeatureLocation');
     });
 
 module('seqJS.FeatureLocation.crop');
-
-    var parse_spanoperator_array = function(rhs){
-        //If we have a SpanOperator - ['string', [ list_of_other_things ]]
-        if(typeof rhs[0] === 'string' || rhs[0] instanceof String){
-            return new seqJS.SpanOperator(rhs[1].map(function(x){return parse_spanoperator_array(x);}),
-                                          rhs[0]);
-        }
-        //otherwise, we have a span - [[a,b,c], [d,e,f]]
-        return new seqJS.Span(new seqJS.Location(rhs[0][0], rhs[0][1], rhs[0][2]),
-                              new seqJS.Location(rhs[1][0], rhs[1][1], rhs[1][2]));
-    };
 
 
     var test_featurelocation_crop = function(lhsa, rhsa, expected_string){
@@ -719,7 +723,7 @@ module('seqJS.FeatureLocation.crop');
      * Multiple output
      *   join
      */
-    
+ /*   
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('join', length=2, ["+
@@ -750,12 +754,12 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('complement', length=1, [Span(Location(0):Location(10))]),"+
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
-
+*/
     /*
      * Multiple output
      *   order
      */
-    
+ /*   
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('order', length=2, ["+
@@ -787,12 +791,12 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
 
-
+*/
     /*
      * Multiple output
      *   mixed
      */
-    
+/*    
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('order', length=2, ["+
@@ -805,7 +809,7 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('', length=1, [Span(Location(0):Location(10))]),"+
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
-
+*/
 module('seqJS#Feature');
 
     test('type and location', function(){
