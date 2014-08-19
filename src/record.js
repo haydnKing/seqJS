@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -1035,6 +1034,13 @@ var seqJS = seqJS || {};
             return operator;
         };
 
+        /** Get the number of items
+         * @returns {int} the number of items held by the SpanOperator
+         */
+        this.length = function(){
+            return items.length;
+        };
+
         /** Test if any of my sub-spans overlap
          * @param {seqJS.Span} rhs the span to test with
          * @returns {boolean} true if overlap
@@ -1073,9 +1079,19 @@ var seqJS = seqJS || {};
             if(_items.length === 0){
                 return null;
             }
-            //There's no point in 'merge' if there's only one item
-            if(_items.length === 1 && _operator !== 'complement'){
-                _operator = '';
+            //if there's only one item
+            if(_items.length === 1){
+                //There's no point in 'merge' if there's only one item
+                if(_operator !== 'complement'){
+                    _operator = '';
+                }
+                /*
+                //If the item is a spanOperator
+                if(!_items[0].isSpan() &&){
+//TODO: tidy up if not complement(join(...))
+                    //we can tidy up
+                }
+                */
             }
 
             //handle complement
@@ -1240,12 +1256,6 @@ var seqJS = seqJS || {};
             return m;
         };
 
-var to_str = function(x){
-    if(x===null){
-        return "null";
-    }
-    return x.toString(-1);
-};
         /** Return a new FeatureLocation which has been cropped to rhs
          * @param {seqJS.FeatureLocation} rhs The FeatureLocation to crop to
          * @returns {seqJS.FeatureLocation} the new feature location
@@ -1253,8 +1263,6 @@ var to_str = function(x){
         this.crop = function(rhs) {
             //for each span in rhs
             var _items = rhs.getSpans().map(function(span){
-                console.log(_sl + '.crop('+span.left()+', '+span.right()+', '+span.isComplement()+')' +
-                 '\n\t-> '+to_str(_sl.crop(span.left(), span.right(), span.isComplement())));
                 //return a cropped SpanOperator
                 return _sl.crop(span.left(), span.right(), span.isComplement());
             }).filter(function(x) {return x!==null;});
