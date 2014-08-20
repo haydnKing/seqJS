@@ -528,6 +528,14 @@ var seqJS = seqJS || {};
          */
         this.operator = function() {return _operator;};
 
+        /** Get the distance between two locations
+         * @param {seqJS.Location} rhs the location to compare with
+         * @returns {int} the distance between the locations
+         */
+        this.distance = function(rhs) {
+            return this.toInt() - rhs.toInt();
+        };
+
         /** Is the location less than rhs
          * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is strictly smaller than this
@@ -600,22 +608,14 @@ var seqJS = seqJS || {};
          * @param {int} offset the amount to add
          * @returns {seqJS.Location} the new location
          */
-        this.add = function(o) {
-            if (_location + o > 0){
+        this.offset = function(o) {
+            if (_location + o >= 0){
                 return new seqJS.Location(_location + o, _operator,
                             (_operator === '.' ? _location2 + o : undefined));
             }
             else {
                 throw "location cannot be negative";
             }
-        };
-
-        /** Return a new Location with an subtracted offset
-         * @param {int} offset the amount to subtract
-         * @returns {seqJS.Location} the new location
-         */
-        this.subtract = function(o) {
-            return this.add(-o);
         };
 
         /** Return a seqJS.Location with an inverted datum - 
@@ -706,7 +706,7 @@ var seqJS = seqJS || {};
             }
             _location1 = new seqJS.Location(m[1]);
             //Genbank stores locations as being inclusive
-            _location2 = new seqJS.Location(m[2]).add(1);
+            _location2 = new seqJS.Location(m[2]).offset(1);
         }
         //if we're given numbers then implicit exact
         else if(typeof _location1 === 'number' && typeof _location2 === 'number'){
@@ -748,7 +748,7 @@ var seqJS = seqJS || {};
          * @returns {string} genbank style string (e.g. 100..200)
          */
         this.toGenbankString = function() {
-            return _location1.toGenbankString() + '..' + _location2.subtract(1).toGenbankString();
+            return _location1.toGenbankString() + '..' + _location2.offset(-1).toGenbankString();
         };
 
         /** Get a 0-string representation of the Span for debugging
@@ -775,6 +775,13 @@ var seqJS = seqJS || {};
             complement = value;
             return this;
         };
+                
+        /** Get the size or length of the span
+         * @returns {int} the length
+         */
+        this.length = function() {
+            return this.right().distance(this.left());
+        };
 
         /** Return a new span which is indexed from the other end of the
          * molecule
@@ -785,8 +792,8 @@ var seqJS = seqJS || {};
             if(isNaN(l)){
                 throw('seqJS.Span.invertDatum called with NaN');
             }
-            return new seqJS.Span(_location2.subtract(1).invertDatum(l),
-                                  _location1.invertDatum(l).add(1),
+            return new seqJS.Span(_location2.offset(-1).invertDatum(l),
+                                  _location1.invertDatum(l).offset(1),
                                   !complement);
         };
 
@@ -794,18 +801,9 @@ var seqJS = seqJS || {};
          * @param {Number} offset the offset to add
          * @returns {seqJS.Span} the new span
          */
-        this.add = function(o){
-            return new seqJS.Span(_location1.add(o),
-                                  _location2.add(o),
-                                  complement);
-        };
-        /** Return a new span with offset subtracted from it
-         * @param {Number} offset the offset to subtract
-         * @returns {seqJS.Span} the new span
-         */
-        this.subtract = function(o){
-            return new seqJS.Span(_location1.subtract(o),
-                                  _location2.subtract(o),
+        this.offset = function(o){
+            return new seqJS.Span(_location1.offset(o),
+                                  _location2.offset(o),
                                   complement);
         };
 
@@ -1036,8 +1034,25 @@ var seqJS = seqJS || {};
         /** Get the number of items
          * @returns {int} the number of items held by the SpanOperator
          */
-        this.length = function(){
+        this.itemsLength = function(){
             return items.length;
+        };
+
+        /** Get the length of the sequence referred to by th contained spans
+         * @returns {int}
+         */
+        this.length = function(){
+            return items.reduce(function(prev, current) {
+                return prev + current.length();
+            }, 0);
+        };
+
+        /** Returns a new SpanOperator with an offset to every contained span
+         * @param {int} offset the offset to add
+         * @returns {seqJS.SpanOperator} the new SpanOperator
+         */
+        this.offset = function(o){
+            return new seqJS.SpanOperator(items.map(function(x){return x.offset(o);}), operator);
         };
 
         /** Test if any of my sub-spans overlap
@@ -1092,7 +1107,7 @@ var seqJS = seqJS || {};
                 
                 //If the item is a spanOperator with only one item, there's no
                 //need to add another
-                if(!_items[0].isSpan() && _items[0].length() === 1){
+                if(!_items[0].isSpan() && _items[0].itemsLength() === 1){
                     _operator = (_operator === _items[0].operator()) ? 
                         '' : 'complement';
                     _items[0].operator(_operator);
@@ -1263,16 +1278,32 @@ var seqJS = seqJS || {};
             return m;
         };
 
+        /** Return the length of the sequence that the feature refers to
+         * @returns {int} sequence length
+         */
+        this.length = function(){
+            return _sl.length();
+        };
+
         /** Return a new FeatureLocation which has been cropped to rhs
          * @param {seqJS.FeatureLocation} rhs The FeatureLocation to crop to
          * @returns {seqJS.FeatureLocation} the new feature location
          */
         this.crop = function(rhs) {
             //for each span in rhs
-            var _items = rhs.getSpans().map(function(span){
-                //return a cropped SpanOperator
-                return _sl.crop(span.left(), span.right(), span.isComplement());
-            }).filter(function(x) {return x!==null;});
+            var len = 0,
+                _items = rhs.getSpans().map(function(span){
+                    //return a cropped SpanOperator
+                    return _sl.crop(span.left(), 
+                                    span.right(), 
+                                    span.isComplement());
+                })
+                .filter(function(x) {return x!==null;})
+                .map(function(x) {
+                    var r = x.offset(len);
+                    len = len + x.length();
+                    return r;
+                });
             //if nothing overlaps
             if(_items.length === 0){
                 return null;

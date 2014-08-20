@@ -274,145 +274,6 @@ By definition location1 < location 2.
         <dl>
             
 <dt>
-    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Return a new span with offset added to it
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the offset to add</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line797">line 797</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    the new span
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="seqJS.Span.html">seqJS.Span</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>|undefined}</span></h4>
     
     
@@ -532,7 +393,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line818">line 818</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line816">line 816</a>
     </li></ul></dd>
     
     
@@ -626,7 +487,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line842">line 842</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line840">line 840</a>
     </li></ul></dd>
     
     
@@ -766,7 +627,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line784">line 784</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line791">line 791</a>
     </li></ul></dd>
     
     
@@ -948,7 +809,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line849">line 849</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line847">line 847</a>
     </li></ul></dd>
     
     
@@ -1076,6 +937,236 @@ molecule
 	<dd>
 		
 <span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="length"><span class="type-signature"></span>length<span class="signature">()</span><span class="type-signature"> &rarr; {int}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Get the size or length of the span
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line782">line 782</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the length
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">int</span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Return a new span with offset added to it
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the offset to add</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line804">line 804</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the new span
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="seqJS.Span.html">seqJS.Span</a></span>
 
 
 	</dd>
@@ -1458,145 +1549,6 @@ molecule
         
             
 <dt>
-    <h4 class="name" id="subtract"><span class="type-signature"></span>subtract<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Return a new span with offset subtracted from it
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-	
-	<tbody>
-	
-	
-        <tr>
-            
-                <td class="name"><code>offset</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">the offset to subtract</td>
-        </tr>
-	
-	
-	</tbody>
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line806">line 806</a>
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    the new span
-</div>
-
-
-
-<dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="seqJS.Span.html">seqJS.Span</a></span>
-
-
-	</dd>
-</dl>
-
-        
-    
-    
-</dd>
-
-        
-            
-<dt>
     <h4 class="name" id="toGenbankString"><span class="type-signature"></span>toGenbankString<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
     
     
@@ -1862,7 +1814,7 @@ molecule
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Aug 20 2014 10:13:11 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Aug 20 2014 11:20:51 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
