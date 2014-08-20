@@ -411,7 +411,6 @@ var seqJS = seqJS || {};
         };
 
         /** Extract the sequence that the feature refers to
-         * TODO: find out which features should be kept
          * @param {seqJS.Feature} feat The feature whose underlying sequence we want to extract
          * @param {boolean} [extract_features=false] Whether or not to include
          * cropped features in the output {@link seqJS.Seq}. If 'feat' is a
@@ -1085,13 +1084,21 @@ var seqJS = seqJS || {};
                 if(_operator !== 'complement'){
                     _operator = '';
                 }
-                /*
-                //If the item is a spanOperator
-                if(!_items[0].isSpan() &&){
-//TODO: tidy up if not complement(join(...))
-                    //we can tidy up
+                //apply complement
+                if(complement){
+                    _operator = (_operator==='') ? 'complement' : '';
+                    _items[0] = _items[0].invertDatum(right-left);
                 }
-                */
+                
+                //If the item is a spanOperator with only one item, there's no
+                //need to add another
+                if(!_items[0].isSpan() && _items[0].length() === 1){
+                    _operator = (_operator === _items[0].operator()) ? 
+                        '' : 'complement';
+                    _items[0].operator(_operator);
+                    return _items[0];
+                }
+                return new seqJS.SpanOperator(_items, _operator);
             }
 
             //handle complement
