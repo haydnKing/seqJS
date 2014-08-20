@@ -723,7 +723,7 @@ module('seqJS.FeatureLocation.crop');
      * Multiple output
      *   join
      */
- /*   
+    
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('join', length=2, ["+
@@ -754,12 +754,12 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('complement', length=1, [Span(Location(0):Location(10))]),"+
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
-*/
+
     /*
      * Multiple output
      *   order
      */
- /*   
+    
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('order', length=2, ["+
@@ -791,12 +791,12 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
 
-*/
+
     /*
      * Multiple output
      *   mixed
      */
-/*    
+    
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
                               "FeatureLocation(SpanOperator('order', length=2, ["+
@@ -809,7 +809,7 @@ module('seqJS.FeatureLocation.crop');
                                   "SpanOperator('', length=1, [Span(Location(0):Location(10))]),"+
                                   "SpanOperator('', length=1, [Span(Location(10):Location(15))])"+
                              "]))");
-*/
+
 module('seqJS#Feature');
 
     test('type and location', function(){
