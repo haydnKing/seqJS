@@ -61,6 +61,15 @@ module('seqJS#seq');
         equal(s.reverseComplement().seq(), 'TGACGAT', 'odd length R.C.');
     });
 
+    test('reverse complement with features', function() {
+        var s = new seqJS.Seq("ATCGTC", 'DNA', [new seqJS.Feature('gene', '1..3')]);
+        equal(s.reverseComplement().seq(), 'GACGAT', 'even length R.C.');
+        equal(s.features()[0].toString(-1), 
+              'Feature(\'gene\', FeatureLocation('+
+                  'SpanOperator(\'complement\', [Span(Location(3):Location(6))])'+
+              '))');
+    });
+
     test('test get features within range', function() {
         var s = new seqJS.Seq(
             'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',

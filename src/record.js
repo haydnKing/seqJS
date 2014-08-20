@@ -374,6 +374,7 @@ var seqJS = seqJS || {};
             }
             return s;
         };
+
         /** Perform a reverse complement on the seq
          * @returns {seqJS.Seq} this
          */
@@ -388,8 +389,7 @@ var seqJS = seqJS || {};
                        .map(function(c){return replace[c];})
                        .join('');
 
-            //TODO: Reverse complement features
-            
+            _features = _features.map(function(f){return f.invertDatum(_seq.length);}); 
 
             return this;
             
@@ -1482,9 +1482,10 @@ var seqJS = seqJS || {};
         /** Get a string representation for debugging
          * @returns {string} the string
          */
-        this.toString = function() {
-            return '[seqJS.Feature \"'+this.type()+'\",'+
-                this.location().toString()+']';
+        this.toString = function(offset) {
+            offset = offset || 0;
+            return 'Feature(\''+this.type()+'\', '+
+                this.location().toString(offset)+')';
         };
 
         init();
