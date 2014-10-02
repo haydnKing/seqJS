@@ -63,8 +63,11 @@ module('seqJS#seq');
 
     test('reverse complement with features', function() {
         var s = new seqJS.Seq("ATCGTC", 'DNA', [new seqJS.Feature('gene', '1..3')]);
-        equal(s.reverseComplement().seq(), 'GACGAT', 'even length R.C.');
-        equal(s.features()[0].toString(-1), 
+        var o_str = s.features()[0].toString(-1);
+        var n = s.reverseComplement();
+        equal(n.seq(), 'GACGAT', 'even length R.C.');
+        equal(s.features()[0].toString(-1), o_str, "Original seqJS.Seq changed");
+        equal(n.features()[0].toString(-1), 
               'Feature(\'gene\', FeatureLocation('+
                   'SpanOperator(\'complement\', [Span(Location(3):Location(6))])'+
               '))');
@@ -535,100 +538,56 @@ module('seqJS.SpanOperator.crop');
     test_spanoperator_crop(['merge', [ ['', [[[10],[20]]]], ['', [[[40], [50]]]]]], 10, 20, false,
                            "SpanOperator('', length=1, [Span(Location(0):Location(10))])");
 
-module('seqJS#FeatureLocation');
-
-    test('parse A..B', function(){
-        var l = new seqJS.FeatureLocation('100..200');
-
-        featureloc_eq(l, '100..200');
-
-    });
-
-    test('parse <A..B', function(){
-        var l = new seqJS.FeatureLocation('<100..200');
-
-        featureloc_eq(l, '<100..200');
-    });
-
-    test('parse A.B..C', function(){
-        var l = new seqJS.FeatureLocation('100.102..200');
-
-        featureloc_eq(l, '100.102..200');
-    });
-
-    test('parse complement(A..B)', function(){
-        var l = new seqJS.FeatureLocation('complement(100..200)');
-
-        featureloc_eq(l, 'complement(100..200)');
-    });
-
-    test('parse join(A..B,C..D)', function(){
-        var l = new seqJS.FeatureLocation('join(100..200,300..400)');
-
-        featureloc_eq(l, 'join(100..200,300..400)');
-    });
-
-    test('parse order(A..B,C..D)', function(){
-        var l = new seqJS.FeatureLocation('order(100..200,300..400)');
-
-        featureloc_eq(l, 'order(100..200,300..400)');
-    });
-
-    test('parse complement(join(A..B,C..D))', function(){
-        var l = new seqJS.FeatureLocation(
-            'complement(join(100..200,300..400))');
-
-        featureloc_eq(l, 'complement(join(100..200,300..400))');
-    });
-
-    test('parse join(complement(C..D),complement(A..B))', function(){
-        var l = new seqJS.FeatureLocation(
-            'join(complement(300..400),complement(100..200))');
-
-        featureloc_eq(l, 
-            'join(complement(300..400),complement(100..200))');
-    });
-
-    test('parse join(A..B,complement(join(E..F,C..D)))', function(){
-        var l = new seqJS.FeatureLocation(
-            'join(100..200,complement(join(500..600,300..400)))');
-
-        featureloc_eq(l, 
-            'join(100..200,complement(join(500..600,300..400)))');
-    });
-
-    test('fail complement(B..A)', function(){
-        expect(1);
-
-        throws(function(){
-            new seqJS.FeatureLocation('complement(200..100)');
+module('seqJS.FeatureLocation');
+    
+    /*
+     * test that correct locations parse
+     */
+    var test_featureloc = function(name, string){
+        test(name, function(){
+            var l = new seqJS.FeatureLocation(string);
+            featureloc_eq(l,string);
         });
-    });
+    };
+    
+    test_featureloc('parse A..B', '100..200');
+    test_featureloc('parse <A..B', '<100..200');
+    test_featureloc('parse A.B..C', '100.102..200');
+    test_featureloc('parse complement(A..B)', 'complement(100..200)');
+    test_featureloc('parse join(A..B,C..D)', 'join(100..200,300..400)');
+    test_featureloc('parse order(A..B,C..D)', 'order(100..200,300..400)');
+    test_featureloc('parse complement(join(A..B,C..D))', 'complement(join(100..200,300..400))');
+    test_featureloc('parse join(complement(C..D),complement(A..B))','join(complement(300..400),complement(100..200))');
+    test_featureloc('parse join(A..B,complement(join(E..F,C..D)))', 'join(100..200,complement(join(500..600,300..400)))');
 
-    test('fail join(A..B,order(C..D,E..F))', function(){
-        expect(1);
+    /*
+     * Test that malformed locations fail to parse
+     */
+    var test_featureloc_fail = function(name, string){
+        test(name, function(){
+            expect(1);
 
-        throws(function(){
-            new seqJS.FeatureLocation(
-                'join(100..200,order(300..400,500..600))');
+            throws(function(){
+                new seqJS.FeatureLocation(string);
+            });
         });
-    });
+    };
 
-    test('start and end', function() {
+    test_featureloc_fail('fail complement(B..A)', 'complement(200..100)');
+    test_featureloc_fail('fail join(A..B,order(C..D,E..F))', 'join(100..200,order(300..400,500..600))');
 
-        var f = new seqJS.FeatureLocation('join(10..20,5..6)');
-        equal(f.start(), 4);
-        equal(f.end(), 20);
+    var test_featureloc_start_end = function(name, string, start, end){
+        test(name, function(){
+            expect(2);
+            var f = new seqJS.FeatureLocation(string);
+            equal(f.start(), start, "Start failed");
+            equal(f.end(), end, "End failed");
+        });
+    };
 
-        f = new seqJS.FeatureLocation('join(10..20,complement(5..6))');
-        equal(f.start(), 4);
-        equal(f.end(), 20);
-
-        f = new seqJS.FeatureLocation('order(10..20,5..6)');
-        equal(f.start(), 4);
-        equal(f.end(), 20);
-
-    });
+    test_featureloc_start_end("Start and end join(C..D,A..B)", 'join(10..20,5..6)', 4, 20);
+    test_featureloc_start_end("Start and end join(C..D,c(A..B))", 'join(10..20,complement(5..6))', 4, 20);
+    test_featureloc_start_end("Start and end order(C..D,A..B)", 'order(10..20,5..6)', 4, 20);
 
 module('seqJS.FeatureLocation.crop');
     var parse_featurelocation_array = function(a){
