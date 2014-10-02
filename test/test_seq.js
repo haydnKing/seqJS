@@ -108,7 +108,7 @@ module('seqJS.Seq.extract', {
 var feats2string = function(feats){
     return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
 };
-/*
+
     test('extract 10..20 no features', function() {
         var f = new seqJS.Feature('gene', '10..20');
         var s = this.s.extract(f);
@@ -170,7 +170,7 @@ var feats2string = function(feats){
              'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)',
              'incorrect features returned');
     });
-*/
+
 
 }());
 
