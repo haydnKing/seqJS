@@ -370,13 +370,13 @@ var seqJS = seqJS || {};
                                   this.strandType(),
                                   this.residueType());
             if(complement){
-                s.reverseComplement();
+                s = s.reverseComplement();
             }
             return s;
         };
 
-        /** Perform a reverse complement on the seq
-         * @returns {seqJS.Seq} this
+        /** Return a new Seq which is the reverse complement of this sequence
+         * @returns {seqJS.Seq} the new sequence
          */
         this.reverseComplement = function(){
             if(this.alphabet() !== 'DNA'){
@@ -384,16 +384,22 @@ var seqJS = seqJS || {};
             }
 
             var replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
-            _seq = _seq.split('')
+            var nseq = _seq.split('')
                        .reverse()
                        .map(function(c){return replace[c];})
                        .join('');
 
-            _features = _features.map(function(f){return f.invertDatum(_seq.length);}); 
+            var nfeatures = _features.map(function(f){return f.invertDatum(_seq.length);}); 
 
-            return this;
-            
+            return new seqJS.Seq(nseq, 
+                                 this.alphabet(),
+                                 nfeatures,
+                                 this.topology(),
+                                 this.lengthUnit(),
+                                 this.strandType(),
+                                 this.residueType());
         };
+
         /** Append a sequence to the end of the sequence
          * @param {seqJS.Seq} rhs A linear sequence
          * @returns {seqJS.Seq} this
@@ -1160,13 +1166,25 @@ var seqJS = seqJS || {};
         };
 
         /** Return a new spanoperator with an inverted datum
+         * @param {int} l The length of the molecule
+         * @param {bool} [complement=True] Whether or not to complement
          * @returns {seqJS.SpanOperator} the new span operator
          */
-        this.invertDatum = function(l){
+        this.invertDatum = function(l, c){
+            c = c || true;
             if(isNaN(l)){
                 throw('seqJS.SpanOperator.invertDatum called with NaN');
             }
-            var _items = items.map(function(x){return x.invertDatum(l);});
+            var _items = items.map(function(x){return x.invertDatum(l,false);});
+            if(c){
+                if(['', 'complement'].indexOf(operator) >= 0){
+                    return new seqJS.SpanOperator(_items, 
+                                    operator==='' ? 'complement' : '');
+                }
+                return new seqJS.SpanOperator([
+                            new seqJS.SpanOperator(_items, operator)],
+                            'complement');
+            }
             return new seqJS.SpanOperator(_items, operator);
         };
     };

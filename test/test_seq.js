@@ -22,7 +22,7 @@
       throws(block, [expected], [message])
   */
 
-module('seqJS#seq');
+module('seqJS.seq');
 
     test('setting and get data', function(){
         expect(3);
@@ -56,7 +56,8 @@ module('seqJS#seq');
         var s = new seqJS.Seq("ATCGTC", 'DNA', [new seqJS.Feature('gene', '1..3')]);
         var o_str = s.features()[0].toString(-1);
         var n = s.reverseComplement();
-        equal(n.seq(), 'GACGAT', 'even length R.C.');
+
+        equal(n.seq(), 'GACGAT', 'ReverseComplement failed');
         equal(s.features()[0].toString(-1), o_str, "Original seqJS.Seq changed");
         equal(n.features()[0].toString(-1), 
               'F(\'gene\', FL(\'join\', SO(\'complement\', [S(L(3):L(6))])))', "ReverseComplement Failed");

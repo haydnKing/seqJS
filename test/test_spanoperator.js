@@ -118,4 +118,20 @@ test_spanoperator_crop(['order', [[[20],[30]], [[40], [50]]]], 30, 40, true,
 test_spanoperator_crop(['merge', [ ['', [[[10],[20]]]], ['', [[[40], [50]]]]]], 10, 20, false,
                        "SO('', [S(L(0):L(10))])");
 
+
+var test_spanoperator_invertdatum = function(loc_str, len, expected_str){
+    test('seqJS.SpanOperator(\'' + loc_str + '\').invertDatum('+len+')', function(){
+        var f = new seqJS.SpanOperator(loc_str);
+        var o = f.toString(-1);
+
+        equal(f.invertDatum(len).toString(-1), expected_str, "InvertDatum failed");
+        equal(f.toString(-1), o, "InvertDatum changed original");
+    });
+};
+
+test_spanoperator_invertdatum('1..3', 6, 
+                         'SO(\'complement\', [S(L(3):L(6))])');
+test_spanoperator_invertdatum('join(1..3,4..6)', 6, 
+                         'SO(\'complement\', [SO(\'merge\', [S(L(3):L(6)), S(L(0):L(3))])])');
+
 }());

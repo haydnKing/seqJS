@@ -30,14 +30,27 @@ module('seqJS.Feature');
     var test_feature_init = function(type_str, loc_str, expected_str){
         test('seqJS.Feature(\'' + type_str + '\', \''+ loc_str + '\')', 
              function(){
-                 var f = new seqJS.Feature(type_str, loc_str, expected_str);
+                 var f = new seqJS.Feature(type_str, loc_str);
                  equal(f.toString(-1), expected_str);
              });
     };
 
     test_feature_init('gene', '100..200', 'F(\'gene\', FL(\'join\', SO(\'\', [S(L(99):L(200))])))');
+    test_feature_init('gene', 'complement(100..200)', 'F(\'gene\', FL(\'join\', SO(\'complement\', [S(L(99):L(200))])))');
 
-    
+    var test_feature_invertdatum = function(type_str, loc_str, len, expected_str){
+        test('seqJS.Feature(\''+type_str+'\', \'' + loc_str + '\').invertDatum('+len+')', function(){
+            var f = new seqJS.Feature(type_str, loc_str);
+            var o = f.toString(-1);
+
+            equal(f.invertDatum(len).toString(-1), expected_str, "InvertDatum failed");
+            equal(f.toString(-1), o, "InvertDatum changed original");
+        });
+    };
+
+    test_feature_invertdatum('gene', '1..3', 6, 
+                             'F(\'gene\', FL(\'join\', SO(\'complement\', [S(L(3):L(6))])))');
+
     test('feature - overlaps', function() {
         var a = new seqJS.Feature('gene', '100..200'),
             b = new seqJS.Feature('gene', '150..250'),

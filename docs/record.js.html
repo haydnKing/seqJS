@@ -397,13 +397,13 @@ var seqJS = seqJS || {};
                                   this.strandType(),
                                   this.residueType());
             if(complement){
-                s.reverseComplement();
+                s = s.reverseComplement();
             }
             return s;
         };
 
-        /** Perform a reverse complement on the seq
-         * @returns {seqJS.Seq} this
+        /** Return a new Seq which is the reverse complement of this sequence
+         * @returns {seqJS.Seq} the new sequence
          */
         this.reverseComplement = function(){
             if(this.alphabet() !== 'DNA'){
@@ -411,16 +411,22 @@ var seqJS = seqJS || {};
             }
 
             var replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
-            _seq = _seq.split('')
+            var nseq = _seq.split('')
                        .reverse()
                        .map(function(c){return replace[c];})
                        .join('');
 
-            _features = _features.map(function(f){return f.invertDatum(_seq.length);}); 
+            var nfeatures = _features.map(function(f){return f.invertDatum(_seq.length);}); 
 
-            return this;
-            
+            return new seqJS.Seq(nseq, 
+                                 this.alphabet(),
+                                 nfeatures,
+                                 this.topology(),
+                                 this.lengthUnit(),
+                                 this.strandType(),
+                                 this.residueType());
         };
+
         /** Append a sequence to the end of the sequence
          * @param {seqJS.Seq} rhs A linear sequence
          * @returns {seqJS.Seq} this
@@ -880,7 +886,7 @@ var seqJS = seqJS || {};
         this.isSpan = function() {return true;};
     };
 
-    var operator_fmt = /^(complement|join|order)\((.+)\)$/;
+    var operator_fmt = /^(complement|join|order|merge)\((.+)\)$/;
     /*
      * tokenize:
      *  split string arguments on commas, paying attention to the depth of
@@ -908,6 +914,19 @@ var seqJS = seqJS || {};
         return ret;
     };
 
+    /*
+     * parse a token.
+     * if token is of form op(TOKENS) return a SpanOperator
+     * otherwise return a Span
+     */
+    var parse_token = function(token){
+        if(operator_fmt.exec(token)){
+            return new seqJS.SpanOperator(token);
+        }
+        return new seqJS.Span(token);
+    };
+
+
     /** An operator stores two things
      * 1) a string defining an operation 
      * 2) a list of {@link seqJS.SpanOperator} objects or a single {@link @seqJS.Span} which are acted on by the
@@ -931,27 +950,22 @@ var seqJS = seqJS || {};
             var m = operator_fmt.exec(location);
             if(m){
                 operator = m[1];
-                switch(operator){
-                    case 'complement':
-                        items.push(new seqJS.SpanOperator(m[2].trim()));
-                        break;
-                    case 'join':
-                    case 'order':
-                    case 'merge':
-                        operator = 'merge';
-                        var s_items = tokenize(m[2]);
-                        for(var i = 0; i &lt; s_items.length; i++){
-                            items.push(new seqJS.SpanOperator(s_items[i]));
-                        }
-                }
+                location = m[2];
             }
-            else {
+            else{
                 operator = '';
-                //if location string is empty, there are no spans yet
-                if(location){
-                    items.push(new seqJS.SpanOperator([new seqJS.Span(location)], ''));
-                }
             }
+            //if single token operator
+            if(['','complement'].indexOf(operator) >= 0){
+                items.push(parse_token(location));
+            }
+            else{
+                operator = 'merge';
+                tokenize(location).forEach(function(t){
+                    items.push(parse_token(t));
+                });
+            }
+
         }
         //else, we're given an Array and an operator
         else{
@@ -1179,13 +1193,25 @@ var seqJS = seqJS || {};
         };
 
         /** Return a new spanoperator with an inverted datum
+         * @param {int} l The length of the molecule
+         * @param {bool} [complement=True] Whether or not to complement
          * @returns {seqJS.SpanOperator} the new span operator
          */
-        this.invertDatum = function(l){
+        this.invertDatum = function(l, c){
+            c = c || true;
             if(isNaN(l)){
                 throw('seqJS.SpanOperator.invertDatum called with NaN');
             }
-            var _items = items.map(function(x){return x.invertDatum(l);});
+            var _items = items.map(function(x){return x.invertDatum(l,false);});
+            if(c){
+                if(['', 'complement'].indexOf(operator) >= 0){
+                    return new seqJS.SpanOperator(_items, 
+                                    operator==='' ? 'complement' : '');
+                }
+                return new seqJS.SpanOperator([
+                            new seqJS.SpanOperator(_items, operator)],
+                            'complement');
+            }
             return new seqJS.SpanOperator(_items, operator);
         };
     };
@@ -1252,9 +1278,9 @@ var seqJS = seqJS || {};
             var n_indent = indent &lt; 0 ? indent : indent + 1;
             var tabs = new Array(Math.abs(indent + 1)).join('\t');
             var ret = tabs + 
-                (indent &lt; 0 ? 'FL(\n' : 'FeatureLocation(\n') +
+                (indent &lt; 0 ? 'FL(\'' : 'FeatureLocation(\'') +
+                    merge_op + '\', \n' +
                     _sl.toString(n_indent) + '\n' + tabs + ')';
-            ret = ret.replace(/merge/g, merge_op);
             if(indent &lt; 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
             }
@@ -1576,7 +1602,7 @@ var seqJS = seqJS || {};
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 14:59:43 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 17:35:23 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
