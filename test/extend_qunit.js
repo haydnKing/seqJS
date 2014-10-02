@@ -23,17 +23,6 @@ var location_eq = function(actual, location1, operator, location2, msg) {
     }
 };
 
-var span_eq = function(actual, string, complement){
-
-    equal(actual.toString(), string, "String incorrect");
-
-    equal(actual.isComplement(), complement, "Complement flag wrong");
-};
-
-var featureloc_eq = function(actual, string){
-    equal(actual.toGenbankString(), string, "toGenbankString() is wrong");
-};
-
 var feature_eq = function(actual, type, location_string, qualifiers, feat_name){
 
     var m = function(msg){

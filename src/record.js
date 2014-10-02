@@ -584,13 +584,15 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the Location for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. Use
+         * compressed notation (Location -> L) if indent < 0
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
             var ret = new Array(indent + 1).join('\t');
-            return ret + 'Location(' + ((_operator === '.') ? 
+            return ret + (indent < 0 ? 'L(' : 'Location(') + 
+                            ((_operator === '.') ? 
                             _location + '.' + _location2 :
                             _operator + _location) + ')';
         };
@@ -752,13 +754,17 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the Span for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent < 0
+         * then use compressed notation
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
-            var ret = new Array(indent + 1).join('\t');
-            return ret + 'Span('+ _location1 + ':'+_location2+')'; 
+            var tabs = new Array(Math.abs(indent + 1)).join('\t');
+            indent = indent < 0 ? -1 : 0;
+            return tabs + (indent < 0 ? 'S(' : 'Span(') + 
+                _location1.toString(indent) + ':' + 
+                _location2.toString(indent) +')'; 
         };
 
         /** Returns true if the span is on the reverse strand
@@ -961,16 +967,20 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the SpanOperator for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent < 0
+         * then use compressed notation.
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
+            var n_indent = (indent < 0) ? indent : indent + 1;
+            var tabs = new Array(Math.abs(indent+1)).join('\t');
 
-            var ret = new Array(indent + 1).join('\t') + 'SpanOperator(\'' + 
-                operator + '\', length=' + items.length + ', [\n' + 
-                items.map(function(x){return x.toString(indent+1);}).join(', \n') + 
-                '\n' + new Array(indent+1).join('\t') + '])';
+            var ret = tabs + 
+                (indent < 0 ? 'SO(\'' : 'SpanOperator(\'') + 
+                operator + '\', [\n' + 
+                items.map(function(x){return x.toString(n_indent);}).join(', \n') + 
+                '\n' + tabs + '])';
             if(indent < 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
             }
@@ -1206,14 +1216,17 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the FeatureLocation for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent < 0
+         * then use compressed notation.
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
-            var ret = new Array(indent + 1).join('\t') + 'FeatureLocation(\n' +
-                    _sl.toString(indent + 1) + 
-                    '\n' + new Array(indent + 1).join('\t') + ')';
+            var n_indent = indent < 0 ? indent : indent + 1;
+            var tabs = new Array(Math.abs(indent + 1)).join('\t');
+            var ret = tabs + 
+                (indent < 0 ? 'FL(\n' : 'FeatureLocation(\n') +
+                    _sl.toString(n_indent) + '\n' + tabs + ')';
             ret = ret.replace(/merge/g, merge_op);
             if(indent < 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
@@ -1486,13 +1499,15 @@ var seqJS = seqJS || {};
             return ret;
         };
 
-        /** Get a string representation for debugging
+        /** Get a string representation of the Feature for debugging
+         * @param {int} [indent=0] How much to indent the string. If indent < 0
+         * then use compressed notation.
          * @returns {string} the string
          */
-        this.toString = function(offset) {
-            offset = offset || 0;
-            return 'Feature(\''+this.type()+'\', '+
-                this.location().toString(offset)+')';
+        this.toString = function(indent) {
+            indent = indent || 0;
+            return (indent < 0 ? 'F(\'' : 'Feature(\'') + this.type() + 
+                '\', ' + this.location().toString(indent) + ')';
         };
 
         /** Return a new Feature which is indexed from the other end of the

@@ -1,6 +1,32 @@
 /* global gbrecord_eq:true, seqJS:true */
 /* jshint unused:false */
 
+
+
+var parse_spanoperator_array = function(rhs){
+    //If we have a SpanOperator - ['string', [ list_of_other_things ]]
+    if(typeof rhs[0] === 'string' || rhs[0] instanceof String){
+        return new seqJS.SpanOperator(
+            rhs[1].map(function(x){return parse_spanoperator_array(x);}), 
+            rhs[0]);
+    }
+    //otherwise, we have a span - [[a,b,c], [d,e,f]]
+    return new seqJS.Span(new seqJS.Location(rhs[0][0], rhs[0][1], rhs[0][2]),
+                          new seqJS.Location(rhs[1][0], rhs[1][1], rhs[1][2]));
+};
+
+var parse_featurelocation_array = function(a){
+    var merge_op = (a[0] === 'join' || a[0] === 'order') ? a[0] : undefined;
+    return new seqJS.FeatureLocation(parse_spanoperator_array(a), merge_op);
+};
+
+var to_str = function(a){
+    if(a){
+        return a.toString(-1);
+    }
+    return 'null';
+};
+
 var test_parse = function(data, format){
     return function() {
         var records = seqJS.read(data.input, format);
