@@ -1,5 +1,4 @@
 /*global seqJS:true  */
-/*global location_eq:true  */
 
 (function() {
   /*
@@ -26,138 +25,79 @@
 
 module('seqJS#location');
 
-    test('invalid operator', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location(4, -1);
-        }, "Invalid location operator '-1'");
-    });
-
-    test('invalid location', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location(-1);
-        }, "Invalid location '-1'");
-    });
-
-    test('setting implicit exact', function(){
-        var l = new seqJS.Location(5);
-        location_eq(l, 5, '');
-    });
-
-    test('setting explicit before', function(){
-        var l = new seqJS.Location(6, '<');
-        location_eq(l, 6, '<');
-    });
-
-    test('setting explicit range', function(){
-        var l = new seqJS.Location(6, '.', 8);
-        location_eq(l, 6, '.', 8);
-    });
-
-    test('set invalid range', function(){
-        expect(1);
-        throws(function() {
-            new seqJS.Location(8, '.', 6);
+    var location_from_args = function(args){
+        return new seqJS.Location(args[0], args[1], args[2]);
+    };
+    
+    var test_location_init = function(args, exp_str){
+        test('seqJS.Location('+args.join(', ')+')', function() {
+            expect(1);
+            var l = location_from_args(args);
+            equal(l.toString(-1), exp_str, "Location init failed");
         });
-    });
+    };
 
-    test('invalid operator', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location(4, '!');
-        }, "Invalid location operator '!'");
-    });
+    test_location_init([5], 'L(5)');
+    test_location_init([6, '<'], 'L(<6)');
+    test_location_init([6, '.', 8], 'L(6.8)');
+    test_location_init(['6'], 'L(5)');
+    test_location_init(['<6'], 'L(<5)');
+    test_location_init(['>6'], 'L(>5)');
+    test_location_init(['6.8'], 'L(5.8)');
 
-    test('invalid location', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location(-1);
-        }, "Invalid location '-1'");
-    });
-
-    test('fixed location from string', function(){
-        var l = new seqJS.Location('6');
-        location_eq(l, 5, '');
-    });
-
-    test('before location from string', function(){
-        var l = new seqJS.Location('<6');
-        location_eq(l, 5, '<');
-    });
-    test('after location from string', function(){
-        var l = new seqJS.Location('>6');
-        location_eq(l, 5, '>');
-    });
-    test('range location from string', function(){
-        var l = new seqJS.Location('6.8');
-        location_eq(l, 5, '.', 8);
-    });
-    test('invalid location string format', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location('!6');
-        }, "Invalid location format '!6'");
-    });
-    test('invalid location string format 2', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location('67sds');
-        }, "Invalid location format '67sds'");
-    });
-
-    test('invalid location range string', function(){
-        expect(1);
-        throws(function(){
-            new seqJS.Location('8.6');
+    var test_location_init_fail = function(name, a,b,c){
+        test(name, function(){
+            expect(1);
+            throws(function(){
+                new seqJS.Location(a,b,c);
+            });
         });
-    });
+    };
 
-    test('add', function(){
-        var l;
+    test_location_init_fail('invalid operator', 4, -1);
+    test_location_init_fail('invalid location', -1);
+    test_location_init_fail('set invalid range', 8, '.', 6);
+    test_location_init_fail('invalid operator', 4, '!');
+    test_location_init_fail('invalid location', -1);
+    test_location_init_fail('invalid location string 1', '!6');
+    test_location_init_fail('invalid location string 2', '67sds');
+    test_location_init_fail('invalid location string 3', '8.6');
 
-        l = new seqJS.Location('10');
-        location_eq(l.offset(5), 14, '');
-        location_eq(l, 9, '');
+    var test_location_offset = function(args, offset, expected_str){
+        test('seqJS.Location('+args.join(', ')+').offset('+offset+')', function() {
+            expect(2);
+            var l = location_from_args(args);
+            var orig = l.toString(-1);
 
-        l = new seqJS.Location('<10');
-        location_eq(l.offset(6), 15, '<');
-        location_eq(l, 9, '<');
+            equal(l.offset(offset).toString(-1), expected_str, "Offset failed");
+            equal(l.toString(-1), orig, "Offset changed original");
+        });
+    };
 
-        l = new seqJS.Location('>10');
-        location_eq(l.offset(6), 15, '>');
-        location_eq(l, 9, '>');
 
-        l = new seqJS.Location('5.10');
-        location_eq(l.offset(6), 10, '.', 16);
-        location_eq(l, 4, '.', 10);
+    test_location_offset(['10'], 5, 'L(14)');
+    test_location_offset(['<10'], 5, 'L(<14)');
+    test_location_offset(['>10'], 6, 'L(>15)');
+    test_location_offset(['5.10'], 6, 'L(10.16)');
+    test_location_offset(['50'], -40, 'L(9)');
 
-        l = new seqJS.Location('50');
-        location_eq(l.offset(-40), 9, '');
-        location_eq(l, 49, '');
-    });
+    var test_location_invertdatum = function(args, len, expected_str){
+        test('seqJS.Location('+args.join(', ')+').invertDatum('+len+')', function() {
+            expect(2);
+            var l = location_from_args(args);
+            var orig = l.toString(-1);
 
-    test('invertDatum', function() {
-        var l;
+            equal(l.invertDatum(len).toString(-1), expected_str, "Invert Datum failed");
+            equal(l.toString(-1), orig, "Invert Datum changed original");
+        });
+    };
 
-        l = new seqJS.Location('5');
-        location_eq(l.invertDatum(100), 95, '');
-        location_eq(l, 4, '');
 
-        l = new seqJS.Location('<5');
-        location_eq(l.invertDatum(100), 95, '>');
-        location_eq(l, 4, '<');
-
-        l = new seqJS.Location('>5');
-        location_eq(l.invertDatum(100), 95, '<');
-        location_eq(l, 4, '>');
-
-        l = new seqJS.Location('5.10');
-        location_eq(l.invertDatum(100), 90, '.', 96);
-        location_eq(l, 4, '.', 10);
-    });
+    test_location_invertdatum(['5'], 100, 'L(95)');
+    test_location_invertdatum(['<5'], 100, 'L(>95)');
+    test_location_invertdatum(['>5'], 100, 'L(<95)');
+    test_location_invertdatum(['5.10'], 100, 'L(90.96)');
         
-module('seqJS.Location.crop');
     var test_location_crop = function(loc, start, end, str){
         var l = new seqJS.Location(loc[0], loc[1], loc[2]);
 
@@ -172,23 +112,23 @@ module('seqJS.Location.crop');
         });
     };
 
-        test_location_crop([20], 10, 25, 'L(10)');
-        test_location_crop([20], 30, 45, 'L(0)');
-        test_location_crop([20], 10, 15, 'L(5)');
+    test_location_crop([20], 10, 25, 'L(10)');
+    test_location_crop([20], 30, 45, 'L(0)');
+    test_location_crop([20], 10, 15, 'L(5)');
 
-        test_location_crop([20, '<'], 10, 25, 'L(<10)');
-        test_location_crop([20, '<'], 30, 45, 'L(0)');
-        test_location_crop([20, '<'], 10, 15, 'L(<5)');
+    test_location_crop([20, '<'], 10, 25, 'L(<10)');
+    test_location_crop([20, '<'], 30, 45, 'L(0)');
+    test_location_crop([20, '<'], 10, 15, 'L(<5)');
 
-        test_location_crop([20, '>'], 10, 25, 'L(>10)');
-        test_location_crop([20, '>'], 30, 45, 'L(>0)');
-        test_location_crop([20, '>'], 10, 15, 'L(5)');
+    test_location_crop([20, '>'], 10, 25, 'L(>10)');
+    test_location_crop([20, '>'], 30, 45, 'L(>0)');
+    test_location_crop([20, '>'], 10, 15, 'L(5)');
 
-        test_location_crop([20, '.', 30], 10, 35, 'L(10.20)');
-        test_location_crop([20, '.', 30], 25, 45, 'L(0.5)');
-        test_location_crop([20, '.', 30], 10, 25, 'L(10.15)');
-        test_location_crop([20, '.', 30], 35, 45, 'L(0)');
-        test_location_crop([20, '.', 30], 10, 15, 'L(5)');
+    test_location_crop([20, '.', 30], 10, 35, 'L(10.20)');
+    test_location_crop([20, '.', 30], 25, 45, 'L(0.5)');
+    test_location_crop([20, '.', 30], 10, 25, 'L(10.15)');
+    test_location_crop([20, '.', 30], 35, 45, 'L(0)');
+    test_location_crop([20, '.', 30], 10, 15, 'L(5)');
 
 
 }());
