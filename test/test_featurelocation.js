@@ -30,22 +30,25 @@ module('seqJS.FeatureLocation');
     /*
      * test that correct locations parse
      */
-    var test_featureloc_init = function(string){
-        test('seqJS.FeatureLocation(\''+string+'\')', function(){
-            var l = new seqJS.FeatureLocation(string);
-            equal(l.toString(-1), string, 'FeatureLocation init failed');
+    var test_featureloc_init = function(str, e_str){
+        test('seqJS.FeatureLocation(\''+str+'\')', function(){
+            var l = new seqJS.FeatureLocation(str);
+            equal(l.toString(-1), e_str, 'FeatureLocation init failed');
         });
     };
     
-    test_featureloc_init('100..200');
-    test_featureloc_init('<100..200');
-    test_featureloc_init('100.102..200');
-    test_featureloc_init('complement(100..200)');
-    test_featureloc_init('join(100..200,300..400)');
-    test_featureloc_init('order(100..200,300..400)');
-    test_featureloc_init('complement(join(100..200,300..400))');
-    test_featureloc_init('join(complement(300..400),complement(100..200))');
-    test_featureloc_init('join(100..200,complement(join(500..600,300..400)))');
+    test_featureloc_init('100..200', 'FL(\'join\', SO(\'\', [S(L(99):L(200))]))');
+    test_featureloc_init('<100..200', 'FL(\'join\', SO(\'\', [S(L(<99):L(200))]))');
+    test_featureloc_init('100.102..200', 'FL(\'join\', SO(\'\', [S(L(99.102):L(200))]))');
+    test_featureloc_init('complement(100..200)', 'FL(\'join\', SO(\'complement\', [S(L(99):L(200))]))');
+    test_featureloc_init('join(100..200,300..400)', 'FL(\'join\', SO(\'merge\', [S(L(99):L(200)), S(L(299):L(400))]))');
+    test_featureloc_init('order(100..200,300..400)', 'FL(\'order\', SO(\'merge\', [S(L(99):L(200)), S(L(299):L(400))]))');
+    test_featureloc_init('complement(join(100..200,300..400))', 
+                         'FL(\'join\', SO(\'complement\', [SO(\'merge\', [S(L(99):L(200)), S(L(299):L(400))])]))');
+    test_featureloc_init('join(complement(300..400),complement(100..200))',
+                         'FL(\'join\', SO(\'merge\', [SO(\'complement\', [S(L(299):L(400))]), SO(\'complement\', [S(L(99):L(200))])]))');
+    test_featureloc_init('join(100..200,complement(join(500..600,300..400)))',
+                         'FL(\'join\', SO(\'merge\', [S(L(99):L(200)), SO(\'complement\', [SO(\'merge\', [S(L(499):L(600)), S(L(299):L(400))])])]))');
 
     /*
      * Test that malformed locations fail to parse
@@ -83,7 +86,7 @@ module('seqJS.FeatureLocation.crop');
         var lhs = parse_featurelocation_array(lhsa),
             rhs = parse_featurelocation_array(rhsa);
 
-        test(lhs.toString(-1) + '.crop('+rhs.toString(-1)+')', function(){
+        test(lhs.toGenbankString() + '.crop('+rhs.toGenbankString()+')', function(){
             var original = lhs.toString(-1);
 
             equal(to_str(lhs.crop(rhs)), expected_str, "crop returned incorrectly");
@@ -98,16 +101,16 @@ module('seqJS.FeatureLocation.crop');
 
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['', [ [[10], [40]] ] ],
-                              "FL(SO('', [S(L(10):L(20))]))");
+                              "FL(\'join\', SO('', [S(L(10):L(20))]))");
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['', [ [[10], [40]] ] ],
-                              "FL(SO('complement', [S(L(10):L(20))]))");
+                              "FL(\'join\', SO('complement', [S(L(10):L(20))]))");
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['complement', [ [[10], [40]] ] ],
-                              "FL(SO('complement', [S(L(10):L(20))]))");
+                              "FL(\'join\', SO('complement', [S(L(10):L(20))]))");
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['complement', [ [[10], [40]] ] ],
-                              "FL(SO('', [S(L(10):L(20))]))");
+                              "FL(\'join\', SO('', [S(L(10):L(20))]))");
 
     /*
      * One on One
@@ -115,41 +118,41 @@ module('seqJS.FeatureLocation.crop');
      */
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['', [ [[25], [40]] ] ],
-                              "FL(SO('', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(5))]))");
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['', [ [[10], [25]] ] ],
-                              "FL(SO('', [S(L(10):L(15))]))");
+                              "FL(\'join\', SO('', [S(L(10):L(15))]))");
 
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['complement', [ [[25], [40]] ] ],
-                              "FL(SO('complement', [S(L(10):L(15))]))");
+                              "FL(\'join\', SO('complement', [S(L(10):L(15))]))");
     test_featurelocation_crop(['', [ [[20], [30]] ] ], 
                               ['complement', [ [[10], [25]] ] ],
-                              "FL(SO('complement', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('complement', [S(L(0):L(5))]))");
 
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['complement', [ [[25], [40]] ] ],
-                              "FL(SO('', [S(L(10):L(15))]))");
+                              "FL(\'join\', SO('', [S(L(10):L(15))]))");
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['complement', [ [[10], [25]] ] ],
-                              "FL(SO('', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(5))]))");
 
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['', [ [[25], [40]] ] ],
-                              "FL(SO('complement', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('complement', [S(L(0):L(5))]))");
     test_featurelocation_crop(['complement', [ [[20], [30]] ] ], 
                               ['', [ [[10], [25]] ] ],
-                              "FL(SO('complement', [S(L(10):L(15))]))");
+                              "FL(\'join\', SO('complement', [S(L(10):L(15))]))");
 
     test_featurelocation_crop(['', [ [[20], [40]] ] ], 
                               ['', [ [[25], [35]] ] ],
-                              "FL(SO('', [S(L(0):L(10))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(10))]))");
     test_featurelocation_crop(['complement', [ [[20], [40]] ] ], 
                               ['', [ [[25], [35]] ] ],
-                              "FL(SO('complement', [S(L(0):L(10))]))");
+                              "FL(\'join\', SO('complement', [S(L(0):L(10))]))");
     test_featurelocation_crop(['complement', [ [[20], [40]] ] ], 
                               ['complement', [ [[25], [35]] ] ],
-                              "FL(SO('', [S(L(0):L(10))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(10))]))");
 
     /*
      * Dropout
@@ -165,13 +168,13 @@ module('seqJS.FeatureLocation.crop');
                               "null");
     test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
                               ['', [ [[25], [40]] ] ],
-                              "FL(SO('', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(5))]))");
     test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
                               ['join', [ [[10], [20]], [[35], [40]] ] ],
                               "null");
     test_featurelocation_crop(['join', [ [[20], [30]], [[40], [45]] ] ], 
                               ['join', [ [[10], [20]], [[25], [40]] ] ],
-                              "FL(SO('', [S(L(0):L(5))]))");
+                              "FL(\'join\', SO('', [S(L(0):L(5))]))");
 
     /*
      * Multiple output
@@ -180,31 +183,31 @@ module('seqJS.FeatureLocation.crop');
     
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['complement', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('complement', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['complement', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('complement', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['join', [['complement', [[[20], [30]]]], ['', [[[40], [45]]]] ]] , 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('complement', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['complement', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('complement', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
@@ -216,31 +219,31 @@ module('seqJS.FeatureLocation.crop');
     
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['complement', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('complement', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['complement', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('complement', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['order', [['complement', [[[20], [30]]]], ['', [[[40], [45]]]] ]] , 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('complement', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['complement', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('complement', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
@@ -253,13 +256,13 @@ module('seqJS.FeatureLocation.crop');
     
     test_featurelocation_crop(['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('order', ["+
+                              "FL(\'order\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");
     test_featurelocation_crop(['order', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ], 
                               ['join', [['', [[[20], [30]]]], ['', [[[40], [45]]]] ] ],
-                              "FL(SO('join', ["+
+                              "FL(\'join\', SO('merge', ["+
                                   "SO('', [S(L(0):L(10))]), "+
                                   "SO('', [S(L(10):L(15))])"+
                              "]))");

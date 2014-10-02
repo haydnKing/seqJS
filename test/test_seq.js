@@ -59,7 +59,7 @@ module('seqJS#seq');
         equal(n.seq(), 'GACGAT', 'even length R.C.');
         equal(s.features()[0].toString(-1), o_str, "Original seqJS.Seq changed");
         equal(n.features()[0].toString(-1), 
-              'F(\'gene\', FL(SO(\'complement\', [S(L(3):L(6))])))', "ReverseComplement Failed");
+              'F(\'gene\', FL(\'join\', SO(\'complement\', [S(L(3):L(6))])))', "ReverseComplement Failed");
     });
 
     test('test get features within range', function() {

@@ -881,6 +881,18 @@ var seqJS = seqJS || {};
         return ret;
     };
 
+    /*
+     * parse a token.
+     * if token is of form op(TOKENS) return a SpanOperator
+     * otherwise return a Span
+     */
+    var parse_token = function(token){
+        if(operator_fmt.exec(token)){
+            return new seqJS.SpanOperator(token);
+        }
+        return new seqJS.Span(token);
+    };
+
 
     /** An operator stores two things
      * 1) a string defining an operation 
@@ -905,30 +917,22 @@ var seqJS = seqJS || {};
             var m = operator_fmt.exec(location);
             if(m){
                 operator = m[1];
-                location = m[2].trim();
+                location = m[2];
             }
-            else {
+            else{
                 operator = '';
             }
-            var tokens = tokenize(location);
-            switch(operator){
-                case 'complement':
-                case '':
-                    if(tokens.length === 1){
-                        items.push(new seqJS.Span(location));
-                    }
-                    else {
-                        items.push(new seqJS.SpanOperator(location));
-                    }
-                    break;
-                case 'join':
-                case 'order':
-                case 'merge':
-                    operator = 'merge';
-                    tokens.forEach(function(t){
-                        items.push(new seqJS.SpanOperator(t));
-                    });
+            //if single token operator
+            if(['','complement'].indexOf(operator) >= 0){
+                items.push(parse_token(location));
             }
+            else{
+                operator = 'merge';
+                tokenize(location).forEach(function(t){
+                    items.push(parse_token(t));
+                });
+            }
+
         }
         //else, we're given an Array and an operator
         else{
@@ -1229,9 +1233,9 @@ var seqJS = seqJS || {};
             var n_indent = indent < 0 ? indent : indent + 1;
             var tabs = new Array(Math.abs(indent + 1)).join('\t');
             var ret = tabs + 
-                (indent < 0 ? 'FL(\n' : 'FeatureLocation(\n') +
+                (indent < 0 ? 'FL(\'' : 'FeatureLocation(\'') +
+                    merge_op + '\', \n' +
                     _sl.toString(n_indent) + '\n' + tabs + ')';
-            ret = ret.replace(/merge/g, merge_op);
             if(indent < 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
             }

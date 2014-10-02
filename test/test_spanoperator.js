@@ -39,9 +39,9 @@ var test_spanoperator_init = function(args, expected_str){
     test_spanoperator_init(['>10..<100'], 'SO(\'\', [S(L(>9):L(<100))])');
     test_spanoperator_init(['10.15..100'], 'SO(\'\', [S(L(9.15):L(100))])');
     test_spanoperator_init(['complement(10..100)'], 'SO(\'complement\', [S(L(9):L(100))])');
-    test_spanoperator_init(['join(10..100,150..200)'], 'SO(\'merge\', [SO(\'\', [S(L(9):L(100))]), SO(\'\', [S(L(149):L(200))])])');
-    test_spanoperator_init(['order(10..100,150..200)'], 'SO(\'merge\', [SO(\'\', [S(L(9):L(100))]), SO(\'\', [S(L(149):L(200))])])');
-    test_spanoperator_init(['merge(10..100,150..200)'], 'SO(\'merge\', [SO(\'\', [S(L(9):L(100))]), SO(\'\', [S(L(149):L(200))])])');
+    test_spanoperator_init(['join(10..100,150..200)'], 'SO(\'merge\', [S(L(9):L(100)), S(L(149):L(200))])');
+    test_spanoperator_init(['order(10..100,150..200)'], 'SO(\'merge\', [S(L(9):L(100)), S(L(149):L(200))])');
+    test_spanoperator_init(['merge(10..100,150..200)'], 'SO(\'merge\', [S(L(9):L(100)), S(L(149):L(200))])');
 
 var test_spanoperator_crop = function(spans, crop_start, crop_end, crop_complement, expected_str){
     var so = parse_spanoperator_array(spans);

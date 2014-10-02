@@ -35,7 +35,7 @@ module('seqJS.Feature');
              });
     };
 
-    test_feature_init('gene', '100..200', 'F(\'gene\', FL(SO(\'\', [S(L(100):L(200))])))');
+    test_feature_init('gene', '100..200', 'F(\'gene\', FL(\'join\', SO(\'\', [S(L(99):L(200))])))');
 
     
     test('feature - overlaps', function() {
