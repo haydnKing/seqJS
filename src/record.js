@@ -853,7 +853,7 @@ var seqJS = seqJS || {};
         this.isSpan = function() {return true;};
     };
 
-    var operator_fmt = /^(complement|join|order)\((.+)\)$/;
+    var operator_fmt = /^(complement|join|order|merge)\((.+)\)$/;
     /*
      * tokenize:
      *  split string arguments on commas, paying attention to the depth of
@@ -881,6 +881,7 @@ var seqJS = seqJS || {};
         return ret;
     };
 
+
     /** An operator stores two things
      * 1) a string defining an operation 
      * 2) a list of {@link seqJS.SpanOperator} objects or a single {@link @seqJS.Span} which are acted on by the
@@ -904,26 +905,29 @@ var seqJS = seqJS || {};
             var m = operator_fmt.exec(location);
             if(m){
                 operator = m[1];
-                switch(operator){
-                    case 'complement':
-                        items.push(new seqJS.SpanOperator(m[2].trim()));
-                        break;
-                    case 'join':
-                    case 'order':
-                    case 'merge':
-                        operator = 'merge';
-                        var s_items = tokenize(m[2]);
-                        for(var i = 0; i < s_items.length; i++){
-                            items.push(new seqJS.SpanOperator(s_items[i]));
-                        }
-                }
+                location = m[2].trim();
             }
             else {
                 operator = '';
-                //if location string is empty, there are no spans yet
-                if(location){
-                    items.push(new seqJS.SpanOperator([new seqJS.Span(location)], ''));
-                }
+            }
+            var tokens = tokenize(location);
+            switch(operator){
+                case 'complement':
+                case '':
+                    if(tokens.length === 1){
+                        items.push(new seqJS.Span(location));
+                    }
+                    else {
+                        items.push(new seqJS.SpanOperator(location));
+                    }
+                    break;
+                case 'join':
+                case 'order':
+                case 'merge':
+                    operator = 'merge';
+                    tokens.forEach(function(t){
+                        items.push(new seqJS.SpanOperator(t));
+                    });
             }
         }
         //else, we're given an Array and an operator
