@@ -1317,6 +1317,13 @@ var seqJS = seqJS || {};
                     rhs.getMergeOperator());
             }
         };
+
+        /** Return a new FeatureLocation with an inverted datum
+         * @returns {seqJS.FeatureLocation} the new feature location
+         */
+        this.invertDatum = function(l){
+            return new seqJS.FeatureLocation(_sl.invertDatum(l));
+        };
     };
     
     /**  Store information about a feature
@@ -1488,7 +1495,15 @@ var seqJS = seqJS || {};
                 this.location().toString(offset)+')';
         };
 
-        init();
+        /** Return a new Feature which is indexed from the other end of the
+         * molecule
+         * @returns {seqJS.Feature} the new location
+         */
+        this.invertDatum = function(l){
+            var f = new seqJS.Feature(_type, _location.invertDatum(l));
+            copy_qualifiers(f);
+            return f;
+        };
 
         var copy_qualifiers = function(rhs){
             var i, k;
@@ -1497,6 +1512,8 @@ var seqJS = seqJS || {};
                 rhs.qualifier(k, qualifiers[k]);
             }
         };
+
+        init();
     };
 
 
