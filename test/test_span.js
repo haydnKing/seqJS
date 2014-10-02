@@ -83,7 +83,6 @@ module('seqJS.Span');
     test_span_offset('5..10', 0, 'S(L(4):L(10))');
 
 
-module('seqJS.Span.crop');
     var test_span_crop = function(span_left, span_right, start, end, expected_str){
         var span = new seqJS.Span(new seqJS.Location(span_left[0], span_left[1], span_left[2]),
                                   new seqJS.Location(span_right[0], span_right[1], span_right[2]));
@@ -106,12 +105,12 @@ module('seqJS.Span.crop');
         });
     };
 
-        test_span_crop([20],[30], 10, 40, 'S(L(10):L(20))');
-        test_span_crop([20],[30], 25, 40, 'S(L(0):L(5))');
-        test_span_crop([20],[30], 10, 25, 'S(L(10):L(15))');
+    test_span_crop([20],[30], 10, 40, 'S(L(10):L(20))');
+    test_span_crop([20],[30], 25, 40, 'S(L(0):L(5))');
+    test_span_crop([20],[30], 10, 25, 'S(L(10):L(15))');
 
-        test_span_crop([20, '<'],[30, '>'], 10, 40, 'S(L(<10):L(>20))');
-        test_span_crop([20, '<'],[30, '>'], 25, 40, 'S(L(0):L(>5))');
-        test_span_crop([20, '<'],[30, '>'], 10, 25, 'S(L(<10):L(15))');
+    test_span_crop([20, '<'],[30, '>'], 10, 40, 'S(L(<10):L(>20))');
+    test_span_crop([20, '<'],[30, '>'], 25, 40, 'S(L(0):L(>5))');
+    test_span_crop([20, '<'],[30, '>'], 10, 25, 'S(L(<10):L(15))');
 
 }());
