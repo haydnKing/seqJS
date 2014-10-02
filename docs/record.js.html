@@ -401,6 +401,7 @@ var seqJS = seqJS || {};
             }
             return s;
         };
+
         /** Perform a reverse complement on the seq
          * @returns {seqJS.Seq} this
          */
@@ -610,13 +611,15 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the Location for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. Use
+         * compressed notation (Location -> L) if indent &lt; 0
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
             var ret = new Array(indent + 1).join('\t');
-            return ret + 'Location(' + ((_operator === '.') ? 
+            return ret + (indent &lt; 0 ? 'L(' : 'Location(') + 
+                            ((_operator === '.') ? 
                             _location + '.' + _location2 :
                             _operator + _location) + ')';
         };
@@ -778,13 +781,17 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the Span for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent &lt; 0
+         * then use compressed notation
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
-            var ret = new Array(indent + 1).join('\t');
-            return ret + 'Span('+ _location1 + ':'+_location2+')'; 
+            var tabs = new Array(Math.abs(indent + 1)).join('\t');
+            indent = indent &lt; 0 ? -1 : 0;
+            return tabs + (indent &lt; 0 ? 'S(' : 'Span(') + 
+                _location1.toString(indent) + ':' + 
+                _location2.toString(indent) +')'; 
         };
 
         /** Returns true if the span is on the reverse strand
@@ -987,16 +994,20 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the SpanOperator for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent &lt; 0
+         * then use compressed notation.
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
+            var n_indent = (indent &lt; 0) ? indent : indent + 1;
+            var tabs = new Array(Math.abs(indent+1)).join('\t');
 
-            var ret = new Array(indent + 1).join('\t') + 'SpanOperator(\'' + 
-                operator + '\', length=' + items.length + ', [\n' + 
-                items.map(function(x){return x.toString(indent+1);}).join(', \n') + 
-                '\n' + new Array(indent+1).join('\t') + '])';
+            var ret = tabs + 
+                (indent &lt; 0 ? 'SO(\'' : 'SpanOperator(\'') + 
+                operator + '\', [\n' + 
+                items.map(function(x){return x.toString(n_indent);}).join(', \n') + 
+                '\n' + tabs + '])';
             if(indent &lt; 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
             }
@@ -1232,14 +1243,17 @@ var seqJS = seqJS || {};
         };
 
         /** Get a 0-string representation of the FeatureLocation for debugging
-         * @param {int} [indent=0] How much to indent the string
+         * @param {int} [indent=0] How much to indent the string. If indent &lt; 0
+         * then use compressed notation.
          * @returns {string}
          */
         this.toString = function(indent) {
             indent = indent || 0;
-            var ret = new Array(indent + 1).join('\t') + 'FeatureLocation(\n' +
-                    _sl.toString(indent + 1) + 
-                    '\n' + new Array(indent + 1).join('\t') + ')';
+            var n_indent = indent &lt; 0 ? indent : indent + 1;
+            var tabs = new Array(Math.abs(indent + 1)).join('\t');
+            var ret = tabs + 
+                (indent &lt; 0 ? 'FL(\n' : 'FeatureLocation(\n') +
+                    _sl.toString(n_indent) + '\n' + tabs + ')';
             ret = ret.replace(/merge/g, merge_op);
             if(indent &lt; 0){
                 return ret.replace(/\n/g, '').replace(/\t/g, '');
@@ -1342,6 +1356,13 @@ var seqJS = seqJS || {};
                     _items, 'merge'),
                     rhs.getMergeOperator());
             }
+        };
+
+        /** Return a new FeatureLocation with an inverted datum
+         * @returns {seqJS.FeatureLocation} the new feature location
+         */
+        this.invertDatum = function(l){
+            return new seqJS.FeatureLocation(_sl.invertDatum(l));
         };
     };
     
@@ -1505,15 +1526,26 @@ var seqJS = seqJS || {};
             return ret;
         };
 
-        /** Get a string representation for debugging
+        /** Get a string representation of the Feature for debugging
+         * @param {int} [indent=0] How much to indent the string. If indent &lt; 0
+         * then use compressed notation.
          * @returns {string} the string
          */
-        this.toString = function() {
-            return '[seqJS.Feature \"'+this.type()+'\",'+
-                this.location().toString()+']';
+        this.toString = function(indent) {
+            indent = indent || 0;
+            return (indent &lt; 0 ? 'F(\'' : 'Feature(\'') + this.type() + 
+                '\', ' + this.location().toString(indent) + ')';
         };
 
-        init();
+        /** Return a new Feature which is indexed from the other end of the
+         * molecule
+         * @returns {seqJS.Feature} the new location
+         */
+        this.invertDatum = function(l){
+            var f = new seqJS.Feature(_type, _location.invertDatum(l));
+            copy_qualifiers(f);
+            return f;
+        };
 
         var copy_qualifiers = function(rhs){
             var i, k;
@@ -1522,6 +1554,8 @@ var seqJS = seqJS || {};
                 rhs.qualifier(k, qualifiers[k]);
             }
         };
+
+        init();
     };
 
 
@@ -1542,7 +1576,7 @@ var seqJS = seqJS || {};
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Aug 20 2014 12:30:48 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 14:59:43 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
