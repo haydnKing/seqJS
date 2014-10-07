@@ -109,68 +109,39 @@ var feats2string = function(feats){
     return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
 };
 
-    test('extract 10..20 no features', function() {
-        var f = new seqJS.Feature('gene', '10..20');
+var test_seq_extract_nof = function(to_extract, expected_sequence){
+    test('extract \''+to_extract+'\' no features', function(){
+        var f = new seqJS.Feature('gene', to_extract);
         var s = this.s.extract(f);
-        equal(s.seq(), "ATATCGATCGA", 'incorrect sequence');
-        equal(s.features().length, 0, 'Features should not be included by default');
+        equal(s.seq(), expected_sequence, 'incorrect sequence');
+        equal(s.features().length, 0, 'features should not be included by default');
     });
-    test('extract complement(10..20) no features', function() {
-        var f = new seqJS.Feature('gene', 'complement(10..20)');
-        var s = this.s.extract(f);
-        equal(s.seq(), "TCGATCGATAT", 'incorrect sequence');
-        equal(s.features().length, 0, 'Features should not be included by default');
-    });
-    test('extract join(10..20,30..40) no features', function() {
-        var f = new seqJS.Feature('gene', 'join(10..20,30..40)');
-        var s = this.s.extract(f);
-        equal(s.seq(), "ATATCGATCGATAGCTAGTCGA", 'incorrect sequence');
-        equal(s.features().length, 0, 'Features should not be included by default');
-    });
-    test('extract join(10..20,complement(30..40)) no features', function() {
-        var f = new seqJS.Feature('gene', 'join(10..20,complement(30..40))');
-        var s = this.s.extract(f);
-        equal(s.seq(), "ATATCGATCGATCGACTAGCTA", 'incorrect sequence');
-        equal(s.features().length, 0, 'Features should not be included by default');
-    });
+};
 
+test_seq_extract_nof('10..20', "ATATCGATCGA");
+test_seq_extract_nof('complement(10..20)', "TCGATCGATAT");
+test_seq_extract_nof('join(10..20,30..40)', "ATATCGATCGATAGCTAGTCGA");
+test_seq_extract_nof('join(10..20,complement(30..40))', "ATATCGATCGATCGACTAGCTA");
 
-    test('extract 10..20  with features', function() {
-        var f = new seqJS.Feature('gene', '10..20');
+/*
+var test_seq_extract_f = function(to_extract, expected_seq, expected_feats){
+    test('extract \''+to_extract+'\' with features', function(){
+        var f = new seqJS.Feature('gene', to_extract);
         var o = this.s.extract(f, true);
-        equal(o.seq(), "ATATCGATCGA", 'Incorrect sequence');
-        equal(o.features().length, 3, 'Incorrect number of features');
-        equal(feats2string(o.features()),
-             'two=complement(1..6)|one=2..10|three=6..11',
-             'incorrect features returned');
+        equal(o.seq(), expected_seq, 'incorrect sequence');
+        equal(feats2string(o.features()), expected_feats, 'incorrect features returned');
     });
-    test('extract complement(10..20)  with features', function() {
-        var f = new seqJS.Feature('gene', 'complement(10..20)');
-        var o = this.s.extract(f, true);
-        equal(o.seq(), "TCGATCGATAT", 'Incorrect sequence');
-        equal(feats2string(o.features()),
-             'three=complement(1..6)|one=complement(2..10)|two=6..11',
-             'incorrect features returned');
-    });
-    test('extract join(10..19,20..29) with features', function() {
-        //Test multi span extraction
-        var f = new seqJS.Feature('gene', 'join(10..19,20..29)');
-        var o = this.s2.extract(f, true);
-        equal(o.seq(), "ATATCGATCGATGAGCTAGG", 'Incorrect sequence');
-        equal(feats2string(o.features()),
-             'one=order(1..10,11..20)',
-             'incorrect features returned');
-    });
-    test('extract join(2..7,20..30,complement(12..17)) with features', function() {       
-        //Test complex feature extraction
-        var f = new seqJS.Feature('gene', 'join(2..7,20..30,complement(12..17))');
-        var o = this.s.extract(f, true);
-        equal(o.seq(), "CTAGTCATGAGCTAGGTATCGAT", 'Incorrect sequence');
-        equal(feats2string(o.features()),
-             'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)',
-             'incorrect features returned');
-    });
-
+};
+test_seq_extract_f('10..20', "ATATCGATCGA", 
+                   'two=complement(1..6)|one=2..10|three=6..11');
+test_seq_extract_f('complement(10..20)', "TCGATCGATAT", 
+                   'three=complement(1..6)|one=complement(2..10)|two=6..11');
+test_seq_extract_f('join(10..19,20..29)', "ATATCGATCGATGAGCTAGG", 
+                   'one=order(1..10,11..20)');
+test_seq_extract_f('join(2..7,20..30,complement(12..17))', 
+                   "CTAGTCATGAGCTAGGTATCGAT", 
+                   'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)');
+*/
 
 }());
 
