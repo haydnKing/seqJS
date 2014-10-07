@@ -85,7 +85,7 @@ module('seqJS.seq');
              'Intersection: Returned features do not match expectations');
 
     });
-  /*  
+    
 module('seqJS.Seq.extract', {
     setup: function(){
         this.s = new seqJS.Seq(
@@ -104,7 +104,7 @@ module('seqJS.Seq.extract', {
             ]);
     }
 });
-*/
+
 var feats2string = function(feats){
     return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
 };
