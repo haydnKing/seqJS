@@ -434,6 +434,8 @@ var seqJS = seqJS || {};
                 i_span, i_feat,
                 spans = feat.location().getSpans();
 
+            ef = ef || false;
+
             //If we want features, choose them and extract them
             if(ef){
                 _s = _features.filter(feat.overlaps, feat);

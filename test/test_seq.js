@@ -86,9 +86,15 @@ module('seqJS.seq');
 
     });
     
-module('seqJS.Seq.extract', {
-    setup: function(){
-        this.s = new seqJS.Seq(
+
+var feats2string = function(feats){
+    return feats.map(function(x){
+        return x.type() + '=' + x.location().toGenbankString();}).join('|');
+};
+
+var test_seq_extract_nof = function(to_extract, expected_sequence){
+    test('extract \''+to_extract+'\' no features', function(){
+        var oseq = new seqJS.Seq(
                 'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
                 'DNA',
                 [
@@ -96,23 +102,9 @@ module('seqJS.Seq.extract', {
                     new seqJS.Feature('two', 'complement(5..15)'),
                     new seqJS.Feature('three', '15..25')
                 ]);
-        this.s2 = new seqJS.Seq(
-            'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
-            'DNA',
-            [
-                new seqJS.Feature('one', '1..46')
-            ]);
-    }
-});
 
-var feats2string = function(feats){
-    return feats.map(function(x){return x.type() + '=' + x.location().toGenbankString();}).join('|');
-};
-
-var test_seq_extract_nof = function(to_extract, expected_sequence){
-    test('extract \''+to_extract+'\' no features', function(){
         var f = new seqJS.Feature('gene', to_extract);
-        var s = this.s.extract(f);
+        var s = oseq.extract(f);
         equal(s.seq(), expected_sequence, 'incorrect sequence');
         equal(s.features().length, 0, 'features should not be included by default');
     });
