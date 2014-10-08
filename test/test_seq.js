@@ -63,7 +63,8 @@ module('seqJS.seq');
               'F(\'gene\', FL(\'join\', SO(\'complement\', [S(-,L(3):L(6))])))', "ReverseComplement Failed");
     });
 
-    test('test get features within range', function() {
+var test_seq_features = function(start, stop, intersect, expected){
+    test('Seq.features('+start+', '+stop+', '+intersect+')', function(){
         var s = new seqJS.Seq(
             'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
             'DNA',
@@ -73,19 +74,13 @@ module('seqJS.seq');
                 new seqJS.Feature('three', 'complement(7..15)')
             ]);
 
-        //test subset
-        var f = s.features(9,17);
-        equal(feats2string(f), 'two=13..17', 
-             'Contained: returned features do not match');
-
-        //test intersection
-        f = s.features(9,17,true);
-        equal(feats2string(f), 
-              'one=join(5..10,20..25)|three=complement(7..15)|two=13..17', 
-             'Intersection: Returned features do not match expectations');
-
+        var f = s.features(start,stop,intersect);
+        equal(feats2string(f), expected, "Features fail");
     });
-    
+};
+
+test_seq_features(9,17,false,'two=13..17');
+test_seq_features(9,17,true,'one=join(5..10,20..25)|three=complement(7..15)|two=13..17');
 
 var feats2string = function(feats){
     return feats.map(function(x){
