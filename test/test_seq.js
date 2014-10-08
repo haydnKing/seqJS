@@ -115,11 +115,20 @@ test_seq_extract_nof('complement(10..20)', "TCGATCGATAT");
 test_seq_extract_nof('join(10..20,30..40)', "ATATCGATCGATAGCTAGTCGA");
 test_seq_extract_nof('join(10..20,complement(30..40))', "ATATCGATCGATCGACTAGCTA");
 
-/*
+
 var test_seq_extract_f = function(to_extract, expected_seq, expected_feats){
     test('extract \''+to_extract+'\' with features', function(){
+        var oseq = new seqJS.Seq(
+                'ACTAGTCGGATATCGATCGATGAGCTAGGTAGCTAGTCGATCGTAG',
+                'DNA',
+                [
+                    new seqJS.Feature('one', '11..19'),
+                    new seqJS.Feature('two', 'complement(5..15)'),
+                    new seqJS.Feature('three', '15..25')
+                ]);
+
         var f = new seqJS.Feature('gene', to_extract);
-        var o = this.s.extract(f, true);
+        var o = oseq.extract(f, true);
         equal(o.seq(), expected_seq, 'incorrect sequence');
         equal(feats2string(o.features()), expected_feats, 'incorrect features returned');
     });
@@ -133,7 +142,7 @@ test_seq_extract_f('join(10..19,20..29)', "ATATCGATCGATGAGCTAGG",
 test_seq_extract_f('join(2..7,20..30,complement(12..17))', 
                    "CTAGTCATGAGCTAGGTATCGAT", 
                    'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)');
-*/
+
 
 }());
 
