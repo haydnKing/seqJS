@@ -163,7 +163,7 @@ as a string in genbank format (e.g. 1..50) or a
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1406">line 1406</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1414">line 1414</a>
     </li></ul></dd>
     
     
@@ -315,7 +315,7 @@ omitted</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1493">line 1493</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1501">line 1501</a>
     </li></ul></dd>
     
     
@@ -365,7 +365,7 @@ omitted</td>
         
             
 <dt>
-    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, right, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.Feature.html">seqJS.Feature</a>}</span></h4>
+    <h4 class="name" id="crop"><span class="type-signature"></span>crop<span class="signature">(left, <span class="optional">right</span>, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.Feature.html">seqJS.Feature</a>}</span></h4>
     
     
 </dt>
@@ -374,7 +374,8 @@ omitted</td>
     
     <div class="description">
         Return a new <a href="seqJS.Feature.html">seqJS.Feature</a> which is a cropped version of
-this one
+this one. If left is a seqJS.Feature then the other arguments are
+ignored
     </div>
     
 
@@ -418,6 +419,9 @@ this one
             <td class="type">
             
                 
+<span class="param-type"><a href="seqJS.Feature.html">seqJS.Feature</a></span>
+|
+
 <span class="param-type"><a href="seqJS.Location.html">seqJS.Location</a></span>
 |
 
@@ -467,6 +471,8 @@ this one
             
             
                 <td class="attributes">
+                
+                    &lt;optional><br>
                 
                     
                 
@@ -551,7 +557,7 @@ this one
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1545">line 1545</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1554">line 1554</a>
     </li></ul></dd>
     
     
@@ -643,7 +649,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1568">line 1568</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1597">line 1597</a>
     </li></ul></dd>
     
     
@@ -798,7 +804,7 @@ is the new location</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1451">line 1451</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1459">line 1459</a>
     </li></ul></dd>
     
     
@@ -838,6 +844,146 @@ new_location is given, otherwise returns the location
 <span class="param-type"><a href="seqJS.FeatureLocation.html">seqJS.FeatureLocation</a></span>
 |
 
+<span class="param-type"><a href="seqJS.Feature.html">seqJS.Feature</a></span>
+
+
+	</dd>
+</dl>
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="offset"><span class="type-signature"></span>offset<span class="signature">(offset)</span><span class="type-signature"> &rarr; {<a href="seqJS.Feature.html">seqJS.Feature</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Return a new seqJS.Feature which has been offset by the given
+amount
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">the amount to offset by</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1576">line 1576</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    the new seqJS.Feature
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
 <span class="param-type"><a href="seqJS.Feature.html">seqJS.Feature</a></span>
 
 
@@ -988,7 +1134,7 @@ the first integer position</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1531">line 1531</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1539">line 1539</a>
     </li></ul></dd>
     
     
@@ -1170,7 +1316,7 @@ the first integer position</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1471">line 1471</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1479">line 1479</a>
     </li></ul></dd>
     
     
@@ -1265,7 +1411,7 @@ value is give, otherwise return this
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1521">line 1521</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1529">line 1529</a>
     </li></ul></dd>
     
     
@@ -1425,7 +1571,7 @@ then use compressed notation.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1558">line 1558</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1587">line 1587</a>
     </li></ul></dd>
     
     
@@ -1576,7 +1722,7 @@ then use compressed notation.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1437">line 1437</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line1445">line 1445</a>
     </li></ul></dd>
     
     
@@ -1649,7 +1795,7 @@ arguments or this if a new_type is given
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Oct 08 2014 18:14:57 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Oct 08 2014 19:42:25 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>

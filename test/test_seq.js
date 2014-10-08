@@ -133,10 +133,10 @@ test_seq_extract_f('10..20', "ATATCGATCGA",
 test_seq_extract_f('complement(10..20)', "TCGATCGATAT", 
                    'three=complement(1..6)|one=complement(2..10)|two=6..11');
 test_seq_extract_f('join(10..19,20..29)', "ATATCGATCGATGAGCTAGG", 
-                   'one=order(1..10,11..20)');
+                   'two=complement(1..6)|one=2..10|three=6..10|three=11..16');
 test_seq_extract_f('join(2..7,20..30,complement(12..17))', 
                    "CTAGTCATGAGCTAGGTATCGAT", 
-                   'two=join(complement(4..6),20..23)|three=join(7..12,complement(18..20))|one=complement(18..23)');
+                   'two=complement(4..6)|three=7..12|one=complement(18..23)|three=complement(18..20)|two=20..23');
 
 
 }());

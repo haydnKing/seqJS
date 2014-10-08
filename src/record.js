@@ -416,9 +416,12 @@ var seqJS = seqJS || {};
             if(this.alphabet() === rhs.alphabet() &&
                this.topology() === 'linear' &&
                rhs.topology() === 'linear'){
-                _seq = _seq + rhs.seq();
-                //TODO: append features with an offset
                 
+                _features = _features.concat(rhs.features().map(function(f){
+                    return f.offset(_seq.length);
+                }));
+                
+                _seq = _seq + rhs.seq();
                 return this;
             }
             throw "Could not join sequences";
@@ -1338,6 +1341,15 @@ var seqJS = seqJS || {};
             return m;
         };
 
+        /**
+         * Return a FeatureLocation which has been offset by the given amount
+         * @param {int} offset the offset
+         * @returns {seqJS.FeatureLocation} the new location
+         */
+        this.offset = function(o){
+            return new seqJS.FeatureLocation(_sl.offset(o), merge_op);
+        };
+
         /** Return the length of the sequence that the feature refers to
          * @returns {int} sequence length
          */
@@ -1554,6 +1566,17 @@ var seqJS = seqJS || {};
             }
             copy_qualifiers(ret);
             return ret;
+        };
+
+        /** Return a new seqJS.Feature which has been offset by the given
+         * amount
+         * @param {int} offset the amount to offset by
+         * @return {seqJS.Feature} the new seqJS.Feature
+         */
+        this.offset = function(o){
+            var r = new seqJS.Feature(this.type(), _location.offset(o));
+            copy_qualifiers(r);
+            return r;
         };
 
         /** Get a string representation of the Feature for debugging
