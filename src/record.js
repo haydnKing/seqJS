@@ -349,9 +349,10 @@ var seqJS = seqJS || {};
          * @param {seqJS.Location|int} end The position to end at
          * @param {boolean} [complement=false] If true, return the reverse
          * complement of the sub-sequence instead
+         * @param {bool} [feats=false] Whether to include features
          * @returns {seqJS.Seq} The sub-sequence
          */
-        this.subseq = function(start, end, complement) {
+        this.subseq = function(start, end, complement, feats) {
             if(start.toInt instanceof Function &&
                  end.toInt instanceof Function) {
                 start = start.toInt();
@@ -362,9 +363,10 @@ var seqJS = seqJS || {};
                 throw('seqJS.Seq.subseq: start and end arguments must be the same type');
             }
             complement = complement || false;
+            feats = (feats===undefined) ? false : feats;
             var s = new seqJS.Seq(this.seq().substring(start, end), 
                                   this.alphabet(),
-                                  this.features(start, end),
+                                  (feats) ? this.features(start, end) : [],
                                   'linear',
                                   this.lengthUnit(),
                                   this.strandType(),
@@ -434,7 +436,7 @@ var seqJS = seqJS || {};
                 i_span, i_feat,
                 spans = feat.location().getSpans();
 
-            ef = ef || false;
+            ef = (ef === undefined) ? false : ef;
 
             //If we want features, choose them and extract them
             if(ef){
@@ -455,10 +457,9 @@ var seqJS = seqJS || {};
                               this.strandType(),
                               this.residueType());
             
-            for(i = 0; i < spans.length; i++){
-                i_span = spans[i];
+            spans.forEach(function(i_span){
                 s.append(this.subseq(i_span.left(), i_span.right(), i_span.isComplement())); 
-            }
+            }, this);
 
             return s;
         };

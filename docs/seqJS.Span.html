@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Span"><span class="type-signature"></span>new Span<span class="signature">(_location1, <span class="optional">_location2</span>, <span class="optional">complement</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Span"><span class="type-signature"></span>new Span<span class="signature">(_location1, <span class="optional">_location2</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -77,8 +77,6 @@ By definition location1 < location 2.
 		<th>Argument</th>
 		
 		
-		
-		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -116,10 +114,6 @@ By definition location1 < location 2.
             
             
             
-                <td class="default">
-                
-                </td>
-            
             
             <td class="description last">the first location</td>
         </tr>
@@ -153,51 +147,8 @@ By definition location1 < location 2.
             
             
             
-                <td class="default">
-                
-                </td>
-            
             
             <td class="description last">the second location</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>complement</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-            
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-                    
-                
-                    
-                
-                </td>
-            
-            
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-            
-            <td class="description last">true if the span is on the reverse strand</td>
         </tr>
 	
 	
@@ -228,7 +179,7 @@ By definition location1 < location 2.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line706">line 706</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line708">line 708</a>
     </li></ul></dd>
     
     
@@ -393,7 +344,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line828">line 828</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line841">line 841</a>
     </li></ul></dd>
     
     
@@ -487,7 +438,7 @@ overlap with this range then return undefined
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line852">line 852</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line865">line 865</a>
     </li></ul></dd>
     
     
@@ -537,7 +488,7 @@ overlap with this range then return undefined
         
             
 <dt>
-    <h4 class="name" id="invertDatum"><span class="type-signature"></span>invertDatum<span class="signature">(length)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
+    <h4 class="name" id="invertDatum"><span class="type-signature"></span>invertDatum<span class="signature">(length, <span class="optional">complement</span>)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
     
     
 </dt>
@@ -568,7 +519,11 @@ molecule
 		<th>Type</th>
 		
 		
+		<th>Argument</th>
 		
+		
+		
+		<th>Default</th>
 		
 		
 		<th class="last">Description</th>
@@ -593,10 +548,62 @@ molecule
             </td>
             
             
+                <td class="attributes">
+                
+                    
+                
+                    
+                
+                </td>
             
+            
+            
+                <td class="default">
+                
+                </td>
             
             
             <td class="description last">The length of the sequence</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>complement</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+            
+            <td class="description last">Whether or not to complement the
+returned span</td>
         </tr>
 	
 	
@@ -627,7 +634,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line803">line 803</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line815">line 815</a>
     </li></ul></dd>
     
     
@@ -718,7 +725,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line779">line 779</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line783">line 783</a>
     </li></ul></dd>
     
     
@@ -809,7 +816,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line859">line 859</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line872">line 872</a>
     </li></ul></dd>
     
     
@@ -900,7 +907,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line736">line 736</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line739">line 739</a>
     </li></ul></dd>
     
     
@@ -991,7 +998,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line794">line 794</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line804">line 804</a>
     </li></ul></dd>
     
     
@@ -1130,7 +1137,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line816">line 816</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line829">line 829</a>
     </li></ul></dd>
     
     
@@ -1269,7 +1276,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line746">line 746</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line749">line 749</a>
     </li></ul></dd>
     
     
@@ -1360,7 +1367,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line740">line 740</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line743">line 743</a>
     </li></ul></dd>
     
     
@@ -1410,7 +1417,7 @@ molecule
         
             
 <dt>
-    <h4 class="name" id="setComplement"><span class="type-signature"></span>setComplement<span class="signature">(value)</span><span class="type-signature"> &rarr; {<a href="seqJS.Span.html">seqJS.Span</a>}</span></h4>
+    <h4 class="name" id="setParent"><span class="type-signature"></span>setParent<span class="signature">(parent)</span><span class="type-signature"> &rarr; {Span}</span></h4>
     
     
 </dt>
@@ -1418,7 +1425,7 @@ molecule
     
     
     <div class="description">
-        Set the value of the complement flag
+        Set the Span's parent
     </div>
     
 
@@ -1452,13 +1459,13 @@ molecule
 	
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>parent</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">object</span>
 
 
             
@@ -1468,7 +1475,8 @@ molecule
             
             
             
-            <td class="description last">The new complement value</td>
+            <td class="description last">the object to set as parent - requires and
+isComplement method</td>
         </tr>
 	
 	
@@ -1499,7 +1507,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line786">line 786</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line796">line 796</a>
     </li></ul></dd>
     
     
@@ -1535,7 +1543,7 @@ molecule
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="seqJS.Span.html">seqJS.Span</a></span>
+<span class="param-type">Span</span>
 
 
 	</dd>
@@ -1590,7 +1598,7 @@ molecule
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line758">line 758</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line761">line 761</a>
     </li></ul></dd>
     
     
@@ -1750,7 +1758,7 @@ then use compressed notation</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line767">line 767</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line770">line 770</a>
     </li></ul></dd>
     
     
@@ -1815,7 +1823,7 @@ then use compressed notation</td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 02 2014 17:35:23 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Oct 08 2014 18:14:58 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
