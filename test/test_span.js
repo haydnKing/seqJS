@@ -33,10 +33,10 @@ module('seqJS.Span');
         });
     };
 
-    test_span_init('100..150', 'S(L(99):L(150))');
-    test_span_init('<100..>150', 'S(L(<99):L(>150))');
-    test_span_init('100.105..150', 'S(L(99.105):L(150))');
-    test_span_init('100..150.160', 'S(L(99):L(150.161))');
+    test_span_init('100..150', 'S(+,L(99):L(150))');
+    test_span_init('<100..>150', 'S(+,L(<99):L(>150))');
+    test_span_init('100.105..150', 'S(+,L(99.105):L(150))');
+    test_span_init('100..150.160', 'S(+,L(99):L(150.161))');
 
     var test_span_init_fail = function(name, str){
         test(name, function(){
@@ -61,10 +61,10 @@ module('seqJS.Span');
         });
     };
 
-    test_span_invertDatum('5..10', 'S(L(90):L(96))');
-    test_span_invertDatum('6..11', 'S(L(89):L(95))');
-    test_span_invertDatum('4.5..10.11', 'S(L(89.91):L(96.98))');
-    test_span_invertDatum('<5..>10', 'S(L(<90):L(>96))');
+    test_span_invertDatum('5..10', 'S(-,L(90):L(96))');
+    test_span_invertDatum('6..11', 'S(-,L(89):L(95))');
+    test_span_invertDatum('4.5..10.11', 'S(-,L(89.91):L(96.98))');
+    test_span_invertDatum('<5..>10', 'S(-,L(<90):L(>96))');
 
 
     var test_span_offset = function(str, offset, expected_str){
@@ -78,9 +78,9 @@ module('seqJS.Span');
         });
     };
 
-    test_span_offset('5..10', 5, 'S(L(9):L(15))');
-    test_span_offset('5..10', -2, 'S(L(2):L(8))');
-    test_span_offset('5..10', 0, 'S(L(4):L(10))');
+    test_span_offset('5..10', 5, 'S(+,L(9):L(15))');
+    test_span_offset('5..10', -2, 'S(+,L(2):L(8))');
+    test_span_offset('5..10', 0, 'S(+,L(4):L(10))');
 
 
     var test_span_crop = function(span_left, span_right, start, end, expected_str){
@@ -105,12 +105,12 @@ module('seqJS.Span');
         });
     };
 
-    test_span_crop([20],[30], 10, 40, 'S(L(10):L(20))');
-    test_span_crop([20],[30], 25, 40, 'S(L(0):L(5))');
-    test_span_crop([20],[30], 10, 25, 'S(L(10):L(15))');
+    test_span_crop([20],[30], 10, 40, 'S(+,L(10):L(20))');
+    test_span_crop([20],[30], 25, 40, 'S(+,L(0):L(5))');
+    test_span_crop([20],[30], 10, 25, 'S(+,L(10):L(15))');
 
-    test_span_crop([20, '<'],[30, '>'], 10, 40, 'S(L(<10):L(>20))');
-    test_span_crop([20, '<'],[30, '>'], 25, 40, 'S(L(0):L(>5))');
-    test_span_crop([20, '<'],[30, '>'], 10, 25, 'S(L(<10):L(15))');
+    test_span_crop([20, '<'],[30, '>'], 10, 40, 'S(+,L(<10):L(>20))');
+    test_span_crop([20, '<'],[30, '>'], 25, 40, 'S(+,L(0):L(>5))');
+    test_span_crop([20, '<'],[30, '>'], 10, 25, 'S(+,L(<10):L(15))');
 
 }());

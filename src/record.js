@@ -703,11 +703,11 @@ var seqJS = seqJS || {};
      *  @constructor 
      *  @param {string|seqJS.Location} _location1 the first location
      *  @param {seqJS.Location} [_location2] the second location
-     *  @param {boolean} [complement=false] true if the span is on the reverse strand
      */
     seqJS.Span = function(_location1, _location2, complement){
         var self = this;
         complement = complement || false;
+        var parent = null;
         //if we're given a string
         if(typeof _location1 === 'string' || _location1 instanceof String){
             var m = span_fmt.exec(_location1);
@@ -771,6 +771,7 @@ var seqJS = seqJS || {};
             var tabs = new Array(Math.abs(indent + 1)).join('\t');
             indent = indent < 0 ? -1 : 0;
             return tabs + (indent < 0 ? 'S(' : 'Span(') + 
+                (this.isComplement() ? '-,' : '+,') +
                 _location1.toString(indent) + ':' + 
                 _location2.toString(indent) +')'; 
         };
@@ -779,14 +780,20 @@ var seqJS = seqJS || {};
          * @returns {boolean} true if we're on the reverse strand
          */
         this.isComplement = function() {
+            if(parent!==null){
+                var p = parent.isComplement();
+                return (complement) ? !p : p;
+            }
             return complement;
         };
-        /** Set the value of the complement flag
-         * @param {boolean} value The new complement value
-         * @returns {seqJS.Span} this
+
+        /** Set the Span's parent
+         * @param {object} parent the object to set as parent - requires and
+         * isComplement method
+         * @return {Span} this
          */
-        this.setComplement = function(value) {
-            complement = value;
+        this.setParent = function(_p){
+            parent = _p;
             return this;
         };
                 
@@ -800,15 +807,18 @@ var seqJS = seqJS || {};
         /** Return a new span which is indexed from the other end of the
          * molecule
          * @param {Number} length The length of the sequence
+         * @param {bool} [complement=true] Whether or not to complement the
+         * returned span
          * @returns {seqJS.Span} the new span
          */
-        this.invertDatum = function(l){
+        this.invertDatum = function(l,c){
+            c = (c === undefined) ? true : c;
             if(isNaN(l)){
                 throw('seqJS.Span.invertDatum called with NaN');
             }
             return new seqJS.Span(_location2.offset(-1).invertDatum(l),
                                   _location1.invertDatum(l).offset(1),
-                                  !complement);
+                                  (c) ? !complement : complement);
         };
 
         /** Return a new span with offset added to it
@@ -919,6 +929,8 @@ var seqJS = seqJS || {};
      */
     seqJS.SpanOperator = function(location, operator){
         var items = [];
+        var parent = null;
+        var self = this;
 
         //If we're given a string to parse
         if(typeof(location) === 'string' || location instanceof String){
@@ -949,6 +961,11 @@ var seqJS = seqJS || {};
             }
             items = location;
         }
+
+        //set myself as the parent of each item
+        items.forEach(function(i){
+            i.setParent(self);
+        });
 
         //Check that what we have makes sense
         switch(operator){
@@ -1012,19 +1029,27 @@ var seqJS = seqJS || {};
             return this;
         };
         
-        /** Called by an outer SpanOperator to set whether this should be
-         * a complement or not
-         * @param {boolean} value Whether or not spans should be on the reverse
+        /** Is the SpanOperator (and it's children) are on the complementary strand?
+         * @returns {bool} whether or not the SpanOperator is on the other
          * strand
          */
-        this.setComplement = function(value){
-            value = value || false;
-            if(operator === 'complement'){
-                value = !value;
+        this.isComplement = function(){
+            var m = (operator==='complement'), p;
+            if(parent!==null){
+                p = parent.isComplement();
+                return m ? !p : p;
             }
-            for(var i = 0; i < items.length; i++){
-                items[i].setComplement(value);
-            }
+            return m;
+        };
+
+        /** Set the SpanOperator's parent
+         * @param {object} parent the object to set as parent - requires and
+         * isComplement method
+         * @return {SpanOperator} this
+         */
+        this.setParent = function(_p){
+            parent = _p;
+            return this;
         };
 
         /** Get a list of all spans in the correct order
@@ -1112,9 +1137,9 @@ var seqJS = seqJS || {};
             }
             //crop each item and remove nulls
             var _operator = operator,
-                _items = items.map(function(x){return x.crop(left, right);})
+                _items = items.map(function(x){return x.crop(left, right, false);})
                               .filter(function(x){return x !== null;});
-
+            
             //return null if no overlap
             if(_items.length === 0){
                 return null;
@@ -1128,7 +1153,7 @@ var seqJS = seqJS || {};
                 //apply complement
                 if(complement){
                     _operator = (_operator==='') ? 'complement' : '';
-                    _items[0] = _items[0].invertDatum(right-left);
+                    _items[0] = _items[0].invertDatum(right-left, false);
                 }
                 
                 //If the item is a spanOperator with only one item, there's no
@@ -1144,7 +1169,7 @@ var seqJS = seqJS || {};
 
             //handle complement
             if(complement){
-                _items = _items.map(function(x){return x.invertDatum(right-left);}).reverse();
+                _items = _items.map(function(x){return x.invertDatum(right-left, false);}).reverse();
                 if(_operator==='' || _operator==='complement'){
                     return new seqJS.SpanOperator(_items, 
                                               (_operator==='') ? 
@@ -1224,9 +1249,6 @@ var seqJS = seqJS || {};
                 throw("merge_op must be \'join\' or \'order\', not \'"+merge_op+"\'");
             }
         }
-
-        //set complement flags on Spans
-        _sl.setComplement();
 
         /**
          * Get a Genbank style string representation of the location
