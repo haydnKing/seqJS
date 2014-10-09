@@ -465,21 +465,23 @@ var seqJS = seqJS || {};
 
     var loc_fmt = /(?:^([<>]?)(\d+)$)|(?:^(\d+)\.(\d+)$)/;
  
-    /** Represent a single location as either and exact base (''), before a
-     *  specific base ('<'), after a specific base ('>') or between two specific
-     *  bases ('A.B').
-     *  If location is passed as a string, it is assumed to be 'biologist
-     *  style' (i.e. 1-offset), if passed as an integer it is assumed to be
-     *  0-offset
+    /** Represent a single location within a sequence.
+     *  Locations can be an exact base (operator=''), some position before a
+     *  specific base (operator='<'), some position after a specific base 
+     *  (operator='>') or between two specific bases (operator='A.B').
+     *  If 'location' argument is passed as a string, it is assumed to be 
+     *  'biologist style' (i.e. 1-offset), if passed as an integer it is 
+     *  assumed to be 0-offset
      * @constructor
-     * @param {string|number} _location Either a 1-offset string specifying the
-     * location in genbank style or a 0-offset integer defining the first 
-     * location
-     * @param {string} [_operator=''] The operator which applies, either '', '<', 
-     * '.', or '>'. This parameter can only be given if _location is an
-     * integer. If _operator is given as '.', then _location2 is required
-     * @param {number} [_location2] The second location, used only when
-     * representing locations which are between two points, e.g 100.200
+     * @param {string|number} location Either a 1-offset string specifying the
+     * location in genbank-style format or a 0-offset integer defining the 
+     * first location
+     * @param {string} [operator=''] The operator which applies to the location, 
+     * either '', '<', '>', or '''. This parameter can only be given if 
+     * 'location' is an integer. If 'operator' is given as '.', then 'location2' 
+     * is required
+     * @param {number} [location2] The second position, required when
+     * operator='.' to define a range between 'location' and 'location2'
      */   
     seqJS.Location = function(_location, _operator, _location2) {
         if (typeof _location === 'string' || _location instanceof String){
@@ -534,7 +536,8 @@ var seqJS = seqJS || {};
          */
         this.operator = function() {return _operator;};
 
-        /** Get the distance between two locations
+        /** Get the distance between two locations, i.e. the value of
+         * lhs.toInt() - rhs.toInt()
          * @param {seqJS.Location} rhs the location to compare with
          * @returns {int} the distance between the locations
          */
@@ -648,7 +651,8 @@ var seqJS = seqJS || {};
                                       l - _location);
         };
 
-        /** return a cropped location such that it is in the range [start,end)
+        /** return a new location, cropped such that it is within the range 
+         * [start,end). E.g. Location(3).crop(5,10) -> Location(0)
          * @param {seqJS.Location|int} left the start of the range
          * @param {seqJS.Location|int} right past the end location
          * @returns {seqJS.Location} the new location

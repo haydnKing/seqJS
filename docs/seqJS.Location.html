@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Location"><span class="type-signature"></span>new Location<span class="signature">(_location, <span class="optional">_operator</span>, <span class="optional">_location2</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Location"><span class="type-signature"></span>new Location<span class="signature">(location, <span class="optional">operator</span>, <span class="optional">location2</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -49,12 +49,13 @@
     
     
     <div class="description">
-        Represent a single location as either and exact base (''), before a
- specific base ('<'), after a specific base ('>') or between two specific
- bases ('A.B').
- If location is passed as a string, it is assumed to be 'biologist
- style' (i.e. 1-offset), if passed as an integer it is assumed to be
- 0-offset
+        Represent a single location within a sequence.
+ Locations can be an exact base (operator=''), some position before a
+ specific base (operator='<'), some position after a specific base 
+ (operator='>') or between two specific bases (operator='A.B').
+ If 'location' argument is passed as a string, it is assumed to be 
+ 'biologist style' (i.e. 1-offset), if passed as an integer it is 
+ assumed to be 0-offset
     </div>
     
 
@@ -92,7 +93,7 @@
 	
         <tr>
             
-                <td class="name"><code>_location</code></td>
+                <td class="name"><code>location</code></td>
             
             
             <td class="type">
@@ -124,15 +125,15 @@
             
             
             <td class="description last">Either a 1-offset string specifying the
-location in genbank style or a 0-offset integer defining the first 
-location</td>
+location in genbank-style format or a 0-offset integer defining the 
+first location</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>_operator</code></td>
+                <td class="name"><code>operator</code></td>
             
             
             <td class="type">
@@ -164,16 +165,17 @@ location</td>
                 </td>
             
             
-            <td class="description last">The operator which applies, either '', '<', 
-'.', or '>'. This parameter can only be given if _location is an
-integer. If _operator is given as '.', then _location2 is required</td>
+            <td class="description last">The operator which applies to the location, 
+either '', '<', '>', or '''. This parameter can only be given if 
+'location' is an integer. If 'operator' is given as '.', then 'location2' 
+is required</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>_location2</code></td>
+                <td class="name"><code>location2</code></td>
             
             
             <td class="type">
@@ -203,8 +205,8 @@ integer. If _operator is given as '.', then _location2 is required</td>
                 </td>
             
             
-            <td class="description last">The second location, used only when
-representing locations which are between two points, e.g 100.200</td>
+            <td class="description last">The second position, required when
+operator='.' to define a range between 'location' and 'location2'</td>
         </tr>
 	
 	
@@ -235,7 +237,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line484">line 484</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line486">line 486</a>
     </li></ul></dd>
     
     
@@ -289,7 +291,8 @@ representing locations which are between two points, e.g 100.200</td>
     
     
     <div class="description">
-        return a cropped location such that it is in the range [start,end)
+        return a new location, cropped such that it is within the range 
+[start,end). E.g. Location(3).crop(5,10) -> Location(0)
     </div>
     
 
@@ -399,7 +402,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line656">line 656</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line660">line 660</a>
     </li></ul></dd>
     
     
@@ -457,7 +460,8 @@ representing locations which are between two points, e.g 100.200</td>
     
     
     <div class="description">
-        Get the distance between two locations
+        Get the distance between two locations, i.e. the value of
+lhs.toInt() - rhs.toInt()
     </div>
     
 
@@ -538,7 +542,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line541">line 541</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line544">line 544</a>
     </li></ul></dd>
     
     
@@ -680,7 +684,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line561">line 561</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line564">line 564</a>
     </li></ul></dd>
     
     
@@ -822,7 +826,7 @@ representing locations which are between two points, e.g 100.200</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line578">line 578</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line581">line 581</a>
     </li></ul></dd>
     
     
@@ -962,7 +966,7 @@ the location will now be measured from the far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line634">line 634</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line637">line 637</a>
     </li></ul></dd>
     
     
@@ -1041,7 +1045,7 @@ the location will now be measured from the far end of the sequence
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line526">line 526</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line528">line 528</a>
     </li></ul></dd>
     
     
@@ -1133,7 +1137,7 @@ if operator is ''
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line531">line 531</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line533">line 533</a>
     </li></ul></dd>
     
     
@@ -1279,7 +1283,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line549">line 549</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line552">line 552</a>
     </li></ul></dd>
     
     
@@ -1421,7 +1425,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line571">line 571</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line574">line 574</a>
     </li></ul></dd>
     
     
@@ -1560,7 +1564,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line619">line 619</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line622">line 622</a>
     </li></ul></dd>
     
     
@@ -1651,7 +1655,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line535">line 535</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line537">line 537</a>
     </li></ul></dd>
     
     
@@ -1742,7 +1746,7 @@ is '.'
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line585">line 585</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line588">line 588</a>
     </li></ul></dd>
     
     
@@ -1830,7 +1834,7 @@ first location
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line611">line 611</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line614">line 614</a>
     </li></ul></dd>
     
     
@@ -1990,7 +1994,7 @@ compressed notation (Location -> L) if indent < 0</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line597">line 597</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line600">line 600</a>
     </li></ul></dd>
     
     
@@ -2055,7 +2059,7 @@ compressed notation (Location -> L) if indent < 0</td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Wed Oct 08 2014 19:42:25 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Thu Oct 09 2014 17:12:04 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
