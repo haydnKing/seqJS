@@ -76,6 +76,22 @@ test_location_init_fail('invalid location string 1', ['!6']);
 test_location_init_fail('invalid location string 2', ['67sds']);
 test_location_init_fail('invalid location string 3', ['8.6']);
 
+var test_location_togenbankstring = function(gbstring){
+    test('Location.toGenbankString '+gbstring, function(){
+        var l = new seqJS.Location(gbstring);
+        var o = l.toString(-1);
+
+        equal(l.toGenbankString(), gbstring, 'toGenbankString failed');
+        
+        equal(o, l.toString(-1), 'toGenbankString changed original');
+    });
+};
+
+test_location_togenbankstring('5');
+test_location_togenbankstring('<5');
+test_location_togenbankstring('>5');
+test_location_togenbankstring('5.150');
+
 var test_location_offset = function(args, offset, expected_str){
     test('seqJS.Location('+str_args(args)+').offset('+offset+')', function() {
         expect(2);
