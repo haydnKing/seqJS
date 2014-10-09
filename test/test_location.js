@@ -87,12 +87,25 @@ var test_location_offset = function(args, offset, expected_str){
     });
 };
 
+test_location_offset([10], 5, 'L(15)');
+test_location_offset([10,'<'], 5, 'L(<15)');
+test_location_offset([10,'>'], 6, 'L(>16)');
+test_location_offset([5,'.',10], 6, 'L(11.16)');
+test_location_offset([50], -40, 'L(10)');
+test_location_offset([50], -50, 'L(0)');
 
-test_location_offset(['10'], 5, 'L(14)');
-test_location_offset(['<10'], 5, 'L(<14)');
-test_location_offset(['>10'], 6, 'L(>15)');
-test_location_offset(['5.10'], 6, 'L(10.16)');
-test_location_offset(['50'], -40, 'L(9)');
+var test_location_offset_fail = function(args, offset){
+    test('seqJS.Location('+str_args(args)+').offset('+offset+') fail', function(){
+        throws(function(){
+            location_from_args(args).offset(offset);
+        });
+    });
+};
+
+test_location_offset_fail([15], -16);
+test_location_offset_fail([15, '<'], -16);
+test_location_offset_fail([15, '>'], -16);
+test_location_offset_fail([15, '.', 17], -16);
 
 var test_location_invertdatum = function(args, len, expected_str){
     test('seqJS.Location('+str_args(args)+').invertDatum('+len+')', function() {
