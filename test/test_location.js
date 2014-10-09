@@ -102,7 +102,7 @@ var test_location_offset_fail = function(args, offset){
     });
 };
 
-test_location_offset_fail([15], -16);
+test_location_offset_fail([15], -15);
 test_location_offset_fail([15, '<'], -16);
 test_location_offset_fail([15, '>'], -16);
 test_location_offset_fail([15, '.', 17], -16);
