@@ -557,13 +557,14 @@ var seqJS = seqJS || {};
                 _location2 < rhs :
                 _location < rhs;
         };
+
         /** Is the location greater than rhs
          * @param {seqJS.Location|Number} rhs the location to compare with
          * @returns {boolean} true if rhs is greater than this
          */
         this.gt = function(rhs) {
             if(typeof(rhs) !== 'number'){
-                rhs = (rhs.operator === '.') ? rhs.location2() : rhs.location();
+                rhs = (rhs.operator() === '.') ? rhs.location2() : rhs.location();
             }
             return _location > rhs;
         };

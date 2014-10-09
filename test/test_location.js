@@ -178,5 +178,53 @@ test_location_distance([5], [0, '.', 2], 5);
 
 test_location_distance([0], [3, '.', 5], -3);
 test_location_distance([3, '.', 5], [0], 3);
+
+
+var test_location_comparisons = function(lhs_args, rhs_args, true_list){
+    test('compare Location('+str_args(lhs_args)+') with Location('+str_args(rhs_args)+')', function(){
+        var lhs = location_from_args(lhs_args),
+            rhs = location_from_args(rhs_args);
+
+        var l_pre = lhs.toString(-1),
+            r_pre = rhs.toString(-1);
+
+        var tl = [];
+        if(lhs.gt(rhs)){tl.push('gt');}
+        if(lhs.gte(rhs)){tl.push('gte');}
+        if(lhs.lt(rhs)){tl.push('lt');}
+        if(lhs.lte(rhs)){tl.push('lte');}
+
+        tl = tl.sort().join(',');
+        true_list = true_list.sort().join(',');
+
+        equal(tl, true_list, 'comparisons failed');
+
+        equal(lhs.toString(-1), l_pre, 'lhs changed by comparisons');
+        equal(rhs.toString(-1), r_pre, 'rhs changed by comparisons');
+    });
+};
+
+test_location_comparisons([0], [5], ['lt', 'lte']);
+test_location_comparisons([5], [0], ['gt', 'gte']);
+
+test_location_comparisons([0, '<'], [5], ['lt', 'lte']);
+test_location_comparisons([5], [0, '<'], ['gt', 'gte']);
+
+test_location_comparisons([0, '>'], [5], ['lt', 'lte']);
+test_location_comparisons([5], [0, '>'], ['gt', 'gte']);
+
+test_location_comparisons([0, '.', 7], [5], ['gte', 'lte']);
+test_location_comparisons([5], [0, '.', 7], ['lte', 'gte']);
+
+test_location_comparisons([5], [5], ['gte', 'lte']);
+test_location_comparisons([5, '<'], [5], ['gte', 'lte']);
+test_location_comparisons([5], [5, '<'], ['gte', 'lte']);
+test_location_comparisons([5, '>'], [5], ['gte', 'lte']);
+test_location_comparisons([5], [5, '>'], ['gte', 'lte']);
+test_location_comparisons([5, '<'], [5, '<'], ['gte', 'lte']);
+test_location_comparisons([5, '>'], [5, '<'], ['gte', 'lte']);
+test_location_comparisons([5, '>'], [5, '>'], ['gte', 'lte']);
+test_location_comparisons([5, '<'], [5, '>'], ['gte', 'lte']);
+test_location_comparisons([5, '.', 7], [5, '.', 7], ['gte', 'lte']);
     
 }());
