@@ -25,18 +25,40 @@
 
 module('seqJS.Span');
 
-    var test_span_init = function(str, e_str){
-        test('seqJS.Span(\''+str+'\')', function(){
+var str_args = function(args){
+    var r = [];
+    args.forEach(function(a){
+        if(typeof(a) === 'string' || a instanceof String){
+            r.push('\''+a+'\'');
+        }
+        else {
+            r.push(a);
+        }
+    });
+    return r.join(', ');
+};
+
+    var test_span_init = function(args, e_str){
+        test('seqJS.Span(\''+str_args(args)+'\')', function(){
             expect(1);
-            var s = new seqJS.Span(str);
+            var s = new seqJS.Span(args[0], args[1]);
             equal(s.toString(-1), e_str);
         });
     };
 
-    test_span_init('100..150', 'S(+,L(99):L(150))');
-    test_span_init('<100..>150', 'S(+,L(<99):L(>150))');
-    test_span_init('100.105..150', 'S(+,L(99.105):L(150))');
-    test_span_init('100..150.160', 'S(+,L(99):L(150.161))');
+    test_span_init(['100..150'], 'S(+,L(99):L(150))');
+    test_span_init(['<100..>150'], 'S(+,L(<99):L(>150))');
+    test_span_init(['100.105..150'], 'S(+,L(99.105):L(150))');
+    test_span_init(['100..150.160'], 'S(+,L(99):L(150.161))');
+
+    test_span_init([new seqJS.Location(99), new seqJS.Location(150)], 
+                   'S(+,L(99):L(150))');
+    test_span_init([new seqJS.Location(99, '<'), new seqJS.Location(150, '>')], 
+                   'S(+,L(<99):L(>150))');
+    test_span_init([new seqJS.Location(99,'.',105), new seqJS.Location(150)], 
+                   'S(+,L(99.105):L(150))');
+    test_span_init([new seqJS.Location(99), new seqJS.Location(150, '.', 161)], 
+                   'S(+,L(99):L(150.161))');
 
     var test_span_init_fail = function(name, str){
         test(name, function(){
