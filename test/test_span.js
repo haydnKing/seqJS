@@ -106,11 +106,9 @@ var str_args = function(args){
 
 
     var test_span_crop = function(span_left, span_right, start, end, expected_str){
-        var span = new seqJS.Span(new seqJS.Location(span_left[0], span_left[1], span_left[2]),
-                                  new seqJS.Location(span_right[0], span_right[1], span_right[2]));
-
-        test(span.toString(-1) + '.crop('+start+', '+end+')',
-             function(){
+        test(span.toString(-1) + '.crop('+start+', '+end+')', function(){
+            var span = new seqJS.Span(new seqJS.Location(span_left[0], span_left[1], span_left[2]),
+                                      new seqJS.Location(span_right[0],span_right[1],span_right[2]));
             var original = span.toString(-1);
 
             equal(span.crop(start,end).toString(-1), 
