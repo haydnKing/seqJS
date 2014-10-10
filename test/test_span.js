@@ -204,4 +204,25 @@ var test_span_offset_fail = function(lhs_l, lhs_r, offset){
 };
 test_span_offset_fail([10], [15], -11);
 
+var test_span_togenbankstring = function(gbstr){
+    test('Span(\''+gbstr+'\').toGenbankString()', function(){
+        var s = new seqJS.Span(gbstr);
+        var o = s.toString(-1);
+        equal(s.toGenbankString(), gbstr, 'span.toGenbankString() failed');
+        equal(s.toString(-1), o, 'span.toGenbankString() changed span');
+    });
+};
+test_span_togenbankstring('10..50');
+test_span_togenbankstring('<10..50');
+test_span_togenbankstring('>10..50');
+test_span_togenbankstring('10..<50');
+test_span_togenbankstring('10..>50');
+test_span_togenbankstring('<10..<50');
+test_span_togenbankstring('<10..>50');
+test_span_togenbankstring('>10..<50');
+test_span_togenbankstring('>10..>50');
+test_span_togenbankstring('10.14..50');
+test_span_togenbankstring('10..50.56');
+test_span_togenbankstring('10.14..50.56');
+
 }());
