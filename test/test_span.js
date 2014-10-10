@@ -159,4 +159,16 @@ test_span_length([10, '.', 15], [20], 10);
 test_span_length([10], [20, '.', 25], 15);
 test_span_length([10, '.', 15], [20, '.', 25], 15);
 
+var test_span_left_right = function(span_left, span_right, e_left, e_right){
+    test('Span(('+str_args(span_left)+'), ('+str_args(span_right)+')) left() & right()', function() {
+        var s = span_from_args(span_left, span_right);
+        var o = s.toString(-1);
+        equal(s.left().toString(-1), e_left, 'left failed');
+        equal(s.right().toString(-1), e_right, 'right failed');
+        equal(s.toString(-1), o, 'left or right changed original');
+    });
+};
+test_span_left_right([5], [36], "L(5)", "L(36)");
+
+
 }());
