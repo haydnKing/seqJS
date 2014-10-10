@@ -139,4 +139,38 @@ test_spanoperator_invertdatum('1..3', 6,
 test_spanoperator_invertdatum('join(1..3,4..6)', 6, 
                          'SO(\'complement\', [SO(\'merge\', [S(-,L(3):L(6)), S(-,L(0):L(3))])])');
 
+test('SpanOperator.isSpan()', function(){
+    var s = new seqJS.SpanOperator('10..20');
+    equal(s.isSpan(), false, 'spanoperator isn\'t a span');
+});
+
+var test_spanoperator_itemslength = function(loc_str, e_len){
+    test('SpanOperator('+loc_str+').itemsLength()', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.itemsLength(), e_len, 'itemsLength() failed');
+        equal(s.toString(-1), o, 'itemsLength() changed spanOperator');
+    });
+};
+test_spanoperator_itemslength('10..20', 1);
+test_spanoperator_itemslength('merge(10..20,30..40)', 2);
+test_spanoperator_itemslength('merge(10..20,complement(30..40))', 2);
+test_spanoperator_itemslength('complement(merge(complement(10..20),30..40))', 1);
+test_spanoperator_itemslength('merge(10..20,30..40,1..2)', 3);
+
+var test_spanoperator_length = function(loc_str, e_len){
+    test('SpanOperator('+loc_str+').length()', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.length(), e_len, 'length() failed');
+        equal(s.toString(-1), o, 'length() changed spanOperator');
+    });
+};
+test_spanoperator_length('10..20', 11);
+test_spanoperator_length('merge(10..20,30..40)', 22);
+test_spanoperator_length('merge(10..20,complement(30..40))', 22);
+test_spanoperator_length('complement(merge(complement(10..20),30..40))', 22);
+test_spanoperator_length('merge(10..20,30..40,1..2)', 24);
+
+
 }());
