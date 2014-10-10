@@ -94,22 +94,6 @@ test_span_invertDatum('4.5..10.11', 'S(-,L(89.91):L(96.98))');
 test_span_invertDatum('<5..>10', 'S(-,L(<90):L(>96))');
 
 
-var test_span_offset = function(str, offset, expected_str){
-    test('seqJS.Span(\''+str+'\').offset('+offset+')', function(){
-        expect(2);
-        var s = new seqJS.Span(str);
-        var orig = s.toString(-1);
-
-        equal(s.offset(offset).toString(-1), expected_str, "Offset failed");
-        equal(s.toString(-1), orig, "Offset changed original");
-    });
-};
-
-test_span_offset('5..10', 5, 'S(+,L(9):L(15))');
-test_span_offset('5..10', -2, 'S(+,L(2):L(8))');
-test_span_offset('5..10', 0, 'S(+,L(4):L(10))');
-
-
 var test_span_crop = function(span_left, span_right, start, end, expected_str){
     test('Span('+str_args(span_left)+','+str_args(span_right)+').crop('+start+', '+end+')', function(){
         var span = span_from_args(span_left, span_right);
@@ -194,6 +178,30 @@ test_span_overlaps([0], [6], [5], [10], true);
 test_span_overlaps([0], [5], [4], [10], true);
 test_span_overlaps([0], [5, '.', 6], [5], [10], true);
 test_span_overlaps([0], [5], [4, '.', 5], [10], true);
+
+var test_span_offset = function(lhs_l, lhs_r, offset, e_str){
+    test('Span(('+str_args(lhs_l)+'),('+str_args(lhs_r)+')).offset('+offset+')', function(){
+        var l = span_from_args(lhs_l, lhs_r);
+
+        var lo = l.toString(-1);
+
+        equal(l.offset(offset).toString(-1), e_str, 'span.offset failed');
+        equal(l.toString(-1), lo, 'span changed by offset call');
+    });
+};
+test_span_offset([0],[5], 5, 'S(+,L(5):L(10))');
+test_span_offset([5],[10], -5, 'S(+,L(0):L(5))');
+test_span_offset([0, '>'],[5], 5, 'S(+,L(>5):L(10))');
+test_span_offset([0],[5, '<'], 5, 'S(+,L(5):L(<10))');
         
+
+var test_span_offset_fail = function(lhs_l, lhs_r, offset){
+    test('Span(('+str_args(lhs_l)+'),('+str_args(lhs_r)+')).offset('+offset+') fails', function(){
+        throws(function(){
+            span_from_args(lhs_l, lhs_r).offset(offset);
+        });
+    });
+};
+test_span_offset_fail([10], [15], -11);
 
 }());
