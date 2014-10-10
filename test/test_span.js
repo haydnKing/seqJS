@@ -225,4 +225,24 @@ test_span_togenbankstring('10.14..50');
 test_span_togenbankstring('10..50.56');
 test_span_togenbankstring('10.14..50.56');
 
+test('Span.isComplement() & Span.setParent()', function(){
+    var s = new seqJS.Span('10..50'),
+        pf = {isComplement: function() {return false;}},
+        pt = {isComplement: function() {return true;}};
+
+    equal(s.isComplement(), false, 'Should be on the forward strand by default');
+
+    s.setParent(pf);
+    equal(s.isComplement(), false, 'Should be on the forward if the parent is');
+
+    s.setParent(pt);
+    equal(s.isComplement(), true, 'Should be on reverse strand if the parent is');
+
+    s.setParent(null);
+    equal(s.isComplement(), false, 'setting parent as null should revert forward');
+});
+
+
+    
+
 }());
