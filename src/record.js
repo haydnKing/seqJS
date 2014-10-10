@@ -1089,15 +1089,10 @@ var seqJS = seqJS || {};
             return spans;
         };
 
-        /** Get or set the operator
-         * @param {string} [op] the new operator
-         * @returns {string|seqJS.SpanOperator} the operator or this
+        /** Get the operator
+         * @returns {string} the operator or this
          */
-        this.operator = function(op){
-            if(op){
-                operator = op;
-                return this;
-            }
+        this.operator = function(){
             return operator;
         };
 

@@ -172,5 +172,23 @@ test_spanoperator_length('merge(10..20,complement(30..40))', 22);
 test_spanoperator_length('complement(merge(complement(10..20),30..40))', 22);
 test_spanoperator_length('merge(10..20,30..40,1..2)', 24);
 
+var test_spanoperator_operator = function(loc_str, e_op){
+    test('SpanOperator('+loc_str+').operator()', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.operator(), e_op, 'operator() failed');
+        equal(s.toString(-1), o, 'operator() changed spanOperator');
+    });
+};
+test_spanoperator_operator('10..20', '');
+test_spanoperator_operator('merge(10..20,30..40)', 'merge');
+test_spanoperator_operator('merge(10..20,complement(30..40))', 'merge');
+test_spanoperator_operator('complement(merge(complement(10..20),30..40))', 'complement');
+test_spanoperator_operator('merge(10..20,30..40,1..2)', 'merge');
+
+
+
+
+
 
 }());
