@@ -214,6 +214,21 @@ test_spanoperator_offset_fail('>10..20', -10);
 test_spanoperator_offset_fail('10.12..20', -10);
 test_spanoperator_offset_fail('5.10..20', -10);
             
+var test_spanoperator_getspans = function(loc_str, e_str){
+    test('SpanOperator('+loc_str+').getSpans()', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.getSpans().map(function(v){return v.toString(-1);}).join(', '), 
+              e_str, 'getSpans() failed');
+        equal(s.toString(-1), o, 'getSpans() changed SpanOperator');
+    });
+};
+test_spanoperator_getspans('10..20', 'S(+,L(9):L(20))');
+test_spanoperator_getspans('complement(10..20)', 'S(-,L(9):L(20))');
+test_spanoperator_getspans('merge(10..20,30..40)', 'S(+,L(9):L(20)), S(+,L(29):L(40))');
+test_spanoperator_getspans('merge(10..20,30..40)', 'S(+,L(9):L(20)), S(+,L(29):L(40))');
+test_spanoperator_getspans('merge(10..20,complement(30..40))', 'S(+,L(9):L(20)), S(-,L(29):L(40))');
+test_spanoperator_getspans('complement(merge(10..20,complement(30..40)))', 'S(+,L(29):L(40)), S(-,L(9):L(20))');
 
 
 
