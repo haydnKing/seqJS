@@ -616,6 +616,22 @@ var seqJS = seqJS || {};
             return this.location();
         };
 
+        /** Convert to an integer using the leftmost position
+         * @returns {int} location as leftmost position
+         */
+        this.left = function() {
+            return this.location();
+        };
+
+        /** Convert to an integer using the rightmost position
+         * @returns {int} location as rightmost position
+         */
+        this.right = function() {
+            return (this.operator()==='.') ? this.location2() : this.location();
+        };
+
+
+
         /** Return a new Location with an added offset
          * @param {int} offset the amount to add
          * @returns {seqJS.Location} the new location
@@ -804,7 +820,7 @@ var seqJS = seqJS || {};
          * @returns {int} the length
          */
         this.length = function() {
-            return this.right().distance(this.left());
+            return this.right().right() - this.left().left();
         };
 
         /** Return a new span which is indexed from the other end of the
