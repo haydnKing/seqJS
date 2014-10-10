@@ -170,5 +170,30 @@ var test_span_left_right = function(span_left, span_right, e_left, e_right){
 };
 test_span_left_right([5], [36], "L(5)", "L(36)");
 
+var test_span_overlaps = function(lhs_l, lhs_r, rhs_l, rhs_r, expected){
+    test('Span.overlaps: (('+str_args(lhs_l)+'),('+str_args(lhs_r)+')) - (('+str_args(rhs_l)+'),('+str_args(rhs_r)+'))', function(){
+        var l = span_from_args(lhs_l, lhs_r),
+            r = span_from_args(rhs_l, rhs_r);
+
+        var lo = l.toString(-1),
+            ro = r.toString(-1);
+
+        equal(l.overlaps(r), expected, 'lhs.overlaps(rhs) failed');
+        equal(r.overlaps(l), expected, 'rhs.overlaps(lhs) failed');
+        equal(l.toString(-1), lo, 'lhs changed by overlaps call');
+        equal(r.toString(-1), ro, 'rhs changed by overlaps call');
+    });
+};
+test_span_overlaps([0], [5], [5], [10], false);
+test_span_overlaps([0], [5, '<'], [5], [10], false);
+test_span_overlaps([0], [5, '<'], [5, '<'], [10], false);
+test_span_overlaps([0], [3,'.',5], [5], [10], false);
+test_span_overlaps([0], [5], [5, '.', 6], [10], false);
+
+test_span_overlaps([0], [6], [5], [10], true);
+test_span_overlaps([0], [5], [4], [10], true);
+test_span_overlaps([0], [5, '.', 6], [5], [10], true);
+test_span_overlaps([0], [5], [4, '.', 5], [10], true);
+        
 
 }());

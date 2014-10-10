@@ -766,8 +766,8 @@ var seqJS = seqJS || {};
          */
         this.overlaps = function(rhs) {
             //check if we don't overlap
-            if(_location1.gte(rhs.right()) ||
-               _location2.lte(rhs.left()) ){
+            if(this.right().right() <= rhs.left().left() || 
+               this.left().left() >= rhs.right().right()){
                 return false;
             }
             return true;
