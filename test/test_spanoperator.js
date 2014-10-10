@@ -186,7 +186,34 @@ test_spanoperator_operator('merge(10..20,complement(30..40))', 'merge');
 test_spanoperator_operator('complement(merge(complement(10..20),30..40))', 'complement');
 test_spanoperator_operator('merge(10..20,30..40,1..2)', 'merge');
 
+var test_spanoperator_offset = function(loc_str, offset, e_str){
+    test('SpanOperator('+loc_str+').offset('+offset+')', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.offset(offset).toString(-1), e_str, 'offset() failed');
+        equal(s.toString(-1), o, 'offset() changed SpanOperator');
+    });
+};
+test_spanoperator_offset('10..20', 5, 'SO(\'\', [S(+,L(14):L(25))])');
+test_spanoperator_offset('10..20', -9, 'SO(\'\', [S(+,L(0):L(11))])');
+test_spanoperator_offset('complement(10..20)', -9, 'SO(\'complement\', [S(-,L(0):L(11))])');
+test_spanoperator_offset('<10..20', -9, 'SO(\'\', [S(+,L(<0):L(11))])');
+test_spanoperator_offset('>10..20', -9, 'SO(\'\', [S(+,L(>0):L(11))])');
+test_spanoperator_offset('merge(>10..20,40..50)', -9, 'SO(\'merge\', [S(+,L(>0):L(11)), S(+,L(30):L(41))])');
 
+var test_spanoperator_offset_fail = function(loc_str, offset){
+    test('SpanOperator('+loc_str+').offset('+offset+') fail', function(){
+        var l = new seqJS.SpanOperator(loc_str);
+        throws(function(){
+            l.offset(offset);
+        });
+    });
+};
+test_spanoperator_offset_fail('10..20', -10);
+test_spanoperator_offset_fail('>10..20', -10);
+test_spanoperator_offset_fail('10.12..20', -10);
+test_spanoperator_offset_fail('5.10..20', -10);
+            
 
 
 
