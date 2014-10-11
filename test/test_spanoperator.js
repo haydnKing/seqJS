@@ -287,5 +287,37 @@ test_spanoperator_toGenbankString('complement(merge(complement(10..20),30..40))'
 test_spanoperator_toGenbankString('complement(merge(complement(merge(10..20,5..7)),30..40))');
 test_spanoperator_toGenbankString('complement(merge(complement(merge(10..20,complement(5..7))),30..40))');
 
+test('SpanOperator.isComplement() & setParent()', function(){
+    var pt = {isComplement: function() {return true;}},
+        pf = {isComplement: function() {return false;}};
+
+    var st = new seqJS.SpanOperator('complement(10..20)'),
+        sf = new seqJS.SpanOperator('10..20');
+
+    var ot = st.toString(-1),
+        of = sf.toString(-1);
+
+    equal(st.isComplement(), true, 'isComplement() failed to match');
+    equal(sf.isComplement(),false, 'isComplement() failed to match');
+
+    st.setParent(pf);
+    sf.setParent(pf);
+    equal(st.isComplement(), true, 'Setting a false parent should not change isComplement()');
+    equal(sf.isComplement(),false, 'Setting a false parent should not change isComplement()');
+
+    st.setParent(pt);
+    sf.setParent(pt);
+    equal(st.isComplement(),false, 'Setting a true parent should invert isComplement()');
+    equal(sf.isComplement(), true, 'Setting a true parent should invert isComplement()');
+
+    st.setParent(null);
+    sf.setParent(null);
+    equal(st.isComplement(), true, 'Setting a null parent should revert isComplement()');
+    equal(sf.isComplement(),false, 'Setting a null parent should revert isComplement()');
+
+    equal(st.toString(-1), ot, 'setParent()/isComplement() changed original');
+    equal(sf.toString(-1), of, 'setParent()/isComplement() changed original');
+
+});
 
 }());
