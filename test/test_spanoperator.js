@@ -230,7 +230,30 @@ test_spanoperator_getspans('merge(10..20,30..40)', 'S(+,L(9):L(20)), S(+,L(29):L
 test_spanoperator_getspans('merge(10..20,complement(30..40))', 'S(+,L(9):L(20)), S(-,L(29):L(40))');
 test_spanoperator_getspans('complement(merge(10..20,complement(30..40)))', 'S(+,L(29):L(40)), S(-,L(9):L(20))');
 
+var test_spanoperator_overlaps = function(loc_l, loc_r, expected){
+    test('Spanoperator.overlaps: \''+loc_l+'\' - \''+loc_r+'\'', function(){
+        var l = new seqJS.SpanOperator(loc_l),
+            r = new seqJS.SpanOperator(loc_r);
+        var ol = l.toString(-1),
+            or = r.toString(-1);
 
+        equal(l.overlaps(r), expected, "l.overlaps(r) failed");
+        equal(r.overlaps(l), expected, "r.overlaps(l) failed");
+
+        equal(l.toString(-1), ol, 'overlaps changed original');
+        equal(r.toString(-1), or, 'overlaps changed original');
+    });
+};
+test_spanoperator_overlaps('10..20', '21..30', false);
+test_spanoperator_overlaps('10..20', '<21..30', false);
+test_spanoperator_overlaps('10..>20', '21..30', false);
+test_spanoperator_overlaps('10..20', 'complement(21..30)', false);
+test_spanoperator_overlaps('merge(10..20,31..40)', '21..30', false);
+test_spanoperator_overlaps('merge(10..20,complement(31..40))', '21..30', false);
+test_spanoperator_overlaps('10..20', '20..30', true);
+test_spanoperator_overlaps('merge(10..20,50..60)', '20..30', true);
+test_spanoperator_overlaps('merge(10..20,50..60)', 'merge(complement(1..5),20..30)', true);
+test_spanoperator_overlaps('complement(merge(10..20,50..60))', 'merge(complement(1..5),20..30)', true);
 
 
 }());

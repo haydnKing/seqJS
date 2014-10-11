@@ -1120,12 +1120,17 @@ var seqJS = seqJS || {};
             return new seqJS.SpanOperator(items.map(function(x){return x.offset(o);}), operator);
         };
 
-        /** Test if any of my sub-spans overlap
-         * @param {seqJS.Span} rhs the span to test with
+        /** Test whether I overlap with any of the other spans
+         * @param {seqJS.Span|seqJS.SpanOperator} rhs the Span or SpanOperator to test with
          * @returns {boolean} true if overlap
          */
         this.overlaps = function(rhs){
-            return items.some(function(i){return i.overlaps(rhs);});
+            var r_s = rhs.getSpans();
+            return items.some(function(l){
+                return r_s.some(function(r){
+                    return l.overlaps(r);
+                });
+            });
         };
 
         /** Test if the object is a span
