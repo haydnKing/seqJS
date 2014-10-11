@@ -24,44 +24,220 @@
 
 module('seqJS.seq');
 
-    test('setting and get data', function(){
-        expect(3);
-        var l = new seqJS.Seq("ATcGAT", 'PROT');
-        equal(l.seq(), "ATCGAT");
-        equal(l.length(), 6);
-        equal(l.alphabet(), 'PROT');
+var SEQ_ARGS = ['seq','alphabet','features','topology','length_unit','strand_type','residue_type'],
+    SEQ_GETS = ['seq','alphabet','features','topology','lengthUnit', 'strandType', 'residueType'];
+
+var str_args = function(args){
+    var s = [];
+    SEQ_ARGS.forEach(function(v){
+        if(args[v] !== undefined){
+            if(typeof(args[v]) === 'string' || args[v] instanceof String){
+                s.push('\''+args[v]+'\'');
+            } else {
+                s.push(args[v]);
+            }
+        }
     });
+    return s.join(', ');
+};
 
-    test('require an alphabet', function(){
-        expect(1);
-        throws(function() {new seqJS.Seq("ATcGAT");},
-               'Argument alphabet is required');
+var seq_from_args = function(a){
+    return new seqJS.Seq(a['seq'],a['alphabet'],a['features'],a['topology'],a['length_unit'],a['strand_type'],a['residue_type']);
+};
+     
+
+var test_seq_init = function(args, expected, elen){
+    test('Seq('+str_args(args)+')', function(){
+        var s = seq_from_args(args),
+            i,e,
+            o = s.toString(-1);
+
+        for(i=0;i < SEQ_ARGS.length; i++){
+            e = expected[SEQ_ARGS[i]];
+            e = (e===undefined) ? '' : e;
+            equal(s[SEQ_GETS[i]](), e, SEQ_GETS[i] + ' failed');
+        }
+        equal(s.length(), elen, 'length failed');
+
+        equal(s.toString(-1), o, 'gets changed Seq');
     });
+};
 
-    test('unknown alphabet', function(){
-        expect(1);
-        throws(function() {new seqJS.Seq("ATcGAT", 'var');},
-               'Unknown Alphabet');
+/*
+ * Test alphabets
+ */
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp'
+}, 4);
+test_seq_init({
+        seq: 'ACGTRYSWKMBDHVN',
+        alphabet: 'aDNA'
+    },{
+        seq: 'ACGTRYSWKMBDHVN',
+        alphabet: 'aDNA',
+        topology: 'linear',
+        length_unit: 'bp'
+}, 15);
+test_seq_init({
+        seq: 'ACGU',
+        alphabet: 'RNA'
+    },{
+        seq: 'ACGU',
+        alphabet: 'RNA',
+        topology: 'linear',
+        length_unit: 'bp'
+}, 4);
+test_seq_init({
+        seq: 'ACGURYSWKMBDHVN',
+        alphabet: 'aRNA'
+    },{
+        seq: 'ACGURYSWKMBDHVN',
+        alphabet: 'aRNA',
+        topology: 'linear',
+        length_unit: 'bp'
+}, 15);
+test_seq_init({
+        seq: 'ACDEFGHIKLMNPQRSTVWY',
+        alphabet: 'PROT'
+    },{
+        seq: 'ACDEFGHIKLMNPQRSTVWY',
+        alphabet: 'PROT',
+        topology: 'linear',
+        length_unit: 'aa'
+}, 20);
+test_seq_init({
+        seq: 'ACDEFGHIKLMNPQRSTVWYBXZ',
+        alphabet: 'aPROT'
+    },{
+        seq: 'ACDEFGHIKLMNPQRSTVWYBXZ',
+        alphabet: 'aPROT',
+        topology: 'linear',
+        length_unit: 'aa'
+}, 23);
+
+/*
+ * Others
+ */
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        residue_type: 'can_be_anything'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        residue_type: 'can_be_anything'
+}, 4);
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp'
+}, 4);
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'circular'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'circular',
+        length_unit: 'bp'
+}, 4);
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        length_unit: 'rc'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'rc'
+}, 4);       
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        strand_type: 'ss'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        strand_type: 'ss'
+}, 4);      
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        strand_type: 'ds'
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        strand_type: 'ds'
+}, 4);      
+test_seq_init({
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        strand_type: ''
+    },{
+        seq: 'ACGT',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        strand_type: ''
+}, 4);
+     
+
+var test_seq_init_fail = function(reason, args){
+    test('Seq('+str_args(args)+') - '+reason, function(){
+        throws(function(){
+            seq_from_args(args);
+        });
     });
+};
+test_seq_init_fail('no alphabet', {
+    seq: 'ATGU',
+});
+test_seq_init_fail('no seq', {
+    alphabet: 'DNA',
+});
+test_seq_init_fail('wrong alphabet', {
+    seq: 'AUGCN',
+    alphabet: 'DNA'
+});
+test_seq_init_fail('unknown alphabet', {
+    seq: 'ATGC',
+    alphabet: 'dDNA'
+});
+test_seq_init_fail('invalid topology', {
+    seq: 'ATGA',
+    alphabet: 'DNA',
+    topology: 'round'
+});
+test_seq_init_fail('invalid length unit', {
+    seq: 'ATGA',
+    alphabet: 'DNA',
+    length_unit: 'light_years'
+});
+test_seq_init_fail('invalid strand type', {
+    seq: 'ATGA',
+    alphabet: 'DNA',
+    strand_type: 'silly_string'
+});
+        
 
-    test('reverse complement', function() {
-        var s = new seqJS.Seq("ATCGTC", 'DNA');
-        equal(s.reverseComplement().seq(), 'GACGAT', 'even length R.C.');
-
-        s = new seqJS.Seq("ATCGTCA", 'DNA');
-        equal(s.reverseComplement().seq(), 'TGACGAT', 'odd length R.C.');
-    });
-
-    test('reverse complement with features', function() {
-        var s = new seqJS.Seq("ATCGTC", 'DNA', [new seqJS.Feature('gene', '1..3')]);
-        var o_str = s.features()[0].toString(-1);
-        var n = s.reverseComplement();
-
-        equal(n.seq(), 'GACGAT', 'ReverseComplement failed');
-        equal(s.features()[0].toString(-1), o_str, "Original seqJS.Seq changed");
-        equal(n.features()[0].toString(-1), 
-              'F(\'gene\', FL(\'join\', SO(\'complement\', [S(-,L(3):L(6))])))', "ReverseComplement Failed");
-    });
 
 var test_seq_features = function(start, stop, intersect, expected){
     test('Seq.features('+start+', '+stop+', '+intersect+')', function(){

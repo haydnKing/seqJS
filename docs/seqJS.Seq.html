@@ -41,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Seq"><span class="type-signature"></span>new Seq<span class="signature">(_seq, _alphabet, <span class="optional">_features</span>, <span class="optional">_topology</span>, <span class="optional">_length_unit</span>, <span class="optional">_strand_type</span>, <span class="optional">_residue_type</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Seq"><span class="type-signature"></span>new Seq<span class="signature">(seq, alphabet, <span class="optional">features</span>, <span class="optional">topology</span>, <span class="optional">length_unit</span>, <span class="optional">strand_type</span>, <span class="optional">residue_type</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -87,7 +87,7 @@
 	
         <tr>
             
-                <td class="name"><code>_seq</code></td>
+                <td class="name"><code>seq</code></td>
             
             
             <td class="type">
@@ -122,7 +122,7 @@
 	
         <tr>
             
-                <td class="name"><code>_alphabet</code></td>
+                <td class="name"><code>alphabet</code></td>
             
             
             <td class="type">
@@ -150,14 +150,15 @@
                 </td>
             
             
-            <td class="description last">the alphabet, one of <a href="seqJS.html#Alphabets">seqJS.Alphabets</a></td>
+            <td class="description last">the alphabet, one of <a href="seqJS.html#Alphabets">seqJS.Alphabets</a>,
+either 'DNA', 'aDNA', 'RNA', 'aRNA', 'PROT' or 'aPROT'</td>
         </tr>
 	
 	
 	
         <tr>
             
-                <td class="name"><code>_features</code></td>
+                <td class="name"><code>features</code></td>
             
             
             <td class="type">
@@ -197,7 +198,7 @@ the sequence</td>
 	
         <tr>
             
-                <td class="name"><code>_topology</code></td>
+                <td class="name"><code>topology</code></td>
             
             
             <td class="type">
@@ -237,7 +238,7 @@ the sequence</td>
 	
         <tr>
             
-                <td class="name"><code>_length_unit</code></td>
+                <td class="name"><code>length_unit</code></td>
             
             
             <td class="type">
@@ -277,7 +278,7 @@ the sequence, one of 'bp', 'aa' or 'rc'</td>
 	
         <tr>
             
-                <td class="name"><code>_strand_type</code></td>
+                <td class="name"><code>strand_type</code></td>
             
             
             <td class="type">
@@ -317,7 +318,7 @@ default is '' - unknown</td>
 	
         <tr>
             
-                <td class="name"><code>_residue_type</code></td>
+                <td class="name"><code>residue_type</code></td>
             
             
             <td class="type">
@@ -381,7 +382,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line180">line 180</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line193">line 193</a>
     </li></ul></dd>
     
     
@@ -468,7 +469,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line243">line 243</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line267">line 267</a>
     </li></ul></dd>
     
     
@@ -607,7 +608,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line415">line 415</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line439">line 439</a>
     </li></ul></dd>
     
     
@@ -698,7 +699,7 @@ default is '' - unknown</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line329">line 329</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line353">line 353</a>
     </li></ul></dd>
     
     
@@ -899,7 +900,7 @@ location of the resulting feature is order(1..10,11..20)</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line442">line 442</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line466">line 466</a>
     </li></ul></dd>
     
     
@@ -1137,7 +1138,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line253">line 253</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line277">line 277</a>
     </li></ul></dd>
     
     
@@ -1228,7 +1229,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line239">line 239</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line263">line 263</a>
     </li></ul></dd>
     
     
@@ -1319,7 +1320,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line284">line 284</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line308">line 308</a>
     </li></ul></dd>
     
     
@@ -1410,7 +1411,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line322">line 322</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line346">line 346</a>
     </li></ul></dd>
     
     
@@ -1501,7 +1502,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line295">line 295</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line319">line 319</a>
     </li></ul></dd>
     
     
@@ -1592,7 +1593,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line389">line 389</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line413">line 413</a>
     </li></ul></dd>
     
     
@@ -1683,7 +1684,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line235">line 235</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line259">line 259</a>
     </li></ul></dd>
     
     
@@ -1774,7 +1775,7 @@ wholly contained by [start,end]</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line305">line 305</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line329">line 329</a>
     </li></ul></dd>
     
     
@@ -2052,7 +2053,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line355">line 355</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line379">line 379</a>
     </li></ul></dd>
     
     
@@ -2143,7 +2144,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line316">line 316</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line340">line 340</a>
     </li></ul></dd>
     
     
@@ -2234,7 +2235,7 @@ complement of the sub-sequence instead</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="record.js.html">record.js</a>, <a href="record.js.html#line336">line 336</a>
+        <a href="record.js.html">record.js</a>, <a href="record.js.html#line360">line 360</a>
     </li></ul></dd>
     
     
@@ -2303,7 +2304,7 @@ complement of the sub-sequence instead</td>
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Oct 11 2014 13:30:24 GMT+0100 (BST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Sat Oct 11 2014 17:30:05 GMT+0100 (BST)
 </footer>
 
 <script> prettyPrint(); </script>
