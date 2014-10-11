@@ -254,6 +254,38 @@ test_spanoperator_overlaps('10..20', '20..30', true);
 test_spanoperator_overlaps('merge(10..20,50..60)', '20..30', true);
 test_spanoperator_overlaps('merge(10..20,50..60)', 'merge(complement(1..5),20..30)', true);
 test_spanoperator_overlaps('complement(merge(10..20,50..60))', 'merge(complement(1..5),20..30)', true);
+            
+var test_spanoperator_toGenbankString = function(loc_str){
+    test('SpanOperator('+loc_str+').toGenbankString()', function(){
+        var s = new seqJS.SpanOperator(loc_str),
+            o = s.toString(-1);
+        equal(s.toGenbankString(), loc_str, 'toGenbankString() failed');
+        equal(s.toString(-1), o, 'toGenbankString() changed SpanOperator');
+    });
+};
+test_spanoperator_toGenbankString('10..20');
+test_spanoperator_toGenbankString('<10..20');
+test_spanoperator_toGenbankString('>10..20');
+test_spanoperator_toGenbankString('10..<20');
+test_spanoperator_toGenbankString('10..>20');
+test_spanoperator_toGenbankString('<10..<20');
+test_spanoperator_toGenbankString('<10..>20');
+test_spanoperator_toGenbankString('>10..<20');
+test_spanoperator_toGenbankString('>10..>20');
+test_spanoperator_toGenbankString('complement(10..20)');
+test_spanoperator_toGenbankString('complement(<10..20)');
+test_spanoperator_toGenbankString('complement(>10..20)');
+test_spanoperator_toGenbankString('complement(10..<20)');
+test_spanoperator_toGenbankString('complement(10..>20)');
+test_spanoperator_toGenbankString('complement(<10..<20)');
+test_spanoperator_toGenbankString('complement(<10..>20)');
+test_spanoperator_toGenbankString('complement(>10..<20)');
+test_spanoperator_toGenbankString('complement(>10..>20)');
+test_spanoperator_toGenbankString('merge(10..20,30..40)');
+test_spanoperator_toGenbankString('merge(complement(10..20),30..40)');
+test_spanoperator_toGenbankString('complement(merge(complement(10..20),30..40))');
+test_spanoperator_toGenbankString('complement(merge(complement(merge(10..20,5..7)),30..40))');
+test_spanoperator_toGenbankString('complement(merge(complement(merge(10..20,complement(5..7))),30..40))');
 
 
 }());
