@@ -298,5 +298,18 @@ test_featureloc_getmergeoperator('join(10..20,complement(30..40))', 'join');
 test_featureloc_getmergeoperator('complement(order(10..20,30..40))', 'order');
 test_featureloc_getmergeoperator('order(10..20,complement(30..40))', 'order');
 
+var test_featureloc_length = function(loc_str, expected){
+    test('seqJS.FeatureLocation(\''+loc_str+'\').length()', function(){
+        var fl = new seqJS.FeatureLocation(loc_str);
+        var o = fl.toString(-1);
+        equal(fl.length(), expected, 'length() failed');
+        equal(fl.toString(-1), o, 'length() changed original');
+    });
+};
+test_featureloc_length('10..20', 11);
+test_featureloc_length('merge(10..20,30..40)', 22);
+test_featureloc_length('merge(10..20,complement(30..40))', 22);
+test_featureloc_length('complement(merge(complement(10..20),30..40))', 22);
+test_featureloc_length('merge(10..20,30..40,1..2)', 24);
 
 }());
