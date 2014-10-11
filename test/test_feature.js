@@ -88,5 +88,36 @@ test_feature_crop('complement(1..10)', 0,5,false,
 test_feature_crop('join(1..10,15..20)', 5, 20,false, 
                 'F(\'gene\', FL(\'join\', SO(\'merge\', [S(+,L(0):L(5)), S(+,L(9):L(15))])))');
              
+test('Feature.type', function(){
+    var f = new seqJS.Feature('sometype', '10..20');
+
+    equal(f.type(), 'sometype', 'type failed');
+    equal(f.type('newtype'), f, 'type failed');
+    equal(f.type(), 'newtype', 'type failed');
+
+});
+
+test('Feature qualifiers', function(){
+    var qs = [['one', 1], ['two', '2'], ['three', {key: 'value'}]];
+    var i;
+    var f = new seqJS.Feature('type', '1..10');
+
+    deepEqual(f.qualifierKeys(), [], 'qualifier keys should be empty to start');
+
+    for(i=0; i<qs.length; i++){
+        equal(f.qualifier(qs[i][0], qs[i][1]), f, 'qualifier should return this when setting a qualifier');
+    }
+
+    deepEqual(f.qualifierKeys(), ['one','two','three']);
+
+    for(i=0; i<qs.length; i++){
+        equal(f.qualifier(qs[i][0]), qs[i][1], 'qualifier set incorrectly');
+    }
+
+    equal(f.clearQualifiers(), f, 'clearQualifiers should return this');
+    deepEqual(f.qualifierKeys(), [], 'clearQualifiers didn\'t remove all qualifiers');
+});
+
+
 
 }());
