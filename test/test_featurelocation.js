@@ -283,5 +283,20 @@ test_featureloc_invertdatum('1..3', 6,
 test_featureloc_invertdatum('complement(1..3)', 6, 
                          'FL(\'join\', SO(\'\', [S(+,L(3):L(6))]))');
 
+var test_featureloc_getmergeoperator = function(loc_str, expected){
+    test('seqJS.FeatureLocation(\''+loc_str+'\').getMergeOperator()', function(){
+        var fl = new seqJS.FeatureLocation(loc_str);
+        var o = fl.toString(-1);
+        equal(fl.getMergeOperator(), expected, 'getMergeOperator failed');
+        equal(fl.toString(-1), o, 'getMergeOperator changed original');
+    });
+};
+test_featureloc_getmergeoperator('10..20', 'join');
+test_featureloc_getmergeoperator('complement(10..20)', 'join');
+test_featureloc_getmergeoperator('complement(join(10..20,30..40))', 'join');
+test_featureloc_getmergeoperator('join(10..20,complement(30..40))', 'join');
+test_featureloc_getmergeoperator('complement(order(10..20,30..40))', 'order');
+test_featureloc_getmergeoperator('order(10..20,complement(30..40))', 'order');
+
 
 }());
