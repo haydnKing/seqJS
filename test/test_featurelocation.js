@@ -312,4 +312,19 @@ test_featureloc_length('merge(10..20,complement(30..40))', 22);
 test_featureloc_length('complement(merge(complement(10..20),30..40))', 22);
 test_featureloc_length('merge(10..20,30..40,1..2)', 24);
 
+var test_featureloc_getspans = function(loc_str, expected){
+    test('seqJS.FeatureLocation(\''+loc_str+'\').getSpans()', function(){
+        var fl = new seqJS.FeatureLocation(loc_str);
+        var o = fl.toString(-1);
+        equal(fl.getSpans().map(function(s){return s.toString(-1);}).join(','), 
+              expected, 'getSpans() failed');
+        equal(fl.toString(-1), o, 'getSpans() changed original');
+    });
+};
+test_featureloc_getspans('10..20', 'S(+,L(9):L(20))');
+test_featureloc_getspans('complement(10..20)', 'S(-,L(9):L(20))');
+test_featureloc_getspans('join(1..5,complement(10..20))', 'S(+,L(0):L(5)),S(-,L(9):L(20))');
+test_featureloc_getspans('complement(join(1..5,complement(10..20)))', 'S(+,L(9):L(20)),S(-,L(0):L(5))');
+test_featureloc_getspans('complement(join(1..5,complement(join(10..20,30..40))))', 'S(+,L(9):L(20)),S(+,L(29):L(40)),S(-,L(0):L(5))');
+
 }());
