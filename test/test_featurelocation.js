@@ -280,7 +280,8 @@ var test_featureloc_invertdatum = function(loc_str, len, expected_str){
 
 test_featureloc_invertdatum('1..3', 6, 
                          'FL(\'join\', SO(\'complement\', [S(-,L(3):L(6))]))');
-
+test_featureloc_invertdatum('complement(1..3)', 6, 
+                         'FL(\'join\', SO(\'\', [S(+,L(3):L(6))]))');
 
 
 }());
