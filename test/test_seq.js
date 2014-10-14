@@ -314,6 +314,18 @@ test_seq_extract_f('join(2..7,20..30,complement(12..17))',
                    "CTAGTCATGAGCTAGGTATCGAT", 
                    'two=complement(4..6)|three=7..12|one=complement(18..23)|three=complement(18..20)|two=20..23');
 
+test('Seq circularize & linearize', function(){
+    var s = new seqJS.Seq('ATGC', 'DNA');
+    var o = s.toString(-1);
+
+    equal(s.topology(), 'linear', 'Topology should be linear by default');
+    s.circularize();
+    equal(s.topology(), 'circular', 'Circularize() failed');
+    s.linearize();
+    equal(s.topology(), 'linear', 'linearize() failed');
+
+    equal(s.toString(-1), o, 'circularize()/linearize() changed original');
+});
 
 }());
 
