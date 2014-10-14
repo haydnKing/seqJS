@@ -265,6 +265,32 @@ var seqJS = seqJS || {};
          * @returns {string} sequence alphabet, one of {@link seqJS.Alphabets}
          */
         this.alphabet = function() {return _alphabet;};
+        /** Get the alphabet type - i.e. for `alphabet`='aDNA' return 'DNA'
+         * @returns {string} alphabet type
+         */
+        this.alphabetType = function() {
+            return (this.isAmbiguous()) ? _alphabet.substr(1) : _alphabet;
+        };
+        /** Return true if the alphabet is ambiguous
+         * @returns {bool} 
+         */
+        this.isAmbiguous = function(){
+            return _alphabet[0] === 'a';
+        };
+        /** Set whether or not the alphabet should be ambiguous
+         * @param {bool} [ambiguous=True] Whether to set ambiguous
+         * @returns {seqJS.Seq} this
+         */
+        this.setAmbiguous = function(a){
+            a = (a===undefined) ? true : a;
+            if(a && !this.isAmbiguous()){
+                _alphabet = 'a' + _alphabet;
+            }
+            else if (!a && this.isAmbiguous()){
+                _alphabet = _alphabet.substr(1);
+            }
+            return this;
+        };
         /** Get a list of features within the range [start,end], or all
          * features if they are not given
          * @param {int} [start] the first position
@@ -437,18 +463,26 @@ var seqJS = seqJS || {};
          * @returns {seqJS.Seq} this
          */
         this.append = function(rhs){
-            if(this.alphabet() === rhs.alphabet() &&
-               this.topology() === 'linear' &&
-               rhs.topology() === 'linear'){
-                
-                _features = _features.concat(rhs.features().map(function(f){
-                    return f.offset(_seq.length);
-                }));
-                
-                _seq = _seq + rhs.seq();
-                return this;
+            if(this.alphabetType() !== rhs.alphabetType()){
+                throw('Can\'t join alphabets \''+this.alphabet()+
+                      '\' with \''+rhs.alphabet()+'\'');
             }
-            throw "Could not join sequences";
+            if(this.topology() !== 'linear' ||
+               rhs.topology() !== 'linear'){
+                throw('Can\'t join non-linear fragments');
+            }
+                
+            //do we need to become ambiguous?
+            if(!this.isAmbiguous() && rhs.isAmbiguous()){
+                this.setAmbiguous(true);
+            }
+            _features = _features.concat(rhs.features().map(function(f){
+                return f.offset(_seq.length);
+            }));
+            
+            _seq = _seq + rhs.seq();
+            return this;
+            
         };
 
         /** Extract the sequence that the feature refers to

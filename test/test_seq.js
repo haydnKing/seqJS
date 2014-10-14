@@ -42,22 +42,37 @@ var str_args = function(args){
 };
 
 var seq_from_args = function(a){
+    if(a['features'] !== undefined){
+        a['features'] = a['features'].map(function(s){
+            return new seqJS.Feature(s[0], s[1]);
+        });
+    }
     return new seqJS.Seq(a['seq'],a['alphabet'],a['features'],a['topology'],a['length_unit'],a['strand_type'],a['residue_type']);
+};
+
+var test_seq = function(actual, expected){
+    var i,e,
+        feat_fun = function(f){return [f.type(), f.location().toGenbankString()];};
+    for(i=0;i < SEQ_ARGS.length; i++){
+        e = expected[SEQ_ARGS[i]];
+        e = (e===undefined) ? '' : e;
+        if(SEQ_ARGS[i] === 'features'){
+            deepEqual(actual.features().map(feat_fun), e, 'features failed');
+        }
+        else{
+            equal(actual[SEQ_GETS[i]](), e, SEQ_GETS[i] + ' failed');
+        }
+    }
+    equal(actual.length(), expected.seq.length, 'length failed');
 };
      
 
-var test_seq_init = function(args, expected, elen){
+var test_seq_init = function(args, expected){
     test('Seq('+str_args(args)+')', function(){
         var s = seq_from_args(args),
-            i,e,
             o = s.toString(-1);
-
-        for(i=0;i < SEQ_ARGS.length; i++){
-            e = expected[SEQ_ARGS[i]];
-            e = (e===undefined) ? '' : e;
-            equal(s[SEQ_GETS[i]](), e, SEQ_GETS[i] + ' failed');
-        }
-        equal(s.length(), elen, 'length failed');
+        
+        test_seq(s, expected);
 
         equal(s.toString(-1), o, 'gets changed Seq');
     });
@@ -73,8 +88,9 @@ test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
         topology: 'linear',
+        features: [],
         length_unit: 'bp'
-}, 4);
+});
 test_seq_init({
         seq: 'ACGTRYSWKMBDHVN',
         alphabet: 'aDNA'
@@ -82,8 +98,9 @@ test_seq_init({
         seq: 'ACGTRYSWKMBDHVN',
         alphabet: 'aDNA',
         topology: 'linear',
+        features: [],
         length_unit: 'bp'
-}, 15);
+});
 test_seq_init({
         seq: 'ACGU',
         alphabet: 'RNA'
@@ -91,8 +108,9 @@ test_seq_init({
         seq: 'ACGU',
         alphabet: 'RNA',
         topology: 'linear',
+        features: [],
         length_unit: 'bp'
-}, 4);
+});
 test_seq_init({
         seq: 'ACGURYSWKMBDHVN',
         alphabet: 'aRNA'
@@ -100,8 +118,9 @@ test_seq_init({
         seq: 'ACGURYSWKMBDHVN',
         alphabet: 'aRNA',
         topology: 'linear',
+        features: [],
         length_unit: 'bp'
-}, 15);
+});
 test_seq_init({
         seq: 'ACDEFGHIKLMNPQRSTVWY',
         alphabet: 'PROT'
@@ -109,8 +128,9 @@ test_seq_init({
         seq: 'ACDEFGHIKLMNPQRSTVWY',
         alphabet: 'PROT',
         topology: 'linear',
+        features: [],
         length_unit: 'aa'
-}, 20);
+});
 test_seq_init({
         seq: 'ACDEFGHIKLMNPQRSTVWYBXZ',
         alphabet: 'aPROT'
@@ -118,8 +138,9 @@ test_seq_init({
         seq: 'ACDEFGHIKLMNPQRSTVWYBXZ',
         alphabet: 'aPROT',
         topology: 'linear',
+        features: [],
         length_unit: 'aa'
-}, 23);
+});
 
 /*
  * Others
@@ -133,8 +154,9 @@ test_seq_init({
         alphabet: 'DNA',
         topology: 'linear',
         length_unit: 'bp',
+        features: [],
         residue_type: 'can_be_anything'
-}, 4);
+});
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -142,9 +164,10 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'linear',
         length_unit: 'bp'
-}, 4);
+});
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -152,9 +175,10 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'circular',
         length_unit: 'bp'
-}, 4);
+});
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -162,9 +186,10 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'linear',
         length_unit: 'rc'
-}, 4);       
+});       
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -172,10 +197,11 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'linear',
         length_unit: 'bp',
         strand_type: 'ss'
-}, 4);      
+});      
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -183,10 +209,11 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'linear',
         length_unit: 'bp',
         strand_type: 'ds'
-}, 4);      
+});      
 test_seq_init({
         seq: 'ACGT',
         alphabet: 'DNA',
@@ -194,10 +221,11 @@ test_seq_init({
     },{
         seq: 'ACGT',
         alphabet: 'DNA',
+        features: [],
         topology: 'linear',
         length_unit: 'bp',
         strand_type: ''
-}, 4);
+});
      
 
 var test_seq_init_fail = function(reason, args){
@@ -325,6 +353,122 @@ test('Seq circularize & linearize', function(){
     equal(s.topology(), 'linear', 'linearize() failed');
 
     equal(s.toString(-1), o, 'circularize()/linearize() changed original');
+});
+
+var test_seq_append = function(l_args, r_args, expected){
+    test('Seq('+str_args(l_args)+').append(Seq('+str_args(r_args)+'))', function(){
+        var l = seq_from_args(l_args),
+            r = seq_from_args(r_args),
+            ro= r.toString(-1);
+
+        var s = l.append(r);
+
+        equal(s,l, 'Seq.append should return this');
+
+        test_seq(s, expected);
+
+        equal(r.toString(-1), ro, 'Append changed rhs');
+    });
+
+};
+test_seq_append({
+        seq: 'ATGTAC',
+        alphabet: 'DNA'
+    },{
+        seq: 'TGATC',
+            features: [],
+        alphabet: 'DNA'
+    },{
+        seq: 'ATGTACTGATC',
+        alphabet: 'DNA',
+        features: [],
+        topology: 'linear',
+        length_unit: 'bp'
+    });
+test_seq_append({
+        seq: 'ATGTAC',
+        alphabet: 'DNA',
+        features: [['f1', '1..3']]
+    },{
+        seq: 'TGATC',
+        alphabet: 'DNA',
+        features: [['f2', '1..3']]
+    },{
+        seq: 'ATGTACTGATC',
+        alphabet: 'DNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        features: [['f1', '1..3'], ['f2', '7..9']]
+});
+test_seq_append({
+        seq: 'ATGTAC',
+        alphabet: 'DNA',
+        features: [['f1', '1..3']]
+    },{
+        seq: 'TGATN',
+        alphabet: 'aDNA',
+        features: [['f2', '1..3']]
+    },{
+        seq: 'ATGTACTGATN',
+        alphabet: 'aDNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        features: [['f1', '1..3'], ['f2', '7..9']]
+});
+test_seq_append({
+        seq: 'NTGTAC',
+        alphabet: 'aDNA',
+        features: [['f1', '1..3']]
+    },{
+        seq: 'TGATC',
+        alphabet: 'DNA',
+        features: [['f2', '1..3']]
+    },{
+        seq: 'NTGTACTGATC',
+        alphabet: 'aDNA',
+        topology: 'linear',
+        length_unit: 'bp',
+        features: [['f1', '1..3'], ['f2', '7..9']]
+});
+test_seq_append({
+        seq: 'ATGTAC',
+        alphabet: 'PROT',
+        features: [['f1', '1..3']]
+    },{
+        seq: 'TGATN',
+        alphabet: 'aPROT',
+        features: [['f2', '1..3']]
+    },{
+        seq: 'ATGTACTGATN',
+        alphabet: 'aPROT',
+        topology: 'linear',
+        length_unit: 'aa',
+        features: [['f1', '1..3'], ['f2', '7..9']]
+});
+
+var test_seq_append_fail = function(reason, lhs, rhs){
+    test('Seq.append fails: '+reason, function(){
+        throws(function(){
+            var l = seq_from_args(lhs),
+                r = seq_from_args(rhs);
+            l.append(r);
+        });
+    });
+};
+test_seq_append_fail('wrong alphabet', {
+        seq: 'ATGT',
+        alphabet: 'DNA'
+    },{
+        seq: 'AUGC',
+        alphabet: 'RNA'
+});
+test_seq_append_fail('circular', {
+        seq: 'ATGT',
+        alphabet: 'DNA'
+    },{
+        seq: 'ATGC',
+        alphabet: 'DNA',
+        topology: 'circular'
 });
 
 }());
