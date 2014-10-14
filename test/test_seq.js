@@ -448,9 +448,9 @@ test_seq_append({
 
 var test_seq_append_fail = function(reason, lhs, rhs){
     test('Seq.append fails: '+reason, function(){
+        var l = seq_from_args(lhs),
+            r = seq_from_args(rhs);
         throws(function(){
-            var l = seq_from_args(lhs),
-                r = seq_from_args(rhs);
             l.append(r);
         });
     });
@@ -470,6 +470,78 @@ test_seq_append_fail('circular', {
         alphabet: 'DNA',
         topology: 'circular'
 });
+
+var test_seq_rc = function(args, expected){
+    test('Seq('+str_args(args)+').reverseComplement()', function(){
+        var s = seq_from_args(args),
+            o = s.toString(-1),
+            r = s.reverseComplement();
+
+        test_seq(r, expected);
+
+        equal(s.toString(-1), o, 'reverseComplement() changed rhs');
+    });
+
+};
+test_seq_rc({
+        seq: 'ATGC',
+        alphabet: 'DNA',
+        features: [['f1', '1..2']]
+    },{
+        seq: 'GCAT',
+        alphabet: 'DNA',
+        length_unit: 'bp',
+        features: [['f1', 'complement(3..4)']],
+        topology: 'linear'
+});
+test_seq_rc({
+        seq: 'ATGCN',
+        alphabet: 'aDNA',
+        features: [['f1', '1..2']]
+    },{
+        seq: 'NGCAT',
+        alphabet: 'aDNA',
+        length_unit: 'bp',
+        features: [['f1', 'complement(4..5)']],
+        topology: 'linear'
+});
+test_seq_rc({
+        seq: 'AUGC',
+        alphabet: 'RNA',
+        features: [['f1', '1..2']]
+    },{
+        seq: 'GCAU',
+        alphabet: 'RNA',
+        length_unit: 'bp',
+        features: [['f1', 'complement(3..4)']],
+        topology: 'linear'
+});
+test_seq_rc({
+        seq: 'AUGCN',
+        alphabet: 'aRNA',
+        features: [['f1', '1..2']]
+    },{
+        seq: 'NGCAU',
+        alphabet: 'aRNA',
+        length_unit: 'bp',
+        features: [['f1', 'complement(4..5)']],
+        topology: 'linear'
+});
+
+var test_seq_rc_fail = function(reason, args){
+    test('Seq.reverseComplement should fail: '+reason, function(){
+        var s = seq_from_args(args);
+        throws(function(){
+            s.reverseComplement();
+        });
+    });
+};
+test_seq_rc_fail('protein alphabet', {
+    seq: 'at',
+    alphabet: 'PROT'
+});
+
+
 
 }());
 

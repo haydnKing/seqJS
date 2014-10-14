@@ -433,15 +433,23 @@ var seqJS = seqJS || {};
             return s;
         };
 
+        var _REP = {
+            DNA: {A: 'T', T: 'A', G: 'C', C: 'G'},
+            aDNA: {A: 'T', T: 'A', G: 'C', C: 'G', W: 'S', S: 'W', M: 'K', 
+                K: 'M', R: 'Y', Y: 'R', B: 'N',D: 'N',H: 'N',V: 'N', N: 'N'},
+            RNA: {A: 'U', U: 'A', G: 'C', C: 'G'},
+            aRNA: {A: 'U', U: 'A', G: 'C', C: 'G', W: 'S', S: 'W', M: 'K', 
+                K: 'M', R: 'Y', Y: 'R', B: 'N',D: 'N',H: 'N',V: 'N', N: 'N'},
+        };
         /** Return a new Seq which is the reverse complement of this sequence
          * @returns {seqJS.Seq} the new sequence
          */
         this.reverseComplement = function(){
-            if(this.alphabet() !== 'DNA'){
-                throw "Can only reverse complement DNA";
+            if(!_REP.hasOwnProperty(this.alphabet())){
+                throw("Cannot reverse complement \'" + this.alphabet() + '\'');
             }
 
-            var replace = {'A': 'T', 'T': 'A', 'G': 'C', 'C': 'G'};
+            var replace = _REP[this.alphabet()];
             var nseq = _seq.split('')
                        .reverse()
                        .map(function(c){return replace[c];})
