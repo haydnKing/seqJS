@@ -54,6 +54,22 @@ test('seqJS.Record().id', function(){
     equal(r.desc('new desc'), r, 'desc(v) should return this');
     equal(r.desc(), 'new desc', 'set description after construction');
 });
+
+test('seqJS.Record() annotations', function(){
+    var r = new seqJS.Record(new seqJS.Seq('ATG','DNA'), 10, 'name', 'desc');
+
+    equal(r.annotation('key', 'value'), r, 'annotation(k,v) should return this');
+    equal(r.annotation('key'), 'value', 'annotations should be returned');
+    equal(r.annotation('not a key'), undefined, 'unknown key');
+
+    deepEqual(r.listAnnotations(), ['key'], 'listAnnotations');
+
+    equal(r.removeAnnotation('key'), r, 'removeAnnotation() should return this');
+
+    deepEqual(r.listAnnotations(), [], 'annotation should have been removed');
+    equal(r.annotation('key'), undefined, 'key should have been removed');
+});
+
     
 
 }());

@@ -103,7 +103,7 @@ var seqJS = seqJS || {};
          */
         this.annotation = function(k, v) {
             if(k === undefined){
-                throw "Record::annotation(k,v): key is required";
+                throw("Record::annotation(k,v): key is required");
             }
             if(v === undefined){
                 return annotations[k];
@@ -126,10 +126,11 @@ var seqJS = seqJS || {};
         };
 
         /** Remove an annotation
+         * @param {string} key The key of the annotation to remove
          * @returns {seqJS.Record} returns this
          */
-        this.clearAnnotation = function(k) {
-            annotations[k] = undefined;
+        this.removeAnnotation = function(k) {
+            delete annotations[k];
             return this;
         };
 
