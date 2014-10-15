@@ -16,7 +16,7 @@ var seqJS = seqJS || {};
     /*
      * record object
      */
-    var DEF_ANNOTATIONS = {
+/*    var DEF_ANNOTATIONS = {
         "accession": "",
         "data_division": "",
         "date": "",
@@ -25,7 +25,7 @@ var seqJS = seqJS || {};
         "taxonomy": [],
         "references": []
     };
-
+*/
     /**
      * Stores a biological sequence record. Records are typically created 
      * synchronously using {@link seqJS.read} or asynchronously using 
@@ -33,15 +33,18 @@ var seqJS = seqJS || {};
      * {@link seqJS.write}.
      * @constructor
      * @param {seqJS.Seq} seq the sequence object
-     * @param {string} id the record's id
-     * @param {string} name the record's name
-     * @param {string} desc the record's description
-     * @param {Object} annotations the record's annotations in {key: value, ...} form
+     * @param {string} [id='<unknown ID>'] the record's id
+     * @param {string} [name='<unnamed>'] the record's name
+     * @param {string} [desc=''] the record's description
+     * @param {Object} [annotations={}] the record's annotations in {key: value, ...} form
      */
     seqJS.Record = function(seq, id, name, desc, annotations){
         if(! seq instanceof seqJS.Seq){
             throw("seq must be a seqJS.Seq instance");
         }
+        id   = (id   === undefined) ? '<unknown ID>' : id;
+        name = (name === undefined) ? '<unnamed>' : name;
+        desc = (desc === undefined) ? '' : desc;
         /** 
          * Get the sequence object 
          * @returns {seqJS.Seq} The sequence object 
@@ -56,7 +59,7 @@ var seqJS = seqJS || {};
         this.id = function (_id) {
             if(_id === undefined)
             {
-                return id || 0;
+                return id;
             }
             id = _id;
             return this;
@@ -69,7 +72,7 @@ var seqJS = seqJS || {};
          */
         this.name = function(_name) {
             if(_name === undefined) {
-                return name || "unnamed";
+                return name;
             }
             name = _name;
             return this;
@@ -82,7 +85,7 @@ var seqJS = seqJS || {};
          */
         this.desc = function(_desc) {
             if(_desc === undefined){
-                return desc || "";
+                return desc;
             }
             desc = _desc;
             return this;
@@ -91,10 +94,6 @@ var seqJS = seqJS || {};
 
         //Initialise the annotations
         annotations = annotations || {};
-        for (var attr in DEF_ANNOTATIONS) { 
-            annotations[attr] = annotations[attr] || DEF_ANNOTATIONS[attr]; 
-        }
-
         /** Get or set an annotation if value is provided
          * @param {string} key annotation key
          * @param {string} [value] the new annotation value

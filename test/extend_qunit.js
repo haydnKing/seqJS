@@ -58,21 +58,8 @@ var gbrecord_eq = function(actual, expected){
     equal(actual.desc(), expected['description'], "Description is wrong");
 
     // ============================= Test Annotations =========================
-    var required_annotations = [
-        'data_division',
-        'date',
-        'source',
-        'organism',
-        'taxonomy',
-        'references'];
 
     var actual_annotations = {}, i;
-
-    for(i = 0; i < required_annotations.length; i++){
-        ok(actual.annotation(required_annotations[i]) !== undefined, 
-           "Required annotation " + required_annotations[i] + " is missing");
-    }
-
     var anames = actual.listAnnotations();
     for(i in anames){
         if(anames[i] !== 'references'){

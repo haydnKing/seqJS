@@ -826,14 +826,7 @@ TEST_DATA.parser_fasta.valid = [
             'description': 'test of FASTA parsing',
 
 
-            annotations: {
-                'data_division': '',
-                'date': '',
-                'source': '',
-                'organism': '',
-                'taxonomy': [],
-                'accession': '',
-            },
+            annotations: {},
 
             references: [],
 
@@ -877,14 +870,7 @@ TEST_DATA.parser_fasta.valid = [
             'description': 'test of FASTA parsing',
 
 
-            annotations: {
-                'data_division': '',
-                'date': '',
-                'source': '',
-                'organism': '',
-                'taxonomy': [],
-                'accession': '',
-            },
+            annotations: {},
 
             references: [],
 
@@ -931,14 +917,7 @@ TEST_DATA.parser_fasta.valid = [
             'description': 'cytochrome b [Elephas maximus maximus]',
 
 
-            annotations: {
-                'data_division': '',
-                'date': '',
-                'source': '',
-                'organism': '',
-                'taxonomy': [],
-                'accession': '',
-            },
+            annotations: {},
 
             references: [],
 

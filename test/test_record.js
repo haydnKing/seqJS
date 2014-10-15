@@ -1,4 +1,4 @@
-/**global seqJS:true  */
+/*global seqJS:true  */
 
 (function() {
   /*
@@ -22,6 +22,13 @@
       throws(block, [expected], [message])
   */
 
+test('seqJS.Record defaults', function(){
+    var r = new seqJS.Record(new seqJS.Seq('ATG','DNA'));
 
+    equal(r.id(), '<unknown ID>', 'Default ID incorrect');
+    equal(r.name(), '<unnamed>', 'Default name incorrect');
+    equal(r.desc(), '', 'Default description incorrect');
+    deepEqual(r.listAnnotations(), [], 'Default annotations incorrect');
+});
 
 }());
