@@ -31,4 +31,29 @@ test('seqJS.Record defaults', function(){
     deepEqual(r.listAnnotations(), [], 'Default annotations incorrect');
 });
 
+test('seqJS.Record().id', function(){
+    var r = new seqJS.Record(new seqJS.Seq('ATG','DNA'), 10);
+
+    equal(r.id(), 10, 'set id from constructor');
+    equal(r.id(12), r, 'id(v) should return this');
+    equal(r.id(), 12, 'set id after construction');
+});
+
+test('seqJS.Record().id', function(){
+    var r = new seqJS.Record(new seqJS.Seq('ATG','DNA'), 10, 'name');
+
+    equal(r.name(), 'name', 'set name from constructor');
+    equal(r.name('new name'), r, 'name(v) should return this');
+    equal(r.name(), 'new name', 'set name after construction');
+});
+
+test('seqJS.Record().id', function(){
+    var r = new seqJS.Record(new seqJS.Seq('ATG','DNA'), 10, 'name', 'desc');
+
+    equal(r.desc(), 'desc', 'set description from constructor');
+    equal(r.desc('new desc'), r, 'desc(v) should return this');
+    equal(r.desc(), 'new desc', 'set description after construction');
+});
+    
+
 }());
