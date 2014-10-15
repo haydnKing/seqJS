@@ -397,12 +397,10 @@ var seqJS = seqJS || {};
          * returns a Seq with two bases, those at positions 5 and 6
          * @param {seqJS.Location|int} start The position to start at
          * @param {seqJS.Location|int} end The position to end at
-         * @param {boolean} [complement=false] If true, return the reverse
-         * complement of the sub-sequence instead
          * @param {bool} [feats=false] Whether to include features
          * @returns {seqJS.Seq} The sub-sequence
          */
-        this.subseq = function(start, end, complement, feats) {
+        this.subseq = function(start, end, feats) {
             if(start.toInt instanceof Function &&
                  end.toInt instanceof Function) {
                 start = start.toInt();
@@ -412,7 +410,6 @@ var seqJS = seqJS || {};
                       end.toInt instanceof Function){
                 throw('seqJS.Seq.subseq: start and end arguments must be the same type');
             }
-            complement = complement || false;
             feats = (feats===undefined) ? false : feats;
 
             var _feats = (feats) ? this.features(start, end, true)
@@ -420,17 +417,13 @@ var seqJS = seqJS || {};
                     return f.crop(start, end);
                 }) : [];
 
-            var s = new seqJS.Seq(this.seq().substring(start, end), 
+            return new seqJS.Seq(this.seq().substring(start, end), 
                                   this.alphabet(),
                                   _feats,
                                   'linear',
                                   this.lengthUnit(),
                                   this.strandType(),
                                   this.residueType());
-            if(complement){
-                s = s.reverseComplement();
-            }
-            return s;
         };
 
         var _REP = {
@@ -521,7 +514,8 @@ var seqJS = seqJS || {};
                               this.residueType());
             
             spans.forEach(function(i_span){
-                s.append(this.subseq(i_span.left(), i_span.right(), i_span.isComplement(), ef)); 
+                var t = this.subseq(i_span.left(), i_span.right(), ef);
+                s.append(i_span.isComplement() ? t.reverseComplement() : t); 
             }, this);
 
             return s;

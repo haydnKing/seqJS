@@ -541,6 +541,52 @@ test_seq_rc_fail('protein alphabet', {
     alphabet: 'PROT'
 });
 
+var test_seq_subseq = function(seq_args, subseq_args, expected){
+    test('Seq('+str_args(seq_args)+').subseq('+subseq_args.join(', ')+'))', function(){
+        var s = seq_from_args(seq_args),
+            o = s.toString(-1),
+            r = s.subseq(subseq_args[0], subseq_args[1], subseq_args[2]);
+
+        test_seq(r, expected);
+
+        equal(s.toString(-1), o, 'subseq() changed rhs');
+    });
+
+};
+test_seq_subseq({
+        seq: 'ATGCGATCGATTCG',
+        alphabet: 'DNA',
+        features: [['f1', '2..3'], ['f2', 'complement(4..10)'], ['f3', 'complement(8..10)']]
+    }, [1, 5, false], {
+        seq: 'TGCG',
+        alphabet: 'DNA',
+        length_unit: 'bp',
+        topology: 'linear',
+        features: []
+});
+test_seq_subseq({
+        seq: 'ATGCGATCGATTCG',
+        alphabet: 'DNA',
+        features: [['f1', '2..3'], ['f2', 'complement(4..10)'], ['f3', 'complement(8..10)']]
+    }, [1, 5, true], {
+        seq: 'TGCG',
+        alphabet: 'DNA',
+        length_unit: 'bp',
+        topology: 'linear',
+        features: [['f1', '1..2'], ['f2', 'complement(3..4)']]
+});
+test_seq_subseq({
+        seq: 'ATGCGATCGATTCG',
+        alphabet: 'DNA',
+        features: [['f1', 'join(2..3,complement(4..10))']]
+    }, [1, 5, true], {
+        seq: 'TGCG',
+        alphabet: 'DNA',
+        length_unit: 'bp',
+        topology: 'linear',
+        features: [['f1', 'join(1..2,complement(3..4))']]
+});
+
 
 
 }());
