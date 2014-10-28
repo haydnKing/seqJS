@@ -43,6 +43,23 @@ GG: [-6.7 , -15.6, -1.77],
     },
     SYM = [0, -1.4, +0.4],
     TA_pen = [+0.4, 0, +0.4];
+
+/*
+ * Data from oligocalc
+ */
+OC = {
+ AA : [8.0 , 21.9],
+ AT : [5.6 , 15.2],
+ TA : [6.6 , 18.4],
+ CA : [8.2 , 21.0],
+ GT : [9.4 , 25.5],
+ CT : [6.6 , 16.4],
+ GA : [8.8 , 23.5],
+ CG : [11.8, 29.0],
+ GC : [10.5, 26.4],
+ GG : [10.9, 28.4],
+}
+
     
 var count_pairs = function(s){
     var r = {};
@@ -112,7 +129,7 @@ seqJS.melt = function(seq){
     dS = dS + INIT[seq.seq()[0]][DS] + ta * TA_pen[DS];
     console.log('dH , dS: '+dH+', '+dS);
 
-    return 1000.0 * dH / (dS + 1.987 * Math.log(Ct)) - 273.15;
+    return 1000.0 * (dH - 3.4) / (dS + 1.987 * Math.log(Ct)) - 273.15;
 };
 
 }());
