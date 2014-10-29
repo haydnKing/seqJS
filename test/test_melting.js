@@ -25,8 +25,9 @@
 module('seqJS.melt');
 
 test('simple melting', function(){
-    //equal(seqJS.melt('ATCGATGGCATGCTAGCTGA'), 70.8);
-    equal(seqJS.melt('ATCGATGG'), 70.8);
+    //equal(seqJS.melt('ATCGATGGCATGCTAGCTGA', 'oligocalc'), 89.4);
+    //equal(seqJS.melt('ATCGATGG', 'oligocalc'), 50.2);
+    equal(seqJS.melt('GCTAGC', 'Allawi1997'), 49.1);
     //equal(seqJS.melt('GCTAGC'), 32.6);
 });
 
