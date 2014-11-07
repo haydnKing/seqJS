@@ -29,10 +29,10 @@ var rounded = function(f){
 };
 
 test('simple melting', function(){
-    //equal(seqJS.melt('ATCGATGGCATGCTAGCTGA', 'oligocalc'), 89.4);
-    //equal(seqJS.melt('ATCGATGG', 'oligocalc'), 50.2);
-    equal(rounded(seqJS.Melt.melt('GCTAGC', 'Allawi1997')), 49.1);
-    //equal(seqJS.melt('GCTAGC'), 32.6);
+    equal(rounded(seqJS.Melt.melt('ATCGATGGCATGCTAGCTGA', {}, 'oligocalc')), 80.6);
+    equal(rounded(seqJS.Melt.melt('ATCGATGGCATGCTAGCTGA', {}, 'Allawi1997')), 74.3);
+    equal(rounded(seqJS.Melt.melt('ATCGATGG', {}, 'oligocalc')), 31.8);
+    equal(rounded(seqJS.Melt.melt('GCTAGCA', {}, 'Allawi1997')), 25.6);
 });
 
 test('datasets', function(){

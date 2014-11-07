@@ -111,6 +111,7 @@ var DH = 0, DS = 1, //DG = 2,
                 A: [2.3, 4.1 , 1.03],
             },
             sym: [0, -1.4, +0.4],
+            TA_pen: [0, 0, 0],
         },
         oligocalc: {
             pairs: {
@@ -143,6 +144,43 @@ var DH = 0, DS = 1, //DG = 2,
         }
     };
 
+var r_default = {
+    Na: 1000.0,
+    K: 0.0,
+    Tris: 0.0,
+    Mg: 0.0,
+    dNTP: 0.0,
+    Oligo: 0.5,
+},
+r_units = {
+    Na: 'mM',
+    K: 'mM',
+    Tris: 'mM',
+    Mg: 'mM',
+    dNTP: 'mM',
+    Oligo: 'uM',
+},
+r_presets = {
+    Phusion: {
+        Na: 50.0,
+        K: 0.0,
+        Tris: 0.0,
+        Mg: 1.5,
+        dNTP: 0.2,
+        Oligo: 0.5,
+    },
+    Q5: {
+        Na: 50.0,
+        K: 0.0,
+        Tris: 0.0,
+        Mg: 2.0,
+        dNTP: 0.2,
+        Oligo: 0.5,
+    },
+};
+
+
+
 var count_pairs = function(s){
     var r = {};
     ALL_PAIRS.forEach(function(p){r[p] = 0;});
@@ -159,37 +197,25 @@ var count_pairs = function(s){
 };
 
 var count_end_ta = function(s){
-    var r = 0;
-    for(var i=s.length-1; i>=0; i = i-1){
-        if(s[i]==='T'){
-            r+=1;
-        }
-        else{
-            return r;
-        }
-    }
+    return s.match(/T*$/)[0].length;
+};
+
+var get_init = function(s,e,thermo){
+    var r = [0.0,0.0];
+    r[DH] = thermo.init[s][DH] + thermo.init[e][DH];
+    r[DS] = thermo.init[s][DS] + thermo.init[e][DS];
     return r;
 };
-
-var allawi97_init = function(seq){
-    var s = seq.seq(),
-        d = data['Allawi1997'].init,
-        l = s.length;
-
-    var R = [d[s[l-1]][DH] + d[s[l-2]][DH], d[s[l-1]][DH] + d[s[l-2]][DH]];
-    var L = [d[s[0]][DH] + d[s[1]][DH], d[s[0]][DH] + d[s[1]][DH]];
-
-    return (R[0]/R[1] &lt; L[0]/L[1]) ? R : L;
-};
-
 
 /**
  * Compute the melting temperature of the given sequence
  * @param {String|seqJS.Seq} seq The sequence to be melted
+ * @param {String|object} settings The settings for the reaction
  * @param {String} [dataset] the name of the dataset to use
  * @returns {float} the predicted melting temperature
  */
-seqJS.Melt.melt = function(seq, dataset){
+seqJS.Melt.melt = function(seq, settings, dataset){
+    settings = seqJS.Melt.getReactionParameters(settings);
     dataset = (dataset===undefined ? default_data : dataset);
     var thermo = data[dataset];
     //convert to a Seq
@@ -200,7 +226,7 @@ seqJS.Melt.melt = function(seq, dataset){
 
     var dH = 0.0, dS = 0.0,
         c = count_pairs(seq.seq()),
-        Ct = 0.0001;
+        Ct = settings.Oligo * Math.pow(10,-6);
 
 
     ALL_PAIRS.forEach(function(p){
@@ -213,16 +239,10 @@ seqJS.Melt.melt = function(seq, dataset){
     }
 
 
-    if(dataset === 'Allawi1997'){
-        var i = allawi97_init(seq);
-        dH = dH + i[DH];
-        dS = dS + i[DS];
-    }
-    else{
-        var ta = count_end_ta(seq.seq());
-        dH = dH + thermo.init[seq.seq()[0]][DH] + ta * thermo.TA_pen[DH];
-        dS = dS + thermo.init[seq.seq()[0]][DS] + ta * thermo.TA_pen[DS];
-    }
+    var ta = count_end_ta(seq.seq());
+    var init = get_init(seq.seq()[0], seq.seq()[seq.length()-1], thermo);
+    dH = dH + init[DH] + ta * thermo.TA_pen[DH];
+    dS = dS + init[DS] + ta * thermo.TA_pen[DS];
 
     console.log('\tdH , dS: '+dH+', '+dS);
     console.log('\tRlnK: ' + 1.987*Math.log(Ct));
@@ -235,7 +255,7 @@ seqJS.Melt.melt = function(seq, dataset){
  * Return a list of supported datasets
  * @returns {String[]} available datasets
  */
-seqJS.Melt.datasets = function(){
+seqJS.Melt.getDatasets = function(){
     return Object.getOwnPropertyNames(data);
 };
 
@@ -243,8 +263,65 @@ seqJS.Melt.datasets = function(){
  * Returns the name of the default dataset
  * @returns {String} the name of the dataset
  */
-seqJS.Melt.datasets = function(){
+seqJS.Melt.getDefaultDataset = function(){
     return default_data;
+};
+
+/**
+ * Return a list of reaction parameters
+ * @returns {String[]} reaction parameters
+ */
+seqJS.Melt.getReactionParameterNames = function(){
+    return Object.getOwnPropertyNames(r_default);
+};
+
+/**
+ * Return the units for the given parameter
+ * @param {String} param The name of the reaction param
+ * @returns {String} The units that param should be expressed in 
+ */
+seqJS.Melt.getReactionParameterUnits = function(param){
+    return r_units[param];
+};
+
+/**
+ * Return a list of reaction presets
+ * @returns {String[]} reaction preset parametrs
+ */
+seqJS.Melt.getReactionPresets = function(){
+    return Object.getOwnPropertyNames(r_presets);
+};
+
+/**
+ * Return a dictionary containing the reaction parameters. If settings is a
+ * string, return parameters from the preset values, otherwise make sure that
+ * the object contains all required values (filling from the default if not)
+ * and return it
+ * @param {String|Object} [settings] The settings to use. Returns default
+ * settings if left blank
+ * @returns {Object} reaction parameters
+ */
+seqJS.Melt.getReactionParameters = function(s){
+    s = (s===undefined ? {} : s);
+
+    if(typeof s === 'string' || s instanceof String){
+        if(Object.getOwnPropertyNames(r_presets).indexOf(s) &lt; 0){
+            throw('Unknown reaction preset \''+s+'\'');
+        }
+        return r_presets[s];
+    }
+    var r = {};
+    
+    seqJS.Melt.getReactionParameterNames().forEach(function(v){
+        if(!s.hasOwnProperty(v)){
+            r[v] = r_default[v];
+        }
+        else {
+            r[v] = s[v];
+        }
+    });
+
+    return r;
 };
 
 
@@ -265,7 +342,7 @@ seqJS.Melt.datasets = function(){
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Nov 07 2014 13:30:00 GMT-0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a> on Fri Nov 07 2014 15:15:29 GMT-0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

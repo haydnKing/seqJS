@@ -84,6 +84,7 @@ var DH = 0, DS = 1, //DG = 2,
                 A: [2.3, 4.1 , 1.03],
             },
             sym: [0, -1.4, +0.4],
+            TA_pen: [0, 0, 0],
         },
         oligocalc: {
             pairs: {
@@ -169,37 +170,25 @@ var count_pairs = function(s){
 };
 
 var count_end_ta = function(s){
-    var r = 0;
-    for(var i=s.length-1; i>=0; i = i-1){
-        if(s[i]==='T'){
-            r+=1;
-        }
-        else{
-            return r;
-        }
-    }
+    return s.match(/T*$/)[0].length;
+};
+
+var get_init = function(s,e,thermo){
+    var r = [0.0,0.0];
+    r[DH] = thermo.init[s][DH] + thermo.init[e][DH];
+    r[DS] = thermo.init[s][DS] + thermo.init[e][DS];
     return r;
 };
-
-var allawi97_init = function(seq){
-    var s = seq.seq(),
-        d = data['Allawi1997'].init,
-        l = s.length;
-
-    var R = [d[s[l-1]][DH] + d[s[l-2]][DH], d[s[l-1]][DH] + d[s[l-2]][DH]];
-    var L = [d[s[0]][DH] + d[s[1]][DH], d[s[0]][DH] + d[s[1]][DH]];
-
-    return (R[0]/R[1] < L[0]/L[1]) ? R : L;
-};
-
 
 /**
  * Compute the melting temperature of the given sequence
  * @param {String|seqJS.Seq} seq The sequence to be melted
+ * @param {String|object} settings The settings for the reaction
  * @param {String} [dataset] the name of the dataset to use
  * @returns {float} the predicted melting temperature
  */
-seqJS.Melt.melt = function(seq, dataset){
+seqJS.Melt.melt = function(seq, settings, dataset){
+    settings = seqJS.Melt.getReactionParameters(settings);
     dataset = (dataset===undefined ? default_data : dataset);
     var thermo = data[dataset];
     //convert to a Seq
@@ -210,7 +199,7 @@ seqJS.Melt.melt = function(seq, dataset){
 
     var dH = 0.0, dS = 0.0,
         c = count_pairs(seq.seq()),
-        Ct = 0.0001;
+        Ct = settings.Oligo * Math.pow(10,-6);
 
 
     ALL_PAIRS.forEach(function(p){
@@ -223,16 +212,10 @@ seqJS.Melt.melt = function(seq, dataset){
     }
 
 
-    if(dataset === 'Allawi1997'){
-        var i = allawi97_init(seq);
-        dH = dH + i[DH];
-        dS = dS + i[DS];
-    }
-    else{
-        var ta = count_end_ta(seq.seq());
-        dH = dH + thermo.init[seq.seq()[0]][DH] + ta * thermo.TA_pen[DH];
-        dS = dS + thermo.init[seq.seq()[0]][DS] + ta * thermo.TA_pen[DS];
-    }
+    var ta = count_end_ta(seq.seq());
+    var init = get_init(seq.seq()[0], seq.seq()[seq.length()-1], thermo);
+    dH = dH + init[DH] + ta * thermo.TA_pen[DH];
+    dS = dS + init[DS] + ta * thermo.TA_pen[DS];
 
     console.log('\tdH , dS: '+dH+', '+dS);
     console.log('\tRlnK: ' + 1.987*Math.log(Ct));
