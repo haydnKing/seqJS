@@ -87,6 +87,15 @@ test('getReactionParameters', function() {
 
 });
 
+test('getSaltCorrection', function(){
+    var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
+        params = {Na: 0, Mg: 1.5, Tris: 10, Oligo: 2.0},
+        Tm = 76.3 + 273.15;
+
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)), rounded(67.9 + 273.15));
+});
+
+
 
 }());
 
