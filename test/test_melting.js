@@ -87,12 +87,56 @@ test('getReactionParameters', function() {
 
 });
 
-test('getSaltCorrection', function(){
+test('getSaltCorrection (Mon = 0)', function(){
+    var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
+        params = {Na: 0, Mg: 1.5, Tris: 0, Oligo: 2.0},
+        Tm = 76.3 + 273.15;
+
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)-273.15), 67.9);
+});
+
+test('getSaltCorrection (R < 0.22) (R = 0.1)', function(){
+    var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
+        params = {Na: 158.114, Mg: 1.0, Tris: 0.0, Oligo: 2.0},
+        Tm = 76.3 + 273.15;
+
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)-273.15), 69.4);
+});
+
+test('getSaltCorrection (0.22 < R < 6) (R = 0.3)', function(){
+    var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
+        params = {Na: 129.0, Mg: 1.5, Tris: 0.0, Oligo: 2.0},
+        Tm = 76.3 + 273.15;
+
+    /*
+     * a = 4.3195024654938344e-05
+     * d = 1.7800762551103776e-05
+     * g = 8.054682551646683e-05
+     */
+
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)-273.15), 69.4);
+});
+
+test('getSaltCorrection (0.22 < R < 6) (R = 3.9)', function(){
+    var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
+        params = {Na: 5, Mg: 1.5, Tris: 10, Oligo: 2.0},
+        Tm = 76.3 + 273.15;
+
+    /*
+     * a = 3.9399998029433816e-05
+     * d = 1.6007118533281715e-05
+     * g = 9.651191641661136e-05
+     */
+
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)-273.15), 67.0);
+});
+
+test('getSaltCorrection (R >= 6)', function(){
     var seq = new seqJS.Seq('AAGGCGAGTCAGGCTCAGTG','DNA'),
         params = {Na: 0, Mg: 1.5, Tris: 10, Oligo: 2.0},
         Tm = 76.3 + 273.15;
 
-    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)), rounded(67.9 + 273.15));
+    equal(rounded(seqJS.Melt.getSaltCorrection(params,seq,Tm)-273.15), 67.9);
 });
 
 

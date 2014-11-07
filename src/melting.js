@@ -365,13 +365,18 @@ var eq16_var = function(Mon, Mg,fGC,N,Tm){
         f: T2.f, 
         g: 8.31*m5*(0.486-0.258*lMon+5.25*m3*lMon*lMon*lMon),
     };
+    console.log('a: '+p.a);
+    console.log('d: '+p.d);
+    console.log('g: '+p.g);
     return eq16_fixed(Mon, Mg, fGC, N, Tm, p);
 };
 
 var eq4 = function(Mon, Mg,fGC,Tm){
+    console.log('--\neq4(Mon='+Mon+', Mg='+Mg+', fGC='+fGC+', Tm='+Tm+')');
     var lMon = Math.log(Mon);
     var TmI = (1.0/Tm) + (4.29*fGC-3.95)*Math.pow(10,-5)*lMon + 
         9.4*Math.pow(10,-6)*lMon*lMon;
+    console.log('TmI = (1.0/Tm) + '+((4.29*fGC-3.95)*Math.pow(10,-5)*lMon)+' + '+(9.4*Math.pow(10,-6)*lMon*lMon)+' = '+TmI);
     return 1.0 / TmI;
 };
 
