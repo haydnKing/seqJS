@@ -25,7 +25,8 @@
 module('seqJS.ss');
 
 test('Test ss', function(){
-    equal(seqJS.ss.predict('GGGAAATCC'), '.(((..)))', 'secondary structure incorrect');
+    var s = new seqJS.Seq('GGGAAATCC', 'DNA');
+    equal(seqJS.ss.predict(s), '.(((..)))', 'secondary structure incorrect');
 });
 
 }());
