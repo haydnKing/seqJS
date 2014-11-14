@@ -34,13 +34,16 @@ seqJS.ss.predict = function(seq){
 var malloc = function(seq){
     //We could save some memory here, but at the expense of some processor time
     var l = seq.length(),
-        a = new Array(l*l);
-    //Fill diagonal and off diagonals
-    a[0] = 0;
-    for(var i=l+1; i<l*l; i+=(l+1)){
-        a[i] = 0;
-        a[i-1] = 0;
+        a = new Array(l*l),
+        i,j;
+    //Fill upper right triangle
+    for(i=0;i<l;i++){
+        for(j=Math.max(i-1,0);j<l;j++){
+            a[i*l+j] = {v: 0, p:-1};
+        }
     }
+
+     
     return a;
 };
 
@@ -50,7 +53,7 @@ var draw = function(a, l){
         line = [];
         for(j=0;j<l;j++){
             v = a[i*l + j];
-            line.push(v===undefined ? '-' : v);
+            line.push(v===undefined ? ' ' : v.v);
         }
         console.log(line.join(' '));
     }
@@ -69,9 +72,9 @@ var fill = function(a, seq){
         i,j;
     for(i=1; i < l; i++){
         for(j=i; j < (l-i)*l; j+=l+1){
-            a[j] = Math.max(a[j-1],
-                         a[j+l],
-                         a[j+l-1]+(s[j%l]===pair[s[Math.floor(j/l)]] ? 1 : 0));
+            a[j].v = Math.max(a[j-1].v,
+                         a[j+l].v,
+                         a[j+l-1].v+(s[j%l]===pair[s[Math.floor(j/l)]] ? 1 : 0));
         }
     }
 };
