@@ -33,13 +33,13 @@ seqJS.ss.predict = function(seq){
 
 var malloc = function(seq){
     //We could save some memory here, but at the expense of some processor time
-    var l = seq.length(),
-        a = new Array(l*l),
+    var N = seq.length(),
+        a = new Array(N*N),
         i,j;
     //Fill upper right triangle
-    for(i=0;i<l;i++){
-        for(j=Math.max(i-1,0);j<l;j++){
-            a[i*l+j] = {v: 0, p:-1};
+    for(i=0;i<N;i++){
+        for(j=Math.max(i-1,0);j<N;j++){
+            a[i*N+j] = {v: 0, p:-1};
         }
     }
 
@@ -47,12 +47,12 @@ var malloc = function(seq){
     return a;
 };
 
-var draw = function(a, l){
+var draw = function(a, N){
     var i=0,j=0,line,v;
-    for(;i<l;i++){
+    for(;i<N;i++){
         line = [];
-        for(j=0;j<l;j++){
-            v = a[i*l + j];
+        for(j=0;j<N;j++){
+            v = a[i*N + j];
             line.push(v===undefined ? ' ' : v.v);
         }
         console.log(line.join(' '));
@@ -67,14 +67,23 @@ var pair = {
 };
 
 var fill = function(a, seq){
-    var l = seq.length(),
+    var N = seq.length(),
         s = seq.seq(),
-        i,j;
-    for(i=1; i < l; i++){
-        for(j=i; j < (l-i)*l; j+=l+1){
-            a[j].v = Math.max(a[j-1].v,
-                         a[j+l].v,
-                         a[j+l-1].v+(s[j%l]===pair[s[Math.floor(j/l)]] ? 1 : 0));
+        max,
+        i,j,k,o;
+    for(o=1;o<N;o++){
+        for(i=0;i<N-o;i++){
+            for(j=i+o;j<N;j++){
+                max = [a[(i+1)*N+j].v, a[i*N+j-1].v];
+                if(pair[s[i]] === s[j]){
+                    max.push(a[(i+1)*N+j-1].v+1);
+                }
+                for(k=i+1;k<j;k++){
+                    max.push(a[i*N+k].v+a[(k+1)*N+j].v);
+                }
+
+                a[i*N+j].v = Math.max.apply(null,max);
+            }
         }
     }
 };
