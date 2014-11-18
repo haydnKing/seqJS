@@ -28,7 +28,7 @@ seqJS.ss.predict = function(seq){
     console.log('FILL:');
     draw(a,seq.length());
 
-    return "NOT_IMPLEMENTED";
+    return traceback(a,seq);
 };
 
 var malloc = function(seq){
@@ -69,23 +69,33 @@ var pair = {
 var fill = function(a, seq){
     var N = seq.length(),
         s = seq.seq(),
-        max,
+        mv,mp,m,
         i,j,k,o;
     for(o=1;o<N;o++){
         for(i=0;i<N-o;i++){
             for(j=i+o;j<N;j++){
-                max = [a[(i+1)*N+j].v, a[i*N+j-1].v];
+                mp = [(i+1)*N+j, i*N+j-1];
+                mv = [a[mp[0]].v, a[mp[1]].v];
                 if(pair[s[i]] === s[j]){
-                    max.push(a[(i+1)*N+j-1].v+1);
+                    mp.push((i+1)*N+j-1);
+                    mv.push(a[(i+1)*N+j-1].v+1);
                 }
                 for(k=i+1;k<j;k++){
-                    max.push(a[i*N+k].v+a[(k+1)*N+j].v);
+                    mp.push([i*N+k, (k+1)*N+j]);
+                    mv.push(a[i*N+k].v+a[(k+1)*N+j].v);
                 }
-
-                a[i*N+j].v = Math.max.apply(null,max);
+                m = Math.max.apply(null,mv);
+                a[i*N+j].p = mp[mv.indexOf(m)];
+                a[i*N+j].v = m;
             }
         }
     }
+};
+
+var traceback = function(/*a, seq*/){
+    //var N = seq.length();
+
+    return "NOT_IMPLEMENTED";
 };
 
 }());
