@@ -39,7 +39,7 @@ var malloc = function(seq){
     //Fill upper right triangle
     for(i=0;i<N;i++){
         for(j=Math.max(i-1,0);j<N;j++){
-            a[i*N+j] = {v: 0, p:-1};
+            a[i*N+j] = {v: 0, i:-1,j:-1};
         }
     }
 
@@ -69,24 +69,33 @@ var pair = {
 var fill = function(a, seq){
     var N = seq.length(),
         s = seq.seq(),
-        mv,mp,m,
-        i,j,k,o;
+        mv,mi,mj,
+        i,j,k,o,
+        u = function(i,j,v){
+            if(v > mv){
+                mv = v;
+                mi = i;
+                mj = j;
+            }
+        };
     for(o=1;o<N;o++){
         for(i=0;i<N-o;i++){
             for(j=i+o;j<N;j++){
-                mp = [(i+1)*N+j, i*N+j-1];
-                mv = [a[mp[0]].v, a[mp[1]].v];
+                mv = -1;
+                mi = -1;
+                mj = -1;
+                u(i+1, j,   a[(i+1)*N+j].v);
+                u(i,   j-1, a[i*N+j-1].v);
+
                 if(pair[s[i]] === s[j]){
-                    mp.push((i+1)*N+j-1);
-                    mv.push(a[(i+1)*N+j-1].v+1);
+                    u(i+1,j-1,a[(i+1)*N+j-1].v+1);
                 }
                 for(k=i+1;k<j;k++){
-                    mp.push([i*N+k, (k+1)*N+j]);
-                    mv.push(a[i*N+k].v+a[(k+1)*N+j].v);
+                    u([i,k+1],[k,j], a[i*N+k].v+a[(k+1)*N+j].v);
                 }
-                m = Math.max.apply(null,mv);
-                a[i*N+j].p = mp[mv.indexOf(m)];
-                a[i*N+j].v = m;
+                a[i*N+j].i = mi;
+                a[i*N+j].j = mj;
+                a[i*N+j].v = mv;
             }
         }
     }
