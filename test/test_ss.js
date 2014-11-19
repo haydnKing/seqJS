@@ -25,8 +25,21 @@
 module('seqJS.ss');
 
 test('Test ss', function(){
+    var s = new seqJS.Seq('GC', 'DNA');
+    equal(seqJS.ss.predict(s), '()', 'secondary structure incorrect');
+});
+test('Test ss', function(){
+    var s = new seqJS.Seq('GAC', 'DNA');
+    equal(seqJS.ss.predict(s), '(.)', 'secondary structure incorrect');
+});
+
+test('Test ss', function(){
     var s = new seqJS.Seq('GGGAAATCC', 'DNA');
-    equal(seqJS.ss.predict(s), '.(((..)))', 'secondary structure incorrect');
+    equal(seqJS.ss.predict(s), '((.(..)))', 'secondary structure incorrect');
+});
+test('Test ss', function(){
+    var s = new seqJS.Seq('GGAAACCACCAAAGGA', 'DNA');
+    equal(seqJS.ss.predict(s), '((...)).((...)).', 'secondary structure incorrect');
 });
 
 }());

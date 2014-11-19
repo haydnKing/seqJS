@@ -1,4 +1,3 @@
-/* global console:true */
 /*
  * seqJS
  * https://github.com/haydnKing/seqJS
@@ -22,12 +21,7 @@ seqJS.ss = {};
  */
 seqJS.ss.predict = function(seq){
     var a = malloc(seq);
-    console.log('\nINIT:');
-    draw(a,seq.length());
     fill(a,seq);
-    console.log('FILL:');
-    draw(a,seq.length());
-
     return traceback(a,seq);
 };
 
@@ -46,11 +40,13 @@ var malloc = function(seq){
      
     return a;
 };
-
-var draw = function(a, N){
+/*
+var draw = function(a, seq){
+    var N = seq.length();
     var i=0,j=0,line,v;
+    console.log('  ' + seq.seq().split('').join(' '));
     for(;i<N;i++){
-        line = [];
+        line = [seq.seq()[i]];
         for(j=0;j<N;j++){
             v = a[i*N + j];
             line.push(v===undefined ? ' ' : v.v);
@@ -59,6 +55,42 @@ var draw = function(a, N){
     }
 };
 
+var draw_trace = function(a, seq){
+    var i,j,line,v,
+        N = seq.length();
+    console.log('  ' + seq.seq().split('').join(' '));
+    for(i=0;i<N;i++){
+        line = [seq.seq()[i]];
+        for(j=0;j<N;j++){
+            v = a[i*N + j];
+            if(v===undefined) {
+                line.push(' ');
+                continue;
+            }
+            if((v.i.constructor === Array) && (v.j.constructor === Array)){
+                line.push('@');
+                continue;
+            }
+            if(v.i<0 || v.j < 0){
+                line.push('*');
+                continue;
+            }
+            var di = i-v.i,
+                dj = j-v.j;
+            if(di===-1 && dj === 1){
+                line.push('/');
+            } else if(di===-1 && dj === 0){
+                line.push('|');
+            } else if(di===0 && dj === 1){
+                line.push('-');
+            } else {
+                line.push('?');
+            }
+        }
+        console.log(line.join(' '));
+    }
+};
+*/
 var pair = {
     A: 'T',
     T: 'A',
@@ -84,12 +116,15 @@ var fill = function(a, seq){
                 mv = -1;
                 mi = -1;
                 mj = -1;
-                u(i+1, j,   a[(i+1)*N+j].v);
-                u(i,   j-1, a[i*N+j-1].v);
-
+                //case 1
                 if(pair[s[i]] === s[j]){
                     u(i+1,j-1,a[(i+1)*N+j-1].v+1);
                 }
+                //case 2
+                u(i+1, j,   a[(i+1)*N+j].v);
+                //case 3
+                u(i,   j-1, a[i*N+j-1].v);
+                //case 4
                 for(k=i+1;k<j;k++){
                     u([i,k+1],[k,j], a[i*N+k].v+a[(k+1)*N+j].v);
                 }
@@ -101,10 +136,28 @@ var fill = function(a, seq){
     }
 };
 
-var traceback = function(/*a, seq*/){
-    //var N = seq.length();
+var traceback = function(a, seq){
+    var N = seq.length();
+    var text = function(i,j){
+        var b = a[i*N+j];
+        if(b.i.constructor === Array){
+            return text(b.i[0],b.j[0]) + text(b.i[1],b.j[1]);
+        }
+        var di= i-b.i, dj= j-b.j;
+        if(b.i < 0 || b.j < 0){
+            return (i===j) ? '.' : '';
+        }
+        if(di===-1 && dj === 1){
+            return '(' + text(b.i,b.j) + ')';
+        } else if(di === 0 && dj === 1){
+            return text(b.i,b.j) + '.';
+        } else if(di === -1 && dj === 0){
+            return '.' + text(b.i,b.j);
+        }
+        throw('Traceback Error');
+    };
 
-    return "NOT_IMPLEMENTED";
+    return text(0,N-1);
 };
 
 }());
