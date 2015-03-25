@@ -25,7 +25,7 @@ seqJS.align = {};
  * @param {integer} gap_penulty.v The cost of opening a gap
  * @param {integer} gap_penulty.u The cost on increasing the size of an open gap
  */
-seqJS.utils.rarray = function(X, Y, cost_fn, gap_penulty){
+seqJS.utils.SS2 = function(X, Y, cost_fn, gap_penulty){
     //convert X and Y to strings
     
     //assert(X is the longest)
@@ -141,7 +141,20 @@ seqJS.utils.rarray = function(X, Y, cost_fn, gap_penulty){
     }
 
 
-    
+    //return everything, for now
+    return {
+        'P':P,
+        'Q':Q,
+        'R':R,
+        'a':a,
+        'b':b,
+        'c':c,
+        'd':d,
+        'e':e,
+        'f':f,
+        'g':g,
+    };
+
 
 };
 
