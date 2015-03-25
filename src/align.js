@@ -16,6 +16,16 @@ seqJS.align = {};
 (function(){
 
 /**
+ * A simple cost function - 0 if x = y, 1 otherwise
+ * @param {string} x
+ * @param {string} y
+ * @returns {integer} cost
+ */
+seqJS.align.simple_cost = function(x,y){
+    return (x.charAt(0) === y.charAt(0)) ? 0 : 1;
+};
+
+/**
  * Calculate the local alignment of Y to X
  * using the SS-2 algorithm from Altschul and Erickson (1986)
  * @param {seqJS.Record|seqJS.Seq|string} X The sequence to align to
@@ -25,7 +35,7 @@ seqJS.align = {};
  * @param {integer} gap_penulty.v The cost of opening a gap
  * @param {integer} gap_penulty.u The cost on increasing the size of an open gap
  */
-seqJS.utils.SS2 = function(X, Y, cost_fn, gap_penulty){
+seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
     //convert X and Y to strings
     
     //assert(X is the longest)
