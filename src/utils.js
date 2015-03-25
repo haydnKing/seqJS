@@ -37,6 +37,12 @@ seqJS.utils.rarray = function(N, M, default){
      * @returns {Number}
      */
     this.get = function(i,j){
+        if(i<0 || i>=N){
+            return 0;
+        }
+        if(j<0 || j>=M){
+            return 0;
+        }
         return data[N*i+j];
     }
 
