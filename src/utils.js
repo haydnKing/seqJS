@@ -22,11 +22,11 @@ seqJS.utils = {};
  * @param {Number} [def=0] The value to initialise all elements to
  * @class
  */
-seqJS.utils.rarray = function(N, M, def){
+seqJS.utils.rarray = function(M, N, def){
     def = def || 0;
 
-    var data = new Array(N*M);
-    for(var i =0; i < N*M; i++){
+    var data = new Array(M*N);
+    for(var i =0; i < M*N; i++){
         data[i] = def;
     }
 
@@ -37,11 +37,8 @@ seqJS.utils.rarray = function(N, M, def){
      * @returns {Number}
      */
     this.get = function(i,j){
-        if(i<0 || i>=N){
-            return 0;
-        }
-        if(j<0 || j>=M){
-            return 0;
+        if(i<0 || i>=M || j<0 || j>=N){
+            throw('('+i+','+j+') is out of rarray bounds ('+N+','+M+')');
         }
         return data[N*i+j];
     };
@@ -53,18 +50,43 @@ seqJS.utils.rarray = function(N, M, def){
      * @param {Number} value The value to set
      */
     this.set = function(i,j,value){
+       /* if(i<0 || i>=M || j<0 || j>=N){
+            throw('('+i+','+j+') is out of rarray bounds ('+N+','+M+') while setting to '+value);
+        }*/
         data[N*i+j] = value;
     };
 
     /** Return the size of the array
      * @function
      * @returns {Object} ret
-     * @returns {integer} ret.N The number of rows
-     * @returns {integer} ret.M the number of columns
+     * @returns {integer} ret.M The number of rows
+     * @returns {integer} ret.N the number of columns
      */
     this.size = function(){
         return {'N':N, 'M':M};
     };
+
+    /** Return a copy of the underlying array
+     * @function
+     * @returns {Array[]}
+     */
+    this.toArray = function(){
+        return data.slice();
+    };
+
+    /** Return a string representation of the array
+     * @function
+     * @returns {String}
+     */
+    this.toString = function(){
+        var ret = ['rArray('];
+        for(var i=0; i<M; i++){
+            ret.push(data.slice(i*N, (i+1)*N).join(', '));
+        }
+        ret.push(')');
+        return ret.join('\n');
+    };
+
     
 };
 

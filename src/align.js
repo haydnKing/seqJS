@@ -42,18 +42,18 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
 
 
     //allocate memory
-    var N = X.length,
-        M = Y.length,
-        P = new seqJS.utils.rarray(N+1,M+1),
-        Q = new seqJS.utils.rarray(N+1,M+1),
-        R = new seqJS.utils.rarray(N+1,M+1),
-        a = new seqJS.utils.rarray(N+2,M+2),
-        b = new seqJS.utils.rarray(N+2,M+2),
-        c = new seqJS.utils.rarray(N+2,M+2),
-        d = new seqJS.utils.rarray(N+2,M+2),
-        e = new seqJS.utils.rarray(N+2,M+2),
-        f = new seqJS.utils.rarray(N+2,M+2),
-        g = new seqJS.utils.rarray(N+2,M+2),
+    var M = X.length,
+        N = Y.length,
+        P = new seqJS.utils.rarray(M+1,N+1),
+        Q = new seqJS.utils.rarray(M+1,N+1),
+        R = new seqJS.utils.rarray(M+1,N+1),
+        a = new seqJS.utils.rarray(M+2,N+2),
+        b = new seqJS.utils.rarray(M+2,N+2),
+        c = new seqJS.utils.rarray(M+2,N+2),
+        d = new seqJS.utils.rarray(M+2,N+2),
+        e = new seqJS.utils.rarray(M+2,N+2),
+        f = new seqJS.utils.rarray(M+2,N+2),
+        g = new seqJS.utils.rarray(M+2,N+2),
         v = gap_penulty.v,
         u = gap_penulty.v,
         i,j;
@@ -70,33 +70,40 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
     R.set(0,0,0);
     c.set(M+1,N+1, 1);
 
+
     //Cost Assignment
     for(i=0;i<M+1;i++){
         for(j=0;j<N+1;j++){
 
-            //Step 2
-            P.set(i,j, u + Math.min(P.get(i-1,j), R.get(i-1,j) + v));
-            //Step 3
-            if(P.get(i,j) === P.get(i-1,j) + u){
-                d.set(i-1,j,1);
-            }
-            if(P.get(i,j) === R.get(i-1,j) + v){
-                e.set(i-1,j,1);
+            if(i>0){
+                //Step 2
+                P.set(i,j, u + Math.min(P.get(i-1,j), R.get(i-1,j) + v));
+                //Step 3
+                if(P.get(i,j) === P.get(i-1,j) + u){
+                    d.set(i-1,j,1);
+                }
+                if(P.get(i,j) === R.get(i-1,j) + v){
+                    e.set(i-1,j,1);
+                }
             }
             //step 4
-            Q.set(i, j, u + Math.min(Q.get(i,j-1), R.get(i,j-1) + v));
-            //step 5
-            if(Q.get(i,j) === Q.get(i,j-i)+u){
-                f.set(i,j-i,1);
-            }
-            if(Q.get(i,j) === R.get(i,j-1) + v + u){
-                g.set(i,j-1,1);
+            if(j>0){
+                Q.set(i, j, u + Math.min(Q.get(i,j-1), R.get(i,j-1) + v));
+                //step 5
+                if(Q.get(i,j) === Q.get(i,j-1)+u){
+                    f.set(i,j-1,1);
+                }
+                if(Q.get(i,j) === R.get(i,j-1) + v + u){
+                    g.set(i,j-1,1);
+                }
             }
             //step 6
-            R.set(i,j, Math.min(P.get(i,j), 
+            if(i>0 && j>0){
+                R.set(i,j, Math.min(P.get(i,j), 
                                 Q.get(i,j), 
-                                R.get(i-1,j-1) + cost_fn(X.charAt(i), 
-                                                         Y.charAt(j))));
+                                R.get(i-1,j-1) + 
+                                        cost_fn(X.charAt(i-1), Y.charAt(j-1))));
+            }
             //step 7
             if(R.get(i,j) === P.get(i,j)){
                 a.set(i,j,1);
@@ -104,11 +111,14 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
             if(R.get(i,j) === Q.get(i,j)){
                 b.set(i,j,1);
             }
-            if(R.get(i,j) === R.get(i-1,j-1) + cost_fn(X.charAt(i),Y.charAt(j))){
-                c.set(i,j,1);
+            if(i>0 && j>0){
+                if(R.get(i,j) === R.get(i-1,j-1) + cost_fn(X.charAt(i),Y.charAt(j))){
+                    c.set(i,j,1);
+                }
             }
         }
     }
+
 
     //Edge Assignment
     for(i=M; i >= 0; i--){
