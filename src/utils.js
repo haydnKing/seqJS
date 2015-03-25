@@ -55,6 +55,16 @@ seqJS.utils.rarray = function(N, M, def){
     this.set = function(i,j,value){
         data[N*i+j] = value;
     };
+
+    /** Return the size of the array
+     * @function
+     * @returns {Object} ret
+     * @returns {integer} ret.N The number of rows
+     * @returns {integer} ret.M the number of columns
+     */
+    this.size = function(){
+        return {'N':N, 'M':M};
+    };
     
 };
 
