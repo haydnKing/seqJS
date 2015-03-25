@@ -19,15 +19,15 @@ seqJS.utils = {};
  * A NxM number array
  * @param {integer} N
  * @param {integer} M
- * @param {Number} [default=0] The value to initialise all elements to
+ * @param {Number} [def=0] The value to initialise all elements to
  * @class
  */
-seqJS.utils.rarray = function(N, M, default){
-    default = default || 0;
+seqJS.utils.rarray = function(N, M, def){
+    def = def || 0;
 
     var data = new Array(N*M);
     for(var i =0; i < N*M; i++){
-        data[i] = default;
+        data[i] = def;
     }
 
     /** Returns the value of the ith row, jth column 
@@ -44,7 +44,7 @@ seqJS.utils.rarray = function(N, M, default){
             return 0;
         }
         return data[N*i+j];
-    }
+    };
 
     /** Set the value of the ith row, jth column
      * @function
@@ -54,7 +54,7 @@ seqJS.utils.rarray = function(N, M, default){
      */
     this.set = function(i,j,value){
         data[N*i+j] = value;
-    }
+    };
     
 };
 

@@ -75,7 +75,7 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
         for(j=0;j<N+1;j++){
 
             //Step 2
-            P.set(i,j, u + Math.min(P.get(i-1,j), R.get(i-1,j) + v))
+            P.set(i,j, u + Math.min(P.get(i-1,j), R.get(i-1,j) + v));
             //Step 3
             if(P.get(i,j) === P.get(i-1,j) + u){
                 d.set(i-1,j,1);
@@ -84,7 +84,7 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
                 e.set(i-1,j,1);
             }
             //step 4
-            Q.set(i, j, u + Math.min(Q.get(i,j-1), R(i,j-1) + v))
+            Q.set(i, j, u + Math.min(Q.get(i,j-1), R.get(i,j-1) + v));
             //step 5
             if(Q.get(i,j) === Q.get(i,j-i)+u){
                 f.set(i,j-i,1);
@@ -139,7 +139,7 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
                 //step 11
                 if(b.get(i,j+1)===1 && f.get(i,j)===1){
                     f.set(i,j+1, 1-g.get(i,j));
-                    g.set(i,j, 1-b.get(i,j))
+                    g.set(i,j, 1-b.get(i,j));
                     b.set(i,j,1);
                 }
                 else{

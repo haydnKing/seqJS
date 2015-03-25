@@ -24,7 +24,14 @@
 
 module('seqJS.align');
 
+test('Altschil&Erickson example', function(){
 
+    var results = seqJS.align.SS2('AGT',
+                                  'TGAGTT',
+                                  seqJS.align.simple_cost,
+                                  {'v': 1, 'u': 1});
+    equal(results.R.get(3,6), 5);
+});
 
 }());
 
