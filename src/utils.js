@@ -19,16 +19,12 @@ seqJS.utils = {};
  * A NxM number array
  * @param {integer} N
  * @param {integer} M
- * @param {Number} [def=0] The value to initialise all elements to
+ * @param {Array} [data] The data to use
  * @class
  */
-seqJS.utils.rarray = function(M, N, def){
-    def = def || 0;
+seqJS.utils.rarray = function(M, N, data){
 
-    var data = new Array(M*N);
-    for(var i =0; i < M*N; i++){
-        data[i] = def;
-    }
+    data = (data === undefined) ? new Array(M*N) : data;
 
     /** Returns the value of the ith row, jth column 
      * @function
@@ -56,6 +52,16 @@ seqJS.utils.rarray = function(M, N, def){
         data[N*i+j] = value;
     };
 
+    /** Set the value of every element to value
+     * @function
+     * @param {Number} value The value to set
+     */
+    this.setAll = function(value){
+        data = null;
+        data = Array.apply(null, new Array(M*N))
+                    .map(Number.prototype.valueOf,value);
+    };
+
     /** Return the size of the array
      * @function
      * @returns {Object} ret
@@ -72,6 +78,14 @@ seqJS.utils.rarray = function(M, N, def){
      */
     this.toArray = function(){
         return data.slice();
+    };
+
+    /** Return a copy of the array
+     * @function
+     * @returns {seqJS.utils.rarray}
+     */
+    this.copy = function(){
+        return new seqJS.utils.rarray(M,N,data.slice());
     };
 
     /** Return a string representation of the array

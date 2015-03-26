@@ -1,4 +1,5 @@
 /*global seqJS:true  */
+/*global console:true  */
 
 (function() {
   /*
@@ -25,12 +26,12 @@
 module('seqJS.align');
 
 test('Altschil&Erickson example', function(){
+    var i,j;
 
     var results = seqJS.align.SS2('AGT',
                                   'TGAGTT',
                                   seqJS.align.simple_cost,
                                   {'v': 1, 'u': 1});
-    deepEqual(results.R.size(), {'N': 7, 'M': 4}, "Returned size is wrong");
 
     var P_data = [Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,Infinity,
         2,4,5,6,7,8,9,3,3,5,5,7,8,9,4,4,3,5,5,7,8];
@@ -40,17 +41,66 @@ test('Altschil&Erickson example', function(){
     var P = new seqJS.utils.rarray(4,7);
     var Q = new seqJS.utils.rarray(4,7);
     var R = new seqJS.utils.rarray(4,7);
-    for(var i = 0; i < 4; i++){
-        for(var j = 0; j < 7; j++){
+    for(i = 0; i < 4; i++){
+        for(j = 0; j < 7; j++){
             P.set(i,j,P_data[i*7+j]);
             Q.set(i,j,Q_data[i*7+j]);
             R.set(i,j,R_data[i*7+j]);
         }
     }
+    var a_data = [0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,];
+    var b_data = [0,1,1,0,0,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,1,1,1,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,0,1,];
+    var c_data = [0,0,0,0,0,0,0,0,
+                  0,1,0,1,0,0,0,0,
+                  0,0,1,0,1,0,0,0,
+                  0,0,0,0,0,0,0,0,
+                  0,0,0,0,0,0,1,1,];
+    var a = new seqJS.utils.rarray(5,8);
+    var b = new seqJS.utils.rarray(5,8);
+    var c = new seqJS.utils.rarray(5,8);
+    var f = results.f.copy();
+    var g = results.f.copy();
+    for(i = 0; i < 5; i++){
+        for(j = 0; j < 8; j++){
+            a.set(i,j,a_data[i*8+j]);
+            b.set(i,j,b_data[i*8+j]);
+            c.set(i,j,c_data[i*8+j]);
+        }
+    }
+    //Set the only values of f and g which matter
+    f.set(0,1,0);
+    f.set(0,2,1);
+    f.set(2,3,0);
+    f.set(2,4,1);
+    f.set(2,5,0);
+    f.set(3,6,0);
+
+    g.set(0,1,1);
+    g.set(0,2,0);
+    g.set(2,3,1);
+    g.set(2,4,1);
+    g.set(2,5,0);
+    g.set(3,6,0);
 
     deepEqual(results.P.toString(), P.toString(), 'P is incorrect');
     deepEqual(results.Q.toString(), Q.toString(), 'Q is incorrect');
     deepEqual(results.R.toString(), R.toString(), 'R is incorrect');
+    deepEqual(results.a.toString(), a.toString(), 'a is incorrect');
+    deepEqual(results.b.toString(), b.toString(), 'b is incorrect');
+    deepEqual(results.c.toString(), c.toString(), 'c is incorrect');
+    deepEqual(results.f.toString(), f.toString(), 'f is incorrect');
+    deepEqual(results.g.toString(), g.toString(), 'g is incorrect');
+
+    console.log('\n');
+    console.log(seqJS.align.printSS2(results));
 });
 
 }());

@@ -68,7 +68,16 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
         R.set(i, 0, v+i*u);
     }
     R.set(0,0,0);
+    a.setAll(0);
+    b.setAll(0);
+    c.setAll(0);
+    d.setAll(0);
+    e.setAll(0);
+    f.setAll(0);
+    g.setAll(0);
+    
     c.set(M+1,N+1, 1);
+    
 
 
     //Cost Assignment
@@ -173,9 +182,42 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
         'e':e,
         'f':f,
         'g':g,
+        'X':X,
+        'Y':Y,
     };
 
 
+};
+
+/**
+ * Print out SS2 results in ASCII form
+ * @param {Object} results The results
+ */
+
+seqJS.align.printSS2 = function(r){
+    var M = r.X.length,
+        N = r.Y.length,
+        ret = [],
+        line = [],
+        i,j;
+
+    line.push('   ');
+    for(j = 0; j < N; j++){
+        line.push(' ' + r.Y.charAt(j) + ' ');
+    }
+    ret.push(line.join(''));
+
+    for(i=0; i < M; i++){
+        line = [' ' + r.X.charAt(i) + ' '];
+        for(j=0; j < N; j++){
+            line.push((r.a.get(i,j) ? '|' : ' ') +
+                      (r.b.get(i,j) ? '_' : ' ') + 
+                      (r.c.get(i,j) ? '\\': ' '));
+        }
+        ret.push(line.join(''));
+    }
+
+    return ret.join('\n');
 };
 
 
