@@ -1,5 +1,4 @@
 /*global seqJS:true  */
-/*global console:true  */
 
 (function() {
   /*
@@ -56,18 +55,18 @@ test('Altschil&Erickson example', function(){
     var b_data = [0,1,1,0,0,0,0,0,
                   0,0,0,0,0,0,0,0,
                   0,0,0,1,1,1,0,0,
-                  0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,1,];
+                  0,0,0,0,0,0,1,0,
+                  0,0,0,0,0,0,0,0,];
     var c_data = [0,0,0,0,0,0,0,0,
                   0,1,0,1,0,0,0,0,
                   0,0,1,0,1,0,0,0,
-                  0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,1,1,];
+                  0,0,0,0,0,1,1,0,
+                  0,0,0,0,0,0,0,1,];
     var a = new seqJS.utils.rarray(5,8);
     var b = new seqJS.utils.rarray(5,8);
     var c = new seqJS.utils.rarray(5,8);
     var f = results.f.copy();
-    var g = results.f.copy();
+    var g = results.g.copy();
     for(i = 0; i < 5; i++){
         for(j = 0; j < 8; j++){
             a.set(i,j,a_data[i*8+j]);
@@ -99,8 +98,6 @@ test('Altschil&Erickson example', function(){
     deepEqual(results.f.toString(), f.toString(), 'f is incorrect');
     deepEqual(results.g.toString(), g.toString(), 'g is incorrect');
 
-    console.log('\n');
-    console.log(seqJS.align.printSS2(results));
 });
 
 }());

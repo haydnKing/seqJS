@@ -91,7 +91,7 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
                 if(P.get(i,j) === P.get(i-1,j) + u){
                     d.set(i-1,j,1);
                 }
-                if(P.get(i,j) === R.get(i-1,j) + v){
+                if(P.get(i,j) === R.get(i-1,j) + v + u){
                     e.set(i-1,j,1);
                 }
             }
@@ -121,13 +121,13 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
                 b.set(i,j,1);
             }
             if(i>0 && j>0){
-                if(R.get(i,j) === R.get(i-1,j-1) + cost_fn(X.charAt(i),Y.charAt(j))){
+                if(R.get(i,j) === R.get(i-1,j-1) + 
+                                  cost_fn(X.charAt(i-1),Y.charAt(j-1))){
                     c.set(i,j,1);
                 }
             }
         }
     }
-
 
     //Edge Assignment
     for(i=M; i >= 0; i--){
@@ -146,7 +146,7 @@ seqJS.align.SS2 = function(X, Y, cost_fn, gap_penulty){
                (b.get(i,j+1) !== 0) ||
                (c.get(i+1,j+1) !== 0)){
                 //step 10
-                if(a.get(i+1,j)===0 || d.get(i,j)===0){
+                if(a.get(i+1,j)===1 || d.get(i,j)===1){
                     d.set(i+1,j, 1-e.get(i,j));
                     e.set(i,  j, 1-a.get(i,j));
                     a.set(i,j,1);
@@ -202,16 +202,16 @@ seqJS.align.printSS2 = function(r){
         i,j;
 
     line.push('   ');
-    for(j = 0; j < N; j++){
-        line.push(' ' + r.Y.charAt(j) + ' ');
+    for(j = 1; j < N+1; j++){
+        line.push(' ' + r.Y.charAt(j-1) + ' ');
     }
     ret.push(line.join(''));
 
-    for(i=0; i < M; i++){
-        line = [' ' + r.X.charAt(i) + ' '];
-        for(j=0; j < N; j++){
+    for(i=1; i < M+1; i++){
+        line = [' ' + r.X.charAt(i-1) + ' '];
+        for(j=1; j < N+1; j++){
             line.push((r.a.get(i,j) ? '|' : ' ') +
-                      (r.b.get(i,j) ? '_' : ' ') + 
+                      (r.b.get(i,j) ? String.fromCharCode(0x2014) : ' ') + 
                       (r.c.get(i,j) ? '\\': ' '));
         }
         ret.push(line.join(''));
